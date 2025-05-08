@@ -7,8 +7,6 @@
 
 namespace mathcca {
      
-  namespace matricca {
-    
     template<std::floating_point T>
     constexpr void transpose_parallel_Base(const host_matrix<T>& A, host_matrix<T>& B);
      
@@ -57,7 +55,6 @@ namespace mathcca {
       return B;
     }
     
-  }
 }
 
 #include <mathcca/detail/host_transpose.inl>

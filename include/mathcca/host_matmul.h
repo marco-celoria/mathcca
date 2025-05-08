@@ -7,8 +7,6 @@
 
 namespace mathcca {
       
-  namespace matricca {
-    
     enum class HostMM {
       Base,
       Tiled
@@ -55,8 +53,6 @@ namespace mathcca {
       return C;
     }
     
-  }
-
 }
 
 #include <mathcca/detail/host_matmul.inl>

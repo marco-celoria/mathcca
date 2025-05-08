@@ -1,7 +1,6 @@
 
 
 namespace mathcca {
-  namespace matricca {
 
 
 	      template<std::floating_point T>
@@ -69,5 +68,4 @@ namespace mathcca {
   }
 #endif
 
-  }
 }

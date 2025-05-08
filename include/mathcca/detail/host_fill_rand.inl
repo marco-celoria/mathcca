@@ -1,6 +1,6 @@
 #include <random>
 
-#ifdef _PARALLELSTL
+#ifdef _STDPAR
 #include <execution>
 #include <ranges>
 #endif
@@ -13,8 +13,6 @@
 #include <cstddef>
 namespace mathcca {
 
-  namespace algocca {
-      
     template<std::floating_point T>
       inline static T Uniform(T min, T max) {
       static thread_local std::mt19937 generator{std::random_device{}()};
@@ -22,15 +20,20 @@ namespace mathcca {
       return distribution(generator);
     }
 
+#ifdef _STDPAR
     template<std::floating_point T>
-    void fill_rand(mathcca::iterator::host_iterator<T> first, mathcca::iterator::host_iterator<T> last) {
-      const auto size {static_cast<std::size_t>(last - first)};
-#ifdef _PARALLELSTL
-      //std::cout << "DEBUG _PARALLELSTL\n"; 
+    void fill_rand(Stdpar, T* first, T* last) {  
+    const auto size {static_cast<std::size_t>(last - first)};
+      //std::cout << "DEBUG _STDPAR\n"; 
       std::ranges::iota_view r(static_cast<unsigned int>(0),static_cast<unsigned int>(size));
       std::for_each(std::execution::par_unseq,r.begin(), r.end(), [&](auto i) {first[i] = Uniform(static_cast<T>(0), static_cast<T>(1));});
-#else
-      //std::cout << "DEBUG NO _PARALLELSTL\n"; 
+    }
+
+#endif
+    template<std::floating_point T>
+    void fill_rand(Omp, T* first, T* last) {
+      //std::cout << "DEBUG NO _STDPAR\n"; 
+    const auto size {static_cast<std::size_t>(last - first)};
       std::random_device rd;
       #pragma omp parallel default(shared)
       {
@@ -46,10 +49,8 @@ namespace mathcca {
           first[i] = uniform(generator);
         }
       }
-#endif
     }
 
-  }
 
 }
 

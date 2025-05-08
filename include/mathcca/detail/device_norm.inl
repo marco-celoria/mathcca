@@ -10,8 +10,6 @@
 
 namespace mathcca {
   
-  namespace matricca {
-
 #ifdef _CUBLAS
     template<std::floating_point T>
     constexpr decltype(auto) frobenius_norm_Cublas(const device_matrix<T>& x) {
@@ -55,9 +53,9 @@ namespace mathcca {
       std::cout << "Base frobenius norm\n";
       static_assert(THREAD_BLOCK_DIM <= 1024);
       //auto y{x*x};
-      //return std::sqrt(algocca::device::reduce_sum<T, THREAD_BLOCK_DIM>(y.cbegin(), y.cend(), static_cast<T>(0), stream));
-      return std::sqrt(algocca::transform_reduce_sum<T, Square<T>, THREAD_BLOCK_DIM>( x.cbegin(), x.cend(), Square<T>(), static_cast<T>(0), stream));
-  }
+      using Iter= device_matrix<T>::const_iterator;//decltype(x.cbegin());
+      //return std::sqrt(device::reduce_sum<T, THREAD_BLOCK_DIM>(y.cbegin(), y.cend(), static_cast<T>(0), stream));
+      return std::sqrt(transform_reduce_sum<Iter, T, Square<T>, THREAD_BLOCK_DIM>( x.cbegin(), x.cend(), Square<T>(), static_cast<T>(0), stream));
   }
 }
 

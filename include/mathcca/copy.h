@@ -5,30 +5,48 @@
 
 #include <concepts>
 #include <mathcca/common_algorithm.h>
-#include <mathcca/host_iterator.h>
+#include <mathcca/host_matrix.h>
 #ifdef __CUDACC__
-#include <mathcca/device_iterator.h>
+#include <mathcca/device_matrix.h>
 #include <cuda_runtime.h>
 #endif
 
 namespace mathcca {
 
-  namespace algocca {
+     class host_iterator_tag;
+     class Omp;
 
 #ifdef __CUDACC__
-    template<std::floating_point T>
-    void copy(mathcca::iterator::device_iterator<const T> first, mathcca::iterator::device_iterator<const T> last, mathcca::iterator::device_iterator<T> d_first, cudaStream_t stream= 0);
-    
-    template<std::floating_point T>
-    void copy(mathcca::iterator::device_iterator<const T> d_first, mathcca::iterator::device_iterator<const T> d_last, mathcca::iterator::host_iterator<T> h_first, cudaStream_t stream= 0);
-    
-    template<std::floating_point T>
-    void copy(mathcca::iterator::host_iterator<const T> h_first, mathcca::iterator::host_iterator<const T> h_last, mathcca::iterator::device_iterator<T> d_first, cudaStream_t stream= 0);
 
+     class device_iterator_tag;
+     class CudaDtoDcpy;
+     class CudaHtoDcpy;
+     class CudaDtoHcpy;
+
+    template<typename Iter1, typename Iter2>
+    void copy(Iter1 s_first, Iter1 s_last, Iter2 d_first, cudaStream_t stream=0) {
+      if constexpr (std::is_same_v<typename Iter1::iterator_system(), mathcca::host_iterator_tag()> && std::is_same_v<typename Iter2::iterator_system(), mathcca::host_iterator_tag()>){
+        copy(Omp(), s_first.get(), s_last.get(), d_first.get());
+      }
+      if constexpr (std::is_same_v<typename Iter1::iterator_system(), mathcca::device_iterator_tag()> && std::is_same_v<typename Iter2::iterator_system(), mathcca::device_iterator_tag()>) {
+        copy(CudaDtoDcpy(), s_first.get(), s_last.get(), d_first.get(), stream);
+      } 
+      else if constexpr (std::is_same_v<typename Iter1::iterator_system(), mathcca::host_iterator_tag()> && std::is_same_v<typename Iter2::iterator_system(), mathcca::device_iterator_tag()>) {
+        copy(CudaHtoDcpy(), s_first.get(), s_last.get(), d_first.get(), stream);
+      }
+      else if constexpr (std::is_same_v<typename Iter1::iterator_system(), mathcca::device_iterator_tag()> && std::is_same_v<typename Iter2::iterator_system(), mathcca::host_iterator_tag()>) {
+        copy(CudaDtoHcpy(), s_first.get(), s_last.get(), d_first.get(), stream);
+      }
+    }
+    
+#else
+    template<typename Iter1, typename Iter2>
+    void copy(Iter1 s_first, Iter1 s_last, Iter2 d_first){
+      if constexpr (std::is_same_v<typename Iter1::iterator_system(), mathcca::host_iterator_tag()> && std::is_same_v<typename Iter2::iterator_system(), mathcca::host_iterator_tag()>){
+        copy(Omp(), s_first.get(), s_last.get(), d_first.get());
+      }
+   }
 #endif
-    template<std::floating_point T>
-    void copy(mathcca::iterator::host_iterator<const T> first, mathcca::iterator::host_iterator<const T> last, mathcca::iterator::host_iterator<T> h_first);
-  }
 
 }
 

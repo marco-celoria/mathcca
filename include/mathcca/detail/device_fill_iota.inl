@@ -2,8 +2,6 @@
 
 namespace mathcca {
         
-  namespace algocca {
-     
     template<std::floating_point T>
     __global__ void fill_iota_kernel(T* __restrict start, const std::size_t size, const T v) {
       const auto tid{static_cast<std::size_t>(threadIdx.x + blockIdx.x * blockDim.x)};
@@ -13,7 +11,7 @@ namespace mathcca {
     }
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
-    void fill_iota(mathcca::iterator::device_iterator<T> first, mathcca::iterator::device_iterator<T> last, const T& v, cudaStream_t stream) {
+    void fill_iota(Cuda, T* first, T* last, const T v, cudaStream_t stream) {
       static_assert(THREAD_BLOCK_DIM <= 1024);
       using value_type= T;
       const auto size {static_cast<std::size_t>(last - first)};
@@ -21,11 +19,9 @@ namespace mathcca {
       const auto blocks{static_cast<unsigned int>((size + static_cast<std::size_t>(threads) - 1) / (static_cast<std::size_t>(threads)))};
       constexpr dim3 dimBlock(threads, 1, 1);
       dim3 dimGrid(blocks, 1, 1);
-      fill_iota_kernel<value_type><<<dimGrid, dimBlock, 0, stream>>>(first.get(), size, v);
+      fill_iota_kernel<value_type><<<dimGrid, dimBlock, 0, stream>>>(first, size, v);
     }
     
-  }
-  
 }
 
 

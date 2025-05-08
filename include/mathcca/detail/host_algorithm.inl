@@ -1,6 +1,6 @@
 #include <random>
 
-//#ifdef _PARALLELSTL
+//#ifdef _STDPAR
 #include <execution>
 #include <ranges>
 //#endif
@@ -16,11 +16,11 @@ namespace algocca {
 
     template<std::floating_point T>
     void fill_const(T* first, T* last, const T& v) {
-#ifdef _PARALLELSTL
+#ifdef _STDPAR
       //std::cout << "DEBUG _PARALLELST\n";  
       std::fill(std::execution::par_unseq, first, last, v);
 #else
-      //std::cout << "DEBUG NO _PARALLELSTL\n";      
+      //std::cout << "DEBUG NO _STDPAR\n";      
       const auto size {static_cast<std::size_t>(last - first)};
       #pragma omp prallel for default(shared) 
       for (std::size_t i= 0; i < size; ++i) {
@@ -34,13 +34,13 @@ namespace algocca {
     void fill_iota(T* first, T* last, const T& v) {
       using value_type= T;
       const auto size {static_cast<std::size_t>(last - first)};
-#ifdef _PARALLELSTL
+#ifdef _STDPAR
       //std::cout << "DEBUG _PARALLELST\n"; 
       std::ranges::iota_view indices(static_cast<unsigned int>(0),static_cast<unsigned int>(size));
       std::for_each(std::execution::par_unseq,indices.begin(),indices.end(),[&](auto i) { first[i]= v + static_cast<value_type>(i); });
 
 #else
-      //std::cout << "DEBUG NO _PARALLELSTL\n";
+      //std::cout << "DEBUG NO _STDPAR\n";
       #pragma omp prallel for default(shared) 
       for (std::size_t i= 0; i < size; ++i) {
         first[i]= v + static_cast<value_type>(i);
@@ -59,12 +59,12 @@ namespace algocca {
     template<std::floating_point T>
     void fill_rand(T* first, T* last) {
       const auto size {static_cast<std::size_t>(last - first)};    
-#ifdef _PARALLELSTL
-      //std::cout << "DEBUG _PARALLELSTL\n"; 
+#ifdef _STDPAR
+      //std::cout << "DEBUG _STDPAR\n"; 
       std::ranges::iota_view r(static_cast<unsigned int>(0),static_cast<unsigned int>(size));
       std::for_each(std::execution::par_unseq,r.begin(), r.end(), [&](auto i) {first[i] = Uniform(static_cast<T>(0), static_cast<T>(1));});
 #else
-      //std::cout << "DEBUG NO _PARALLELSTL\n"; 
+      //std::cout << "DEBUG NO _STDPAR\n"; 
       std::random_device rd;
       #pragma omp parallel default(shared)
       {
@@ -86,11 +86,11 @@ namespace algocca {
 
     template<std::floating_point T>
     void copy(const T* first, const T* last, T* h_first) {
-#ifdef _PARALLELSTL
-      //std::cout << "DEBUG _PARALLELSTL\n"; 
+#ifdef _STDPAR
+      //std::cout << "DEBUG _STDPAR\n"; 
       std::copy(std::execution::par_unseq, first, last, h_first);
 #else       
-      //std::cout << "DEBUG NO _PARALLELSTL\n"; 
+      //std::cout << "DEBUG NO _STDPAR\n"; 
       const auto size {static_cast<std::size_t>(last - first)};
       #pragma omp prallel for default(shared) 
       for (std::size_t i= 0; i < size; ++i) {
@@ -102,11 +102,11 @@ namespace algocca {
 
     template<Arithmetic T>
     T reduce_sum(const T* first, const T* last, const T init) {
-#ifdef _PARALLELSTL
-      //std::cout << "DEBUG _PARALLELSTL\n"; 
+#ifdef _STDPAR
+      //std::cout << "DEBUG _STDPAR\n"; 
       return std::reduce(std::execution::par_unseq, first, last, static_cast<T>(init), std::plus<T>());
 #else
-      //std::cout << "DEBUG NO _PARALLELSTL\n"; 
+      //std::cout << "DEBUG NO _STDPAR\n"; 
       using value_type= T;
       const auto size {static_cast<std::size_t>(last - first)};
       auto res{static_cast<T>(init)};
@@ -121,7 +121,7 @@ namespace algocca {
     
     template<Arithmetic T, typename UnaryFunction>
     T transform_reduce_sum(const T* first, const T* last, UnaryFunction unary_op, const T init) {
-#ifdef _PARALLELSTL
+#ifdef _STDPAR
       return std::transform_reduce(std::execution::par, first, last, init, std::plus<T>(), unary_op());
 #else
       using value_type= T;

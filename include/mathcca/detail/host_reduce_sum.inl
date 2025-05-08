@@ -1,35 +1,31 @@
-
-#ifdef _PARALLELSTL
+#include <cstddef>
+#ifdef _STDPAR
 #include <execution>
 #include <ranges>
 #endif
 
-#ifdef _OPENMP
- #include<omp.h>
-#endif
 namespace mathcca {
 
-  namespace algocca {
-    
+#ifdef _STDPAR
     template<std::floating_point T>
-    T reduce_sum(mathcca::iterator::host_iterator<const T> first, mathcca::iterator::host_iterator<const T> last, const T init) {
-#ifdef _PARALLELSTL
-      //std::cout << "DEBUG _PARALLELSTL\n"; 
+    T reduce_sum(Stdpar, const T* first, const T* last, const T init) {
+      std::cout << "DEBUG _STDPAR\n";
       return std::reduce(std::execution::par_unseq, first, last, static_cast<T>(init), std::plus<T>());
-#else
-      //std::cout << "DEBUG NO _PARALLELSTL\n"; 
+    }
+#endif
+    template<std::floating_point T>
+    T reduce_sum(Omp, const T* first, const T* last, const T init) {
+      std::cout << "DEBUG NO _STDPAR\n";
       using value_type= T;
       const auto size {static_cast<std::size_t>(last - first)};
       auto res{static_cast<T>(init)};
-      #pragma omp prallel for default(shared) reduction(+:res) 
+      #pragma omp prallel for default(shared) reduction(+:res)
       for (std::size_t i= 0; i < size; ++i) {
         res+= first[i];
       }
       return res;
-#endif
     }
 
-  }
-
 }
+
 

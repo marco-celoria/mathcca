@@ -1,36 +1,34 @@
 #include <cstddef>
 #include <mathcca/device_helper.h>
-#include <mathcca/device_iterator.h>
-#include <mathcca/host_iterator.h>
+//#include <mathcca/device_iterator.h>
+//#include <mathcca/host_iterator.h>
 
 namespace mathcca {
        
-  namespace algocca {
      
     template<std::floating_point T>
-    void copy(mathcca::iterator::device_iterator<const T> first, mathcca::iterator::device_iterator<const T> last, mathcca::iterator::device_iterator<T> d_first, cudaStream_t stream) {
-      const auto size{static_cast<std::size_t>(last - first)};
+    void copy(CudaDtoDcpy, const T* s_first, const T* s_last, T* d_first, cudaStream_t stream) {
+      const auto size{static_cast<std::size_t>(s_last - s_first)};
       const std::size_t nbytes{size * sizeof(T)};
-      checkCudaErrors(cudaMemcpy(d_first.get(), first.get(), nbytes, cudaMemcpyDeviceToDevice));
+      checkCudaErrors(cudaMemcpy(d_first, s_first, nbytes, cudaMemcpyDeviceToDevice));
     };
      
       
     template<std::floating_point T>
-    void copy(mathcca::iterator::device_iterator<const T> d_first, mathcca::iterator::device_iterator<const T> d_last, mathcca::iterator::host_iterator<T> h_first, cudaStream_t stream) {
-      const auto size{static_cast<std::size_t>(d_last - d_first)};
+    void copy(CudaDtoHcpy, const T* s_first, const T* s_last, T* d_first, cudaStream_t stream) {
+      const auto size{static_cast<std::size_t>(s_last - s_first)};
       const auto bytes{size * sizeof(T)};
-      checkCudaErrors(cudaMemcpyAsync(h_first.get(), d_first.get(), bytes, cudaMemcpyDeviceToHost, stream));
+      checkCudaErrors(cudaMemcpyAsync(d_first, s_first, bytes, cudaMemcpyDeviceToHost, stream));
     }
 
     
     template<std::floating_point T>
-    void copy(mathcca::iterator::host_iterator<const T> h_first, mathcca::iterator::host_iterator<const T> h_last, mathcca::iterator::device_iterator<T> d_first, cudaStream_t stream) {
-      const auto size{static_cast<std::size_t>(h_last - h_first)};
+    void copy(CudaHtoDcpy, const T* s_first, const T* s_last, T* d_first, cudaStream_t stream) {
+      const auto size{static_cast<std::size_t>(s_last - s_first)};
       const auto bytes{size * sizeof(T)};
-      checkCudaErrors(cudaMemcpyAsync(d_first.get(), h_first.get(), bytes, cudaMemcpyHostToDevice, stream));
+      checkCudaErrors(cudaMemcpyAsync(d_first, s_first, bytes, cudaMemcpyHostToDevice, stream));
     }
 
-  }
 
 }
 

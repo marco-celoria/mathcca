@@ -10,8 +10,6 @@ namespace cg = cooperative_groups;
 
 namespace mathcca {
 
-  namespace matricca {
-    
     template<std::floating_point T>
     void swap(device_matrix<T>& a, device_matrix<T>& b) {
       auto tmp {std::move(a)};
@@ -96,7 +94,7 @@ namespace mathcca {
         blocks  = (s + (threads * 2 - 1)) / (threads * 2);
         //std::cout << "s = " << s << "; threads = " << threads << "; blocks = " << blocks << "\n";
         checkCudaErrors(cudaMemcpy(d_intermediateSums, d_odata, s * sizeof(T), cudaMemcpyDeviceToDevice));
-	mathcca::algocca::cg_reduce_kernel<T><<<blocks, threads, smemSize>>>(d_intermediateSums, d_odata, s, static_cast<T>(0));
+	mathcca::cg_reduce_kernel<T><<<blocks, threads, smemSize>>>(d_intermediateSums, d_odata, s, static_cast<T>(0));
         s = (s + (threads * 2 - 1)) / (threads * 2);
       }
       checkCudaErrors(cudaMemcpy(&gpu_result, d_odata, sizeof(T), cudaMemcpyDeviceToHost));
@@ -215,7 +213,6 @@ namespace mathcca {
       print_matrix_kernel<<<1,1>>> (mat.data(), mat.num_rows(), mat.num_cols());
       cudaDeviceSynchronize();
     }
-  }
 }
 
 

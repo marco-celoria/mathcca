@@ -5,12 +5,19 @@
 
 namespace mathcca {
   
-  namespace algocca {
-
     template<typename T>
-    concept Arithmetic = std::is_arithmetic<T>::value;
-
-  }
+    concept Arithmetic = std::is_arithmetic_v<T>;
+    
+    class Omp{};
+#ifdef _STDPAR
+    class Stdpar{};
+#endif
+#ifdef __CUDACC__
+    class Cuda{};
+    class CudaDtoHcpy{};
+    class CudaHtoDcpy{};
+    class CudaDtoDcpy{};
+#endif
 
 }
 

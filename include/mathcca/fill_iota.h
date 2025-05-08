@@ -2,27 +2,44 @@
 #define FILL_IOTA_H_
 #pragma once
 
+
 #include <concepts>
 #include <mathcca/common_algorithm.h>
-#include <mathcca/host_iterator.h>
+#include <mathcca/host_matrix.h>
 #ifdef __CUDACC__
-#include <mathcca/device_iterator.h>
+#include <mathcca/device_matrix.h>
 #include <cuda_runtime.h>
 #endif
 
 namespace mathcca {
 
-  namespace algocca {
+     class host_iterator_tag;
+     class Omp;
 
 #ifdef __CUDACC__
-    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM= 128>
-    void fill_iota(mathcca::iterator::device_iterator<T> first, mathcca::iterator::device_iterator<T> last, const T& v, cudaStream_t stream= 0);
+     class device_iterator_tag;
+     class Cuda;
+    template<typename Iter , std::floating_point T, unsigned int THREAD_BLOCK_DIM= 128>
+    void fill_iota(Iter first, Iter last, const T v, cudaStream_t stream= 0) {
+      if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()>){
+        fill_iota(Omp(), first.get(), last.get(), v);
+      }
+      if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::device_iterator_tag()>){
+        fill_iota<T, THREAD_BLOCK_DIM>(Cuda(), first.get(), last.get(), v, stream);
+      }
+    }
+#else
+    template<typename Iter, std::floating_point T>
+    void fill_iota(Iter first, Iter last, const T v){
+      if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()> ){
+        fill_iota(Omp(), first.get(), last.get(), v);
+      }
+    }
 #endif
-    template<std::floating_point T>
-    void fill_iota(mathcca::iterator::host_iterator<T> first, mathcca::iterator::host_iterator<T> last, const T& v);
-  }
 
 }
+
+
 
 #ifdef __CUDACC__
 #include <mathcca/detail/device_fill_iota.inl>
@@ -31,5 +48,4 @@ namespace mathcca {
 #include <mathcca/detail/host_fill_iota.inl>
 
 #endif
-
 

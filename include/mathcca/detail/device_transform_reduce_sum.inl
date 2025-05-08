@@ -9,8 +9,6 @@ namespace cg = cooperative_groups;
 
 namespace mathcca {
      
-  namespace algocca {
-      
     template <Arithmetic T, class UnaryOp>
     __global__ void cg_transform_reduce_kernel(const T* __restrict idata, T* __restrict odata, const std::size_t size, const T init,  UnaryOp transform ) {
       // Shared memory for intermediate steps
@@ -59,8 +57,8 @@ namespace mathcca {
     }
     
     
-template<std::floating_point T, typename UnaryFunction, unsigned int THREAD_BLOCK_DIM>
-    T transform_reduce_sum(mathcca::iterator::device_iterator<const T> first, mathcca::iterator::device_iterator<const T> last, UnaryFunction unary_op, const T init, cudaStream_t stream) {
+    template<std::floating_point T, typename UnaryFunction, unsigned int THREAD_BLOCK_DIM>
+    T transform_reduce_sum(Cuda, const T* first, const T* last, UnaryFunction unary_op, const T init, cudaStream_t stream) {
       static_assert(THREAD_BLOCK_DIM <= 1024);
       auto size{static_cast<std::size_t>(last - first)};
       constexpr unsigned int maxThreads{THREAD_BLOCK_DIM};
@@ -75,7 +73,7 @@ template<std::floating_point T, typename UnaryFunction, unsigned int THREAD_BLOC
       dim3 dimGrid(blocks, 1, 1);
       unsigned int smemSize = (threads <= 32) ? 2 * threads * sizeof(T) : threads * sizeof(T);
       //auto square = []__device__(auto val) { return val * val; };
-      cg_transform_reduce_kernel<T, UnaryFunction><<<dimGrid, dimBlock, smemSize, stream>>>(first.get(), d_odata, size, init, unary_op);
+      cg_transform_reduce_kernel<T, UnaryFunction><<<dimGrid, dimBlock, smemSize, stream>>>(first, d_odata, size, init, unary_op);
       // sum partial block sums on GPU
       unsigned int s{blocks};
       while (s > 1) {
@@ -91,8 +89,6 @@ template<std::floating_point T, typename UnaryFunction, unsigned int THREAD_BLOC
       checkCudaErrors(cudaFree(d_intermediateSums));
       return gpu_result;
     }
-    
-  }
     
 }
 

@@ -4,24 +4,37 @@
 
 #include <concepts>
 #include <mathcca/common_algorithm.h>
-#include <mathcca/host_iterator.h>
+#include <mathcca/host_matrix.h>
 #ifdef __CUDACC__
-#include <mathcca/device_iterator.h>
+#include <mathcca/device_matrix.h>
 #include <cuda_runtime.h>
 #endif
 
 namespace mathcca {
 
-  namespace algocca {
+     class host_iterator_tag;
+     class Omp;
 
 #ifdef __CUDACC__
-    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM= 128>
-    T reduce_sum(mathcca::iterator::device_iterator<const T> first, mathcca::iterator::device_iterator<const T> last, const T init, cudaStream_t stream= 0);
+     class device_iterator_tag;
+     class Cuda;
+    template<typename Iter , std::floating_point T, unsigned int THREAD_BLOCK_DIM= 128>
+    T reduce_sum(Iter first, Iter last, const T init, cudaStream_t stream= 0) {
+      if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()>){
+        return reduce_sum(Omp(), first.get(), last.get(), init);
+      }
+      if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::device_iterator_tag()>){
+        return reduce_sum<T, THREAD_BLOCK_DIM>(Cuda(), first.get(), last.get(), init, stream);
+      }
+    }
 #else
-    template<std::floating_point T>
-    T reduce_sum(mathcca::iterator::host_iterator<const T> first, mathcca::iterator::host_iterator<const T> last, const T init);
+    template<typename Iter, std::floating_point T>
+    T reduce_sum(Iter first, Iter last, const T init) {
+      if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()>){
+        return reduce_sum(Omp(), first.get(), last.get(), init);
+      }
+    }
 #endif
-  }
 
 }
 

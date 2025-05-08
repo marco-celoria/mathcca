@@ -2,8 +2,6 @@
 
 namespace mathcca {
 
-  namespace matricca {
- 
     template<std::floating_point T>
     constexpr inline auto check_matmul_compatible_size(const host_matrix<T>& lhs, const host_matrix<T>& rhs) {
       if (lhs.num_cols() == rhs.num_rows())
@@ -85,5 +83,4 @@ namespace mathcca {
   }
   #endif
  
-  }
 } 

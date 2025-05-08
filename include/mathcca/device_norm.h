@@ -8,8 +8,6 @@
 
 namespace mathcca {
 
-  namespace matricca {
-    
     enum class DevFN {
       Base,
       Thrust
@@ -48,8 +46,6 @@ namespace mathcca {
         return frobenius_norm_Base<T, THREAD_BLOCK_DIM>(x, stream);
       }
     }
-
-  }
 
 }
 

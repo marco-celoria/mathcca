@@ -3,13 +3,11 @@
 #include <stdexcept>
 #include <type_traits>
 
-#ifdef PAR_UNSEQ
+#ifdef _STDPAR
  #include <execution>
 #endif
 
 namespace mathcca {
-
-  namespace matricca {
 
     template<std::floating_point T>
     void swap(host_matrix<T>& a, host_matrix<T>& b) {
@@ -94,6 +92,5 @@ namespace mathcca {
     std::cout << "\n";
   }
 
-  }
 }
 

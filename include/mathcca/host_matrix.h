@@ -6,7 +6,7 @@
 #include <concepts>
 #include <iostream>
 
-#include <mathcca/host_iterator.h>
+//#include <mathcca/host_iterator.h>
 #include <mathcca/copy.h>
 #include <mathcca/fill_const.h>
 
@@ -23,8 +23,8 @@
 #endif
 
 namespace mathcca {
-
-  namespace matricca {
+    
+    class host_iterator_tag{};
 
 #ifdef __CUDACC__
     template<std::floating_point T>	
@@ -38,14 +38,17 @@ namespace mathcca {
       
       public:
         
+        template <bool IsConst>
+        class host_iterator;
+        
         using value_type= T;
         using size_type= std::size_t;
         using reference= T&;
         using const_reference= const T&;
         using pointer= T*;//device_ptr<T[]>;
         using const_pointer= const T*; //device_ptr<const T[]>;
-        using iterator= mathcca::iterator::host_iterator<T>;
-        using const_iterator= mathcca::iterator::host_iterator<const T>;
+        using iterator= /*mathcca::iterator::*/host_iterator<false>;
+        using const_iterator= /*mathcca::iterator::*/host_iterator<true>;
         
         constexpr host_matrix(size_type r, size_type c) : num_rows_{r}, num_cols_{c} { 
           data_ = new T[num_rows_ * num_cols_]{};      
@@ -53,7 +56,7 @@ namespace mathcca {
         }
         
         constexpr host_matrix(size_type r, size_type c, const_reference v) : host_matrix(r, c) {
-          mathcca::algocca::fill_const(begin(), end(), v);
+          mathcca::fill_const(begin(), end(), v);
           std::cout << "(host_matrix delegating ctor)\n";
         } 
          
@@ -77,10 +80,10 @@ namespace mathcca {
         }
         
         constexpr host_matrix(const self& m) : host_matrix{m.num_rows_, m.num_cols_} {
-          algocca::copy(m.cbegin(), m.cend(), begin());
+          copy(m.cbegin(), m.cend(), begin());
           std::cout << "host_matrix copy ctor\n";
         }
-
+        
         constexpr host_matrix<T>& operator=(host_matrix&& rhs) {
           /**/
           if (data_)
@@ -95,7 +98,7 @@ namespace mathcca {
           std::cout << "host_matrix move assignment\n";
           return *this;
         }
-
+        
         constexpr host_matrix<T>& operator=(const host_matrix& rhs) {
           if (this != &rhs) {
             std::cout << "host_matrix copy assignment (\n";
@@ -106,7 +109,7 @@ namespace mathcca {
             else {
               num_rows_= rhs.num_rows_;
               num_cols_= rhs.num_cols_;
-              algocca::copy(rhs.cbegin(), rhs.cend(), begin());
+              copy(rhs.cbegin(), rhs.cend(), begin());
             }
             std::cout << ")\n";
           }
@@ -127,19 +130,19 @@ namespace mathcca {
         constexpr pointer data() noexcept { return data_; } 
         constexpr const_pointer data() const noexcept { return data_; } 
         
-        constexpr iterator begin() noexcept { return iterator{data_/*.get()*/}; }
-        constexpr iterator end()   noexcept { return iterator{data_/*.get()*/ + size()}; }
+	iterator begin() noexcept { return iterator{data_/*.get()*/}; }
+        iterator end()   noexcept { return iterator{data_/*.get()*/ + size()}; }
         
-        constexpr const_iterator begin()  const noexcept { return const_iterator{data_/*.get()*/}; }
-        constexpr const_iterator end()    const noexcept { return const_iterator{data_/*.get()*/ + size()}; }
+        const_iterator begin()  const noexcept { return const_iterator{data_/*.get()*/}; }
+        const_iterator end()    const noexcept { return const_iterator{data_/*.get()*/ + size()}; }
         
-        constexpr const_iterator cbegin() const noexcept { return const_iterator{data_/*.get()*/}; }
-        constexpr const_iterator cend()   const noexcept { return const_iterator{data_/*.get()*/ + size()}; }
+        const_iterator cbegin() const noexcept { return const_iterator{data_/*.get()*/}; }
+        const_iterator cend()   const noexcept { return const_iterator{data_/*.get()*/ + size()}; }
         
 #ifdef __CUDACC__
         auto toDevice () const {
           device_matrix<T> devMat(num_rows_, num_cols_);
-	  algocca::copy(begin(), end(), devMat.begin());
+	  copy(begin(), end(), devMat.begin());
           return devMat;
         }
 #endif
@@ -173,7 +176,7 @@ namespace mathcca {
             (*this)[i] -= rhs[i];
           return *this;
         }
-       
+        
         constexpr self& operator*=(const self& rhs) {
           std::cout <<"operator*= lvalue\n";
           if (!check_equal_size((*this), rhs))
@@ -191,49 +194,131 @@ namespace mathcca {
         size_type num_cols_{0};
         pointer data_{nullptr};
         
+    };  
+    
+    /* Swap and checks */
+     
+    template<std::floating_point T>
+    void swap(host_matrix<T>& a, host_matrix<T>& b);
+    
+    template<std::floating_point T>
+    constexpr bool check_equal_size(const host_matrix<T>& lhs, const host_matrix<T>& rhs);
+   
+    /* Operator Overloadings */
+
+    template<std::floating_point T>
+    constexpr bool operator==(const host_matrix<T>& lhs, const host_matrix<T>& rhs);  
+    
+    template<std::floating_point T>
+    constexpr host_matrix<T> operator+ (host_matrix<T>&& res, const host_matrix<T>& rhs);
+  
+    template<std::floating_point T>
+    constexpr host_matrix<T> operator+ (const host_matrix<T>& lhs, const host_matrix<T>& rhs);
+  
+    template<std::floating_point T>
+    constexpr host_matrix<T> operator- (host_matrix<T>&& res, const host_matrix<T>& rhs);
+   
+    template<std::floating_point T>
+    constexpr host_matrix<T> operator- (const host_matrix<T>& lhs, const host_matrix<T>& rhs);
+  
+    template<std::floating_point T>
+    constexpr host_matrix<T> operator*(host_matrix<T>&& A, const host_matrix<T>& B);
+  
+    template<std::floating_point T>
+    constexpr host_matrix<T> operator*(const host_matrix<T>& A, const host_matrix<T>& B);
+  
+    template<std::floating_point T>
+    void print_matrix(const host_matrix<T>& mat);
+
+    template<std::floating_point T>
+    template <bool IsConst>
+    class host_matrix<T>::host_iterator {
+      public:
+        using value_type= T;
+        using difference_type= std::ptrdiff_t;
+        using pointer= T*;
+        using reference= T&;
+        using const_reference=const T&;
+        using iterator_system= host_iterator_tag;
+        using iterator_category= std::contiguous_iterator_tag;
+        
+        host_iterator() : ptr_{nullptr} {}
+        
+	explicit host_iterator(pointer x) : ptr_{x} {}
+        
+	host_iterator(const host_iterator&)= default;
+        
+        template<bool IsConst_ = IsConst, class = std::enable_if_t<IsConst_>>
+        host_iterator(const host_iterator<false>& rhs) : ptr_(rhs.get()) {}  // OK
+        
+        template<bool IsConst_ = IsConst, class = std::enable_if_t<IsConst_>>
+        host_iterator& operator=(const host_iterator<false>& rhs) { ptr_ = rhs.ptr_; return *this; }
+        
+	template <bool Q = IsConst>
+        typename std::enable_if_t<Q, const_reference> operator*() const noexcept { return *ptr_; }
+        
+	template <bool Q = IsConst>
+        typename std::enable_if_t<!Q, reference> operator*() const noexcept { return *ptr_; }
+        
+	template <bool Q = IsConst>
+        typename std::enable_if_t<Q, const_reference> operator[](difference_type n) const noexcept { return *(ptr_ + n); }
+	
+	template <bool Q = IsConst>
+        typename std::enable_if_t<!Q, reference> operator[](difference_type n) const noexcept { return *(ptr_ + n); }
+        
+	pointer operator->()  const noexcept { return ptr_; }
+        pointer get() const noexcept { return ptr_; }
+        
+        host_iterator& operator++()   { ++ptr_; return *this; }
+        host_iterator operator++(int) { auto tmp= *this; ++(*this); return tmp; }
+        host_iterator& operator--()   { --ptr_; return *this; }
+        host_iterator operator--(int) { auto tmp= *this; --(*this); return tmp; }
+        
+        host_iterator& operator+=(difference_type n) { ptr_+= n; return *this; }
+        host_iterator& operator-=(difference_type n) { ptr_-= n; return *this; }
+        
+        friend bool operator==(const host_iterator& x, const host_iterator& y) { return x.get() == y.get(); }
+        
+        friend bool operator!=(const host_iterator& x, const host_iterator& y) { return !(x == y); }
+        
+        friend bool operator<(const host_iterator& lhs, const host_iterator& rhs) { return lhs.get() < rhs.get(); }
+        
+        friend bool operator>(const host_iterator& lhs, const host_iterator& rhs)  { return rhs < lhs; }
+        
+        friend bool operator<=(const host_iterator& lhs, const host_iterator& rhs) { return !(rhs < lhs); }
+        
+        friend bool operator>=(const host_iterator& lhs, const host_iterator& rhs) { return !(lhs < rhs); }
+        
+        friend  host_iterator operator+(const host_iterator& it, difference_type n) {
+          host_iterator temp= it;
+          temp+= n;
+          return temp;
+        }
+        
+        friend difference_type operator+(difference_type n, const host_iterator& it) { return it + n; }
+        
+        friend host_iterator operator-(const host_iterator& it, difference_type n) {
+          host_iterator temp= it;
+          temp-= n;
+          return temp;
+        }
+        
+        friend difference_type operator-(const host_iterator& lhs, const host_iterator& rhs) { return lhs.get() - rhs.get(); }
+        
+      private:
+        
+        pointer ptr_;
+        
     };
-  
-  /* Swap and checks */
 
-  template<std::floating_point T>
-  void swap(host_matrix<T>& a, host_matrix<T>& b);
-  
-  template<std::floating_point T>
-  constexpr bool check_equal_size(const host_matrix<T>& lhs, const host_matrix<T>& rhs);
-   
-  /* Operator Overloadings */
 
-  template<std::floating_point T>
-  constexpr bool operator==(const host_matrix<T>& lhs, const host_matrix<T>& rhs);  
-  
-  
-  template<std::floating_point T>
-  constexpr host_matrix<T> operator+ (host_matrix<T>&& res, const host_matrix<T>& rhs);
-  
-  
-  template<std::floating_point T>
-  constexpr host_matrix<T> operator+ (const host_matrix<T>& lhs, const host_matrix<T>& rhs);
-  
-   
-  template<std::floating_point T>
-  constexpr host_matrix<T> operator- (host_matrix<T>&& res, const host_matrix<T>& rhs);
-   
-  
-  template<std::floating_point T>
-  constexpr host_matrix<T> operator- (const host_matrix<T>& lhs, const host_matrix<T>& rhs);
-  
-  
-  template<std::floating_point T>
-  constexpr host_matrix<T> operator*(host_matrix<T>&& A, const host_matrix<T>& B);
-  
-  
-  template<std::floating_point T>
-  constexpr host_matrix<T> operator*(const host_matrix<T>& A, const host_matrix<T>& B);
-  
-  template<std::floating_point T>
-  void print_matrix(const host_matrix<T>& mat);
 
-  }
+    /*
+    bool operator==(const typename host_matrix<float>::host_iterator<false> & x, const typename host_matrix<float>::host_iterator<false> & y) { return x.get() == y.get(); }
+    bool operator==(const typename host_matrix<double>::host_iterator<false> & x, const typename host_matrix<double>::host_iterator<false> & y) { return x.get() == y.get(); }
+    bool operator==(const typename host_matrix<float>::host_iterator<true> & x, const typename host_matrix<float>::host_iterator<true> & y) { return x.get() == y.get(); }
+    bool operator==(const typename host_matrix<double>::host_iterator<true> & x, const typename host_matrix<double>::host_iterator<true> & y) { return x.get() == y.get(); }
+    */
 }
 
 #include <mathcca/detail/host_matrix.inl>

@@ -8,8 +8,6 @@
 
 namespace mathcca {
 
-  namespace matricca {
-    
     enum class DevT {
       Base,
       Tiled
@@ -55,8 +53,6 @@ namespace mathcca {
       transpose<T, O, LINEAR_THREAD_BLOCK_DIM>(A, B, stream);
       return B;
     }
-
-  }
 
 }
 

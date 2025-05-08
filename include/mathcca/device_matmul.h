@@ -8,8 +8,6 @@
 
 namespace mathcca {
 
-  namespace matricca {
-  
     enum class DevMM {
       Base,
       Tiled
@@ -53,8 +51,6 @@ namespace mathcca {
       matmul<T, O, LINEAR_THREAD_BLOCK_DIM>(A, B, C, stream);
       return C;
     }
-
-  }
 
 }
 

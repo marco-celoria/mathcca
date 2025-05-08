@@ -7,14 +7,12 @@
 
 namespace mathcca {
      
-  namespace matricca {
-    
 #ifdef _MKL
     template<std::floating_point T>
     constexpr decltype(auto) frobenius_norm_Mkl(const host_matrix<T>& x);
 #endif
     
-#ifdef _PARALLELSTL
+#ifdef _STDPAR
     template<std::floating_point T>
     constexpr decltype(auto) frobenius_norm_Pstl(const host_matrix<T>& x) ;
 #endif
@@ -24,7 +22,7 @@ namespace mathcca {
     
     enum class HostFN {
       Base
-#ifdef _PARALLELSTL
+#ifdef _STDPAR
       , Pstl
 #endif
 #ifdef _MKL
@@ -35,7 +33,7 @@ namespace mathcca {
     template<std::floating_point T, HostFN O>
     T frobenius_norm (const host_matrix<T>& x) {
       static_assert(O == HostFN::Base
-#ifdef _PARALLELSTL
+#ifdef _STDPAR
                       || O == HostFN::Pstl
 #endif
 #ifdef _MKL
@@ -50,14 +48,13 @@ namespace mathcca {
         return frobenius_norm_Mkl(x);
       }
 #endif
-#ifdef _PARALLELSTL
+#ifdef _STDPAR
       else if constexpr(O == HostFN::Pstl) {
         return frobenius_norm_Pstl(x);
       }
 #endif
     }
 
-  }
 }
 
 #include <mathcca/detail/host_norm.inl>

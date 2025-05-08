@@ -2,10 +2,9 @@
 
 
 namespace mathcca {
-  namespace matricca {
 
 
-	  #ifdef _PARALLELSTL
+	  #ifdef _STDPAR
 
   template<typename T>
   struct Square {
@@ -57,5 +56,4 @@ namespace mathcca {
     return std::sqrt(sum);
   }
 
-  }
 }
