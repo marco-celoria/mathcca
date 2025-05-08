@@ -6,7 +6,7 @@
 #include <concepts>
 #include <iostream>
 
-//#include <mathcca/host_iterator.h>
+#include <mathcca/host_iterator.h>
 #include <mathcca/copy.h>
 #include <mathcca/fill_const.h>
 
@@ -24,7 +24,6 @@
 
 namespace mathcca {
     
-    class host_iterator_tag{};
 
 #ifdef __CUDACC__
     template<std::floating_point T>	
@@ -38,8 +37,8 @@ namespace mathcca {
       
       public:
         
-        template <bool IsConst>
-        class host_iterator;
+//        template <bool IsConst>
+//        class host_iterator;
         
         using value_type= T;
         using size_type= std::size_t;
@@ -47,17 +46,19 @@ namespace mathcca {
         using const_reference= const T&;
         using pointer= T*;//device_ptr<T[]>;
         using const_pointer= const T*; //device_ptr<const T[]>;
-        using iterator= /*mathcca::iterator::*/host_iterator<false>;
-        using const_iterator= /*mathcca::iterator::*/host_iterator<true>;
+        using iterator= /*mathcca::iterator::*/host_iterator<T, false>;
+        using const_iterator= /*mathcca::iterator::*/host_iterator<T, true>;
         
         constexpr host_matrix(size_type r, size_type c) : num_rows_{r}, num_cols_{c} { 
           data_ = new T[num_rows_ * num_cols_]{};      
-          std::cout << "host_matrix custom ctor\n";
+          //std::cout << "host_matrix custom ctor\n";
+          std::cout << "custom ctor\n";
         }
         
         constexpr host_matrix(size_type r, size_type c, const_reference v) : host_matrix(r, c) {
           mathcca::fill_const(begin(), end(), v);
-          std::cout << "(host_matrix delegating ctor)\n";
+          //std::cout << "(host_matrix delegating ctor)\n";
+          std::cout << "(delegating ctor)\n";
         } 
          
         constexpr ~host_matrix() {
@@ -69,19 +70,22 @@ namespace mathcca {
           /**/
 	  num_rows_= 0;
 	  num_rows_= 0;
-          std::cout << "host_matrix dtor\n"; 
+          //std::cout << "host_matrix dtor\n"; 
+          std::cout << "dtor\n"; 
         };
         
         constexpr host_matrix(self&& m):num_rows_{std::move(m.num_rows_)}, num_cols_{std::move(m.num_cols_)}, data_{std::move(m.data_)} {
           m.num_rows_= 0;
           m.num_rows_= 0;
           m.data_= nullptr; /**/
-          std::cout << "host_matrix move ctor\n";
+          std::cout << "move ctor\n";
+          //std::cout << "host_matrix move ctor\n";
         }
         
         constexpr host_matrix(const self& m) : host_matrix{m.num_rows_, m.num_cols_} {
           copy(m.cbegin(), m.cend(), begin());
-          std::cout << "host_matrix copy ctor\n";
+          std::cout << "copy ctor\n";
+          //std::cout << "host_matrix copy ctor\n";
         }
         
         constexpr host_matrix<T>& operator=(host_matrix&& rhs) {
@@ -95,13 +99,15 @@ namespace mathcca {
           rhs.num_rows_= 0;
           rhs.num_cols_= 0;
           rhs.data_= nullptr; /**/
-          std::cout << "host_matrix move assignment\n";
+          std::cout << "move assignment\n";
+          //std::cout << "host_matrix move assignment\n";
           return *this;
         }
         
         constexpr host_matrix<T>& operator=(const host_matrix& rhs) {
           if (this != &rhs) {
-            std::cout << "host_matrix copy assignment (\n";
+            std::cout << "copy assignment (\n";
+            //std::cout << "host_matrix copy assignment (\n";
             if (this->size() != rhs.size()) {
               auto tmp{rhs};            // use copy ctor
               (*this)= std::move(tmp);  // finally move assignment
@@ -229,7 +235,7 @@ namespace mathcca {
   
     template<std::floating_point T>
     void print_matrix(const host_matrix<T>& mat);
-
+/*
     template<std::floating_point T>
     template <bool IsConst>
     class host_matrix<T>::host_iterator {
@@ -311,14 +317,8 @@ namespace mathcca {
         
     };
 
+*/
 
-
-    /*
-    bool operator==(const typename host_matrix<float>::host_iterator<false> & x, const typename host_matrix<float>::host_iterator<false> & y) { return x.get() == y.get(); }
-    bool operator==(const typename host_matrix<double>::host_iterator<false> & x, const typename host_matrix<double>::host_iterator<false> & y) { return x.get() == y.get(); }
-    bool operator==(const typename host_matrix<float>::host_iterator<true> & x, const typename host_matrix<float>::host_iterator<true> & y) { return x.get() == y.get(); }
-    bool operator==(const typename host_matrix<double>::host_iterator<true> & x, const typename host_matrix<double>::host_iterator<true> & y) { return x.get() == y.get(); }
-    */
 }
 
 #include <mathcca/detail/host_matrix.inl>

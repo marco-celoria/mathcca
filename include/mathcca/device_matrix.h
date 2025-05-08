@@ -23,11 +23,10 @@
 #include <mathcca/fill_const.h>
 #include <mathcca/device_helper.h>
 #include <mathcca/host_matrix.h>
-//#include <mathcca/device_iterator.h>
+#include <mathcca/device_iterator.h>
 
 namespace mathcca {
     
-    class device_iterator_tag{};
     
     template<std::floating_point T>
     class host_matrix;
@@ -48,8 +47,8 @@ namespace mathcca {
       
       public:
         
-        template <bool IsConst>
-        class device_iterator;
+//        template <bool IsConst>
+//        class device_iterator;
 
         using value_type= T;
         using size_type= std::size_t;
@@ -57,18 +56,20 @@ namespace mathcca {
         using const_reference= const T&;
         using pointer= T*;                  //device_ptr<T[]>;
         using const_pointer= const T*;      //device_ptr<const T[]>;
-        using iterator= /*mathcca::iterator::*/device_iterator<false>;
-        using const_iterator= /*mathcca::iterator::*/device_iterator<true>;
+        using iterator= /*mathcca::iterator::*/device_iterator<T, false>;
+        using const_iterator= /*mathcca::iterator::*/device_iterator<T, true>;
 
         device_matrix(size_type r, size_type c) : num_rows_{r}, num_cols_{c} {
           const size_type nbytes{size() * sizeof(value_type) };
           checkCudaErrors(cudaMalloc((void **)& data_, nbytes));
-          std::cout << "device_matrix custom ctor\n";
+          std::cout << "custom ctor\n";
+          //std::cout << "device_matrix custom ctor\n";
         }
         
         device_matrix(size_type r, size_type c, const_reference v) : device_matrix(r, c) {
           fill_const(begin(), end(), v);
-          std::cout << "(device_matrix delegating ctor)\n";
+          std::cout << "(delegating ctor)\n";
+          //std::cout << "(device_matrix delegating ctor)\n";
         } 
    
         ~device_matrix() { 
@@ -78,23 +79,27 @@ namespace mathcca {
 	    data_=nullptr; 
 	  }
 	  // 
-	  std::cout << "device_matrix dtor\n"; 
+	  std::cout << "dtor\n"; 
+	  //std::cout << "device_matrix dtor\n"; 
 	}
         
         device_matrix(self && m) : num_rows_{std::move(m.num_rows_)}, num_cols_{std::move(m.num_cols_)}, data_{std::move(m.data_)} {
-          std::cout << "device_matrix move ctor\n";
+          std::cout << "move ctor\n";
+          //std::cout << "device_matrix move ctor\n";
           m.num_rows_ = 0;
           m.num_cols_ = 0;
           m.data_ = nullptr; //
         }
 
         device_matrix(const self& m) : device_matrix(m.num_rows_, m.num_cols_) {
-          std::cout << "device_matrix copy ctor\n";
+          std::cout << "copy ctor\n";
+          //std::cout << "device_matrix copy ctor\n";
           copy(m.begin(), m.end(), begin());
         }
 
        self& operator=(device_matrix&& rhs) {
-          std::cout << "device_matrix move assignment\n";
+          std::cout << "move assignment\n";
+          //std::cout << "device_matrix move assignment\n";
 	  //
           if (data_) 
             checkCudaErrors(cudaFree(data_));
@@ -110,7 +115,8 @@ namespace mathcca {
         
         self& operator=(const device_matrix& rhs) {
           if (this != &rhs) {
-            std::cout << "device_matrix copy assignment (\n";
+            std::cout << "copy assignment (\n";
+            //std::cout << "device_matrix copy assignment (\n";
             if (size() != rhs.size()) {
               auto tmp{rhs};                    // use copy ctor
               (*this)= std::move(tmp);          // finally move assignment
@@ -237,7 +243,7 @@ namespace mathcca {
     
     template<std::floating_point T>
     void print_matrix(const device_matrix<T>& mat);
-     
+    /* 
     template<std::floating_point T>
     template <bool IsConst>
     class device_matrix<T>::device_iterator {
@@ -258,19 +264,15 @@ namespace mathcca {
 
         template<bool IsConst_ = IsConst, class = std::enable_if_t<IsConst_>>
         device_iterator(const device_iterator<false>& rhs) : ptr_(rhs.get()) {}  // OK
-
         template<bool IsConst_ = IsConst, class = std::enable_if_t<IsConst_>>
         device_iterator& operator=(const device_iterator<false>& rhs) { ptr_ = rhs.ptr_; return *this; }
 
         template <bool Q = IsConst>
         typename std::enable_if_t<Q, const_reference> operator*() const noexcept { return *ptr_; }
-
         template <bool Q = IsConst>
         typename std::enable_if_t<!Q, reference> operator*() const noexcept { return *ptr_; }
-
         template <bool Q = IsConst>
         typename std::enable_if_t<Q, const_reference> operator[](difference_type n) const noexcept { return *(ptr_ + n); }
-
         template <bool Q = IsConst>
         typename std::enable_if_t<!Q, reference> operator[](difference_type n) const noexcept { return *(ptr_ + n); }
 
@@ -281,23 +283,17 @@ namespace mathcca {
         device_iterator operator++(int) { auto tmp= *this; ++(*this); return tmp; }
         device_iterator& operator--()   { --ptr_; return *this; }
         device_iterator operator--(int) { auto tmp= *this; --(*this); return tmp; }
-        
         device_iterator& operator+=(difference_type n) { ptr_+= n; return *this; }
         device_iterator& operator-=(difference_type n) { ptr_-= n; return *this; }
         
         friend bool operator==(const device_iterator& x, const device_iterator& y) { return x.get() == y.get(); }
-        
         friend bool operator!=(const device_iterator& x, const device_iterator& y) { return !(x == y); }
-        
         friend bool operator<(const device_iterator& lhs, const device_iterator& rhs) { return lhs.get() < rhs.get(); }
-        
         friend bool operator>(const device_iterator& lhs, const device_iterator& rhs)  { return rhs < lhs; }
-        
         friend bool operator<=(const device_iterator& lhs, const device_iterator& rhs) { return !(rhs < lhs); }
-        
         friend bool operator>=(const device_iterator& lhs, const device_iterator& rhs) { return !(lhs < rhs); }
         
-        friend  device_iterator operator+(const device_iterator& it, difference_type n) {
+	friend  device_iterator operator+(const device_iterator& it, difference_type n) {
           device_iterator temp= it;
           temp+= n;
           return temp;
@@ -319,7 +315,7 @@ namespace mathcca {
         
         pointer ptr_;
         
-    };
+    };*/
 }
 
 #include <mathcca/detail/device_matrix.inl>

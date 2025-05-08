@@ -58,7 +58,7 @@ int main(int argc, char **argv)  {
       c *= 2;
     }
   }
-  std::cout << "\n\n\nTest Matrix algorithms\n\n\n";
+  std::cout << "Test Matrix algorithms\n";
   {
     std::size_t r{2};
     std::size_t c{5};
@@ -80,12 +80,6 @@ int main(int argc, char **argv)  {
       using value_type= typename decltype(A)::value_type;
       std::cout << "r = " << r << " c = " << c << "\n";
       std::cout << "---------------------------------------------------------\n";
-      if (n < 3) {
-        std::cout << "DEBUG\n";
-        print_matrix(A);
-        std::cout << "DEBUG\n";
-        print_matrix(B);
-      }
       std::cout << std::boolalpha << (A != B) << std::noboolalpha << "\n";
       std::cout << std::boolalpha << (A != C) << std::noboolalpha << "\n";
       std::cout << std::boolalpha << (B != C) << std::noboolalpha << "\n";

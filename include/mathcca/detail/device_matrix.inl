@@ -209,7 +209,6 @@ namespace mathcca {
     
     template<std::floating_point T>
     void print_matrix(const device_matrix<T>& mat) {
-      std::cout << "IDAAAAAA\n" << mat.num_rows() << " " <<  mat.num_cols() << " " << mat.data() << "\n" ;
       print_matrix_kernel<<<1,1>>> (mat.data(), mat.num_rows(), mat.num_cols());
       cudaDeviceSynchronize();
     }

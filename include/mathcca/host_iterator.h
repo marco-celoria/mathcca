@@ -6,9 +6,9 @@
     
 namespace mathcca {
 
-  namespace iterator {
+	    class host_iterator_tag{};
 
-    template <typename T, bool IsConst>
+    template<std::floating_point T, bool IsConst>
     class host_iterator {
       public:
         using value_type= T;
@@ -16,85 +16,88 @@ namespace mathcca {
         using pointer= T*;
         using reference= T&;
         using const_reference=const T&;
-
+        using iterator_system= host_iterator_tag;
+        using iterator_category= std::contiguous_iterator_tag;
+        
         host_iterator() : ptr_{nullptr} {}
+        
         explicit host_iterator(pointer x) : ptr_{x} {}
-
+        
         host_iterator(const host_iterator&)= default;
 
         template<bool IsConst_ = IsConst, class = std::enable_if_t<IsConst_>>
-        host_iterator(const host_iterator<T,false>& rhs) : ptr_(rhs.ptr_) {}  // OK
-
-
+        host_iterator(const host_iterator<T,false>& rhs) : ptr_(rhs.get()) {}  // OK
+        
+        template<bool IsConst_ = IsConst, class = std::enable_if_t<IsConst_>>
+        host_iterator& operator=(const host_iterator<T,false>& rhs) { ptr_ = rhs.ptr_; return *this; }
+        
         template <bool Q = IsConst>
         typename std::enable_if_t<Q, const_reference> operator*() const noexcept { return *ptr_; }
-
+        
         template <bool Q = IsConst>
         typename std::enable_if_t<!Q, reference> operator*() const noexcept { return *ptr_; }
-
+        
         template <bool Q = IsConst>
         typename std::enable_if_t<Q, const_reference> operator[](difference_type n) const noexcept { return *(ptr_ + n); }
-
+        
         template <bool Q = IsConst>
         typename std::enable_if_t<!Q, reference> operator[](difference_type n) const noexcept { return *(ptr_ + n); }
-
+        
         pointer operator->()  const noexcept { return ptr_; }
         pointer get() const noexcept { return ptr_; }
-
+        
         host_iterator& operator++()   { ++ptr_; return *this; }
         host_iterator operator++(int) { auto tmp= *this; ++(*this); return tmp; }
         host_iterator& operator--()   { --ptr_; return *this; }
         host_iterator operator--(int) { auto tmp= *this; --(*this); return tmp; }
-
+        
         host_iterator& operator+=(difference_type n) { ptr_+= n; return *this; }
         host_iterator& operator-=(difference_type n) { ptr_-= n; return *this; }
-
+        
       private:
+        
         pointer ptr_;
+        
     };
-
-   /* 
-     template<typename T>
-    bool operator==(const host_iterator<T>& x, const host_iterator<T>& y) { return x.get() == y.get(); }
-
-    template<typename T>
-    bool operator!=(const host_iterator<T>& x, const host_iterator<T>& y) { return !(x == y); }
-
-    template<typename T>
-    bool operator<(const host_iterator<T>& lhs, const host_iterator<T>& rhs) { return lhs.get() < rhs.get(); }
-
-    template<typename T>
-    bool operator>(const host_iterator<T>& lhs, const host_iterator<T>& rhs)  { return rhs < lhs; }
-
-    template<typename T>
-    bool operator<=(const host_iterator<T>& lhs, const host_iterator<T>& rhs) { return !(rhs < lhs); }
-
-    template<typename T>
-    bool operator>=(const host_iterator<T>& lhs, const host_iterator<T>& rhs) { return !(lhs < rhs); }
-
-    template<typename T>
-    host_iterator<T> operator+(const host_iterator<T>& it, typename host_iterator<T>::difference_type n) {
-      host_iterator temp= it;
-      temp+= n;
-      return temp;
-    }
-
-    template<typename T>
-    typename host_iterator<T>::difference_type operator+(typename host_iterator<T>::difference_type n, const host_iterator<T>& it) { return it + n; }
-
-    template<typename T>
-    host_iterator<T> operator-(const host_iterator<T>& it, typename host_iterator<T>::difference_type n) {
-      host_iterator temp= it;
-      temp-= n;
-      return temp;
-    }
-
-    template<typename T>
-    typename host_iterator<T>::difference_type operator-(const host_iterator<T>& lhs, const host_iterator<T>& rhs) {
-      return lhs.get() - rhs.get();
-    }
- */ 
-  }
+    
+    template<std::floating_point T, bool IsConst>
+         bool operator==(const host_iterator<T, IsConst>& x, const host_iterator<T, IsConst>& y) { return x.get() == y.get(); }
+        
+    template<std::floating_point T, bool IsConst>
+         bool operator!=(const host_iterator<T, IsConst>& x, const host_iterator<T, IsConst>& y) { return !(x == y); }
+        
+    template<std::floating_point T, bool IsConst>
+         bool operator<(const host_iterator<T, IsConst>& lhs, const host_iterator<T, IsConst>& rhs) { return lhs.get() < rhs.get(); }
+        
+    template<std::floating_point T, bool IsConst>
+         bool operator>(const host_iterator<T, IsConst>& lhs, const host_iterator<T, IsConst>& rhs)  { return rhs < lhs; }
+        
+    template<std::floating_point T, bool IsConst>
+         bool operator<=(const host_iterator<T, IsConst>& lhs, const host_iterator<T, IsConst>& rhs) { return !(rhs < lhs); }
+        
+    template<std::floating_point T, bool IsConst>
+         bool operator>=(const host_iterator<T, IsConst>& lhs, const host_iterator<T, IsConst>& rhs) { return !(lhs < rhs); }
+        
+    template<std::floating_point T, bool IsConst>
+          host_iterator<T,IsConst> operator+(const host_iterator<T, IsConst>& it, typename host_iterator<T,IsConst>::difference_type n) {
+          host_iterator temp= it;
+          temp+= n;
+          return temp;
+        }
+        
+    template<std::floating_point T, bool IsConst>
+    typename host_iterator<T,IsConst>::difference_type operator+(typename host_iterator<T,IsConst>::difference_type n, const host_iterator<T, IsConst>& it) { return it + n; }
+        
+    template<std::floating_point T, bool IsConst>
+         host_iterator<T, IsConst> operator-(const host_iterator<T, IsConst>& it, typename host_iterator<T,IsConst>::difference_type n) {
+          host_iterator temp= it;
+          temp-= n;
+          return temp;
+        }
+        
+    template<std::floating_point T, bool IsConst>
+    typename host_iterator<T,IsConst>::difference_type operator-(const host_iterator<T, IsConst>& lhs, const host_iterator<T, IsConst>& rhs) { return lhs.get() - rhs.get(); }
+    
 }
 
 #endif
