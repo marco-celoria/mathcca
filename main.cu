@@ -396,7 +396,7 @@ int main(int argc, char **argv)  {
         value_type n2{static_cast<value_type>(r * r * c * c)};
         value_type n3{static_cast<value_type>(r * r * r * c * c * c)};
         value_type res= std::sqrt(n3/static_cast<value_type>(3) + n2/static_cast<value_type>(2) + n/static_cast<value_type>(6));
-	mathcca::fill_iota(A.begin(), A.end(), static_cast<value_type>(1));
+        mathcca::fill_iota(A.begin(), A.end(), static_cast<value_type>(1));
         res_base= mathcca::frobenius_norm<value_type, mathcca::DevFN::Base>(A);
         res_thrust= mathcca::frobenius_norm<value_type, mathcca::DevFN::Thrust>(A);
 #ifdef _CUBLAS
@@ -407,12 +407,13 @@ int main(int argc, char **argv)  {
 #ifdef _CUBLAS
         std::cout << std::boolalpha << (fabs(res_cublas - res) < decltype(A)::tol()) << " " << res_cublas << " " << res << std::noboolalpha << "\n";
 #endif
+        std::cout << "--------------------------------------------------------\n";
       }
-      std::cout << "--------------------------------------------------------\n";
       std::swap(r,c);
       r *= 5;
       c *= 2;
     }
+    std::cout << "--------------------------------------------------------\n";
   }
     
 }

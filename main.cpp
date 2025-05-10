@@ -456,9 +456,9 @@ int main(int argc, char **argv)  {
       std::cout << std::boolalpha << (fabs(res_pstl - res_mkl)  < decltype(A)::tol()) << " " << res_pstl  << " " << res_mkl << std::noboolalpha << "\n";
 #endif
       std::cout << "--------------------------------------------------------\n";
-
+      
       mathcca::fill_const(A.begin(), A.end(), static_cast<value_type>(3));
-
+      
       res_base= mathcca::frobenius_norm<value_type, mathcca::HostFN::Base>(A);
 #ifdef _STDPAR
       res_pstl= mathcca::frobenius_norm<value_type, mathcca::HostFN::Pstl>(A);
@@ -496,12 +496,13 @@ int main(int argc, char **argv)  {
 #ifdef _MKL      
         std::cout << std::boolalpha << (fabs(res_mkl  - res) < decltype(A)::tol()) << " " << res_mkl  << " " << res << std::noboolalpha << "\n";
 #endif
+        std::cout << "--------------------------------------------------------\n";
       }
-      std::cout << "--------------------------------------------------------\n";
       std::swap(r,c);
       r *= 5;
       c *= 2;
     }
+    std::cout << "--------------------------------------------------------\n";
   }/*
     std::cout << "\n\nTest Iterator\n\n";
     std::size_t r{5};
