@@ -24,11 +24,12 @@
 #include <mathcca/device_helper.h>
 #include <mathcca/host_matrix.h>
 #include <mathcca/device_iterator.h>
+#include <mathcca/device_allocator.h>
 
 namespace mathcca {
     
     
-    template<std::floating_point T>
+    template<std::floating_point T, typename Allocator>
     class host_matrix;
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
@@ -40,13 +41,13 @@ namespace mathcca {
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
     __global__ void mulTo_kernel(T* __restrict accululator, const T* __restrict to_be_op, const std::size_t size);
     
-    template<std::floating_point T> 
+    template<std::floating_point T, typename Allocator = device_allocator<T>> 
     class device_matrix {
       
       using self= device_matrix; 
       
       public:
-        
+          
 //        template <bool IsConst>
 //        class device_iterator;
 
@@ -58,10 +59,12 @@ namespace mathcca {
         using const_pointer= const T*;      //device_ptr<const T[]>;
         using iterator= /*mathcca::iterator::*/device_iterator<T, false>;
         using const_iterator= /*mathcca::iterator::*/device_iterator<T, true>;
+        using traits_alloc = std::allocator_traits<Allocator>;
+        
+	device_matrix(Allocator a) : allocator{std::move(a)} {}
 
         device_matrix(size_type r, size_type c) : num_rows_{r}, num_cols_{c} {
-          const size_type nbytes{size() * sizeof(value_type) };
-          checkCudaErrors(cudaMalloc((void **)& data_, nbytes));
+          data_ = traits_alloc::allocate(allocator, size()); 
           std::cout << "custom ctor\n";
           //std::cout << "device_matrix custom ctor\n";
         }
@@ -74,8 +77,8 @@ namespace mathcca {
    
         ~device_matrix() { 
           //
-          if (data_) { 
-            checkCudaErrors(cudaFree(data_)); 
+          if (data_) {
+            traits_alloc::deallocate(allocator, data_, size()); 
 	    data_=nullptr; 
 	  }
 	  // 
@@ -102,7 +105,7 @@ namespace mathcca {
           //std::cout << "device_matrix move assignment\n";
 	  //
           if (data_) 
-            checkCudaErrors(cudaFree(data_));
+            traits_alloc::deallocate(allocator, data_, size());
           //
 	  num_rows_= std::move(rhs.num_rows_);
           num_cols_= std::move(rhs.num_cols_);
@@ -212,8 +215,9 @@ namespace mathcca {
         size_type num_rows_{0};
         size_type num_cols_{0};
         pointer data_{nullptr};
-        
+        Allocator allocator;
     };
+
     template<std::floating_point T>
     void swap(device_matrix<T>& lhs, device_matrix<T>& rhs);
      

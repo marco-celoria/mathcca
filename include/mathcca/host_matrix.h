@@ -10,8 +10,11 @@
 #include <mathcca/copy.h>
 #include <mathcca/fill_const.h>
 
+#include <mathcca/host_allocator.h>
+
 #ifdef __CUDACC__
  #include <mathcca/device_matrix.h>
+ #include <mathcca/device_allocator.h>
 #endif
 
 #ifdef _OPENMP
@@ -26,11 +29,11 @@ namespace mathcca {
     
 
 #ifdef __CUDACC__
-    template<std::floating_point T>	
+    template<std::floating_point T, typename Allocator>	
     class device_matrix;
 #endif
     
-    template<std::floating_point T>
+    template<std::floating_point T, typename Allocator = host_allocator<T>>
     class host_matrix {
     
       using self= host_matrix; 
@@ -48,9 +51,12 @@ namespace mathcca {
         using const_pointer= const T*; //device_ptr<const T[]>;
         using iterator= /*mathcca::iterator::*/host_iterator<T, false>;
         using const_iterator= /*mathcca::iterator::*/host_iterator<T, true>;
+	using traits_alloc = std::allocator_traits<Allocator>;
         
-        constexpr host_matrix(size_type r, size_type c) : num_rows_{r}, num_cols_{c} { 
-          data_ = new T[num_rows_ * num_cols_]{};      
+        host_matrix(Allocator a) : allocator{std::move(a)} {}
+        
+        constexpr host_matrix(size_type r, size_type c) : num_rows_{r}, num_cols_{c} {
+          data_ = traits_alloc::allocate(allocator, size());    	
           //std::cout << "host_matrix custom ctor\n";
           std::cout << "custom ctor\n";
         }
@@ -64,7 +70,7 @@ namespace mathcca {
         constexpr ~host_matrix() {
           /**/       
           if (data_) {
-            delete[] data_; 
+            traits_alloc::deallocate(allocator, data_, size());  
             data_= nullptr; 
           }
           /**/
@@ -91,7 +97,7 @@ namespace mathcca {
         constexpr host_matrix<T>& operator=(host_matrix&& rhs) {
           /**/
           if (data_)
-            delete[] data_;
+            traits_alloc::deallocate(allocator, data_, size());		  
           /**/
           num_rows_= std::move(rhs.num_rows_);
           num_cols_= std::move(rhs.num_cols_);
@@ -147,7 +153,7 @@ namespace mathcca {
         
 #ifdef __CUDACC__
         auto toDevice () const {
-          device_matrix<T> devMat(num_rows_, num_cols_);
+          device_matrix<T, device_allocator<T>> devMat(num_rows_, num_cols_);
 	  copy(begin(), end(), devMat.begin());
           return devMat;
         }
@@ -199,7 +205,8 @@ namespace mathcca {
         size_type num_rows_{0};
         size_type num_cols_{0};
         pointer data_{nullptr};
-        
+        Allocator allocator;
+
     };  
     
     /* Swap and checks */
