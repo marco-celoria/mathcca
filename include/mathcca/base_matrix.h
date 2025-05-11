@@ -47,15 +47,15 @@ namespace mathcca {
             traits_alloc::deallocate(allocator, data_, size());  
             data_= nullptr; 
           }
-	  num_rows_= 0;
+	  num_cols_= 0;
 	  num_rows_= 0;
           std::cout << "dtor\n"; 
         };
         
         constexpr base_matrix(self&& m):num_rows_{std::move(m.num_rows_)}, num_cols_{std::move(m.num_cols_)}, data_{std::move(m.data_)} {
-          m.num_rows_= 0;
-          m.num_rows_= 0;
           m.data_= nullptr; /**/
+          m.num_cols_= 0;
+          m.num_rows_= 0;
           std::cout << "move ctor\n";
         }
         
@@ -70,9 +70,9 @@ namespace mathcca {
           num_rows_= std::move(rhs.num_rows_);
           num_cols_= std::move(rhs.num_cols_);
           data_= std::move(rhs.data_);
-          rhs.num_rows_= 0;
-          rhs.num_cols_= 0;
           rhs.data_= nullptr;
+          rhs.num_cols_= 0;
+          rhs.num_rows_= 0;
           std::cout << "move assignment\n";
           return *this;
         }
