@@ -26,7 +26,7 @@ namespace mathcca {
       typedef typename Parent::const_reference const_reference;
       typedef typename Parent::iterator_category iterator_category;
       
-      using iterator_system = host_iterator_tag;
+      using iterator_system= host_iterator_tag;
       
       host_iterator() : Parent() {} 
       

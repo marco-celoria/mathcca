@@ -1,0 +1,136 @@
+#ifndef BASE_MATRIX_H_
+#define BASE_MATRIX_H_
+#pragma once
+
+#include <cstddef>
+#include <concepts>
+#include <iostream>
+
+#include <mathcca/base_iterator.h>
+#include <mathcca/copy.h>
+#include <mathcca/fill_const.h>
+
+
+namespace mathcca {
+    
+    template<std::floating_point T, typename Allocator, typename Execution>
+    class base_matrix {
+    
+      using self= base_matrix; 
+      
+      public:
+        
+        using value_type= T;
+        using size_type= std::size_t;
+        using reference= T&;
+        using const_reference= const T&;
+        using pointer= T*;
+        using const_pointer= const T*;
+	using traits_alloc = std::allocator_traits<Allocator>;
+        using iterator= base_iterator<T, false>;
+        using const_iterator= base_iterator<T, true>;
+
+        base_matrix(Allocator a) : allocator{std::move(a)} {}
+        
+        constexpr base_matrix(size_type r, size_type c) : num_rows_{r}, num_cols_{c} {
+          data_ = traits_alloc::allocate(allocator, size());    	
+          std::cout << "custom ctor\n";
+        }
+        
+        constexpr base_matrix(size_type r, size_type c, const_reference v) : base_matrix(r, c) {
+          mathcca::fill_const(Execution(), data(), data()+size(), v);
+          std::cout << "(delegating ctor)\n";
+        } 
+         
+        constexpr ~base_matrix() {
+          if (data_) {
+            traits_alloc::deallocate(allocator, data_, size());  
+            data_= nullptr; 
+          }
+	  num_rows_= 0;
+	  num_rows_= 0;
+          std::cout << "dtor\n"; 
+        };
+        
+        constexpr base_matrix(self&& m):num_rows_{std::move(m.num_rows_)}, num_cols_{std::move(m.num_cols_)}, data_{std::move(m.data_)} {
+          m.num_rows_= 0;
+          m.num_rows_= 0;
+          m.data_= nullptr; /**/
+          std::cout << "move ctor\n";
+        }
+        
+        constexpr base_matrix(const self& m) : base_matrix{m.num_rows_, m.num_cols_} {
+          copy(Execution(), m.data(), m.data() + m.size(), data());
+          std::cout << "copy ctor\n";
+        }
+        
+        constexpr base_matrix<T, Allocator, Execution>& operator=(base_matrix&& rhs) {
+          if (data_)
+            traits_alloc::deallocate(allocator, data_, size());		  
+          num_rows_= std::move(rhs.num_rows_);
+          num_cols_= std::move(rhs.num_cols_);
+          data_= std::move(rhs.data_);
+          rhs.num_rows_= 0;
+          rhs.num_cols_= 0;
+          rhs.data_= nullptr;
+          std::cout << "move assignment\n";
+          return *this;
+        }
+        
+        constexpr base_matrix<T, Allocator, Execution>& operator=(const base_matrix& rhs) {
+          if (this != &rhs) {
+            std::cout << "copy assignment (\n";
+            if (this->size() != rhs.size()) {
+              auto tmp{rhs};            // use copy ctor
+              (*this)= std::move(tmp);  // finally move assignment
+            }
+            else {
+              num_rows_= rhs.num_rows_;
+              num_cols_= rhs.num_cols_;
+              copy(Execution(), rhs.data(), rhs.data() + rhs.size(), data());
+            }
+            std::cout << ")\n";
+          }
+          return *this;
+        }
+        
+	constexpr size_type num_rows() const noexcept { return num_rows_; }
+        constexpr size_type num_cols() const noexcept { return num_cols_; }
+        
+        constexpr size_type size() const noexcept { return num_rows_ * num_cols_; }
+        
+        constexpr pointer data() noexcept { return data_; } 
+        constexpr const_pointer data() const noexcept { return data_; } 
+       
+        iterator begin() noexcept { return iterator{ data()}; }
+        iterator end()   noexcept { return iterator{ data() +  size()}; }
+
+        const_iterator begin()  const noexcept { return const_iterator{ data()}; }
+        const_iterator end()    const noexcept { return const_iterator{ data() +  size()}; }
+
+        const_iterator cbegin() const noexcept { return const_iterator{ const_cast<pointer>(data())}; }
+        const_iterator cend()   const noexcept { return const_iterator{ const_cast<pointer>(data() +  size()) }; }
+        
+        constexpr static auto tol() noexcept {
+          if constexpr (std::is_same_v<value_type, double>) {
+            return 1e-5;
+          } else {
+            return static_cast<float>(1e-2);
+          }
+        }
+        
+      private:
+        
+        size_type num_rows_{0};
+        size_type num_cols_{0};
+        pointer data_{nullptr};
+        Allocator allocator;
+
+    };  
+    
+}
+
+#endif
+
+
+

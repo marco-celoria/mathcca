@@ -11,8 +11,8 @@ namespace mathcca {
       }
     }
 
-      template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
-    void fill_const(Cuda, T* first, T* last, const T v, cudaStream_t stream) {
+      template<std::floating_point T, unsigned int THREAD_BLOCK_DIM=128>
+    void fill_const(Cuda, T* first, T* last, const T v, cudaStream_t stream=0) {
       static_assert(THREAD_BLOCK_DIM <= 1024);
       using value_type= T;
       const auto size {static_cast<std::size_t>(last - first)};

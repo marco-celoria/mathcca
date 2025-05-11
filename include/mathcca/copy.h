@@ -29,7 +29,7 @@ namespace mathcca {
         copy(Omp(), s_first.get(), s_last.get(), d_first.get());
       }
       if constexpr (std::is_same_v<typename Iter1::iterator_system(), mathcca::device_iterator_tag()> && std::is_same_v<typename Iter2::iterator_system(), mathcca::device_iterator_tag()>) {
-        copy(CudaDtoDcpy(), s_first.get(), s_last.get(), d_first.get(), stream);
+        copy(Cuda(), s_first.get(), s_last.get(), d_first.get(), stream);
       } 
       else if constexpr (std::is_same_v<typename Iter1::iterator_system(), mathcca::host_iterator_tag()> && std::is_same_v<typename Iter2::iterator_system(), mathcca::device_iterator_tag()>) {
         copy(CudaHtoDcpy(), s_first.get(), s_last.get(), d_first.get(), stream);

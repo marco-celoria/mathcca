@@ -29,7 +29,7 @@
 namespace mathcca {
     
     
-    template<std::floating_point T, typename Allocator>
+    template<std::floating_point T, typename Allocator, typename Execution>
     class host_matrix;
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
@@ -40,116 +40,56 @@ namespace mathcca {
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
     __global__ void mulTo_kernel(T* __restrict accululator, const T* __restrict to_be_op, const std::size_t size);
-    
-    template<std::floating_point T, typename Allocator = device_allocator<T>> 
-    class device_matrix {
-      
-      using self= device_matrix; 
-      
-      public:
-          
-//        template <bool IsConst>
-//        class device_iterator;
-
-        using value_type= T;
-        using size_type= std::size_t;
-        using reference= T&;
-        using const_reference= const T&;
-        using pointer= T*;                  //device_ptr<T[]>;
-        using const_pointer= const T*;      //device_ptr<const T[]>;
-        using iterator= /*mathcca::iterator::*/device_iterator<T, false>;
-        using const_iterator= /*mathcca::iterator::*/device_iterator<T, true>;
-        using traits_alloc = std::allocator_traits<Allocator>;
-        
-	device_matrix(Allocator a) : allocator{std::move(a)} {}
-
-        device_matrix(size_type r, size_type c) : num_rows_{r}, num_cols_{c} {
-          data_ = traits_alloc::allocate(allocator, size()); 
-          std::cout << "custom ctor\n";
-          //std::cout << "device_matrix custom ctor\n";
-        }
-        
-        device_matrix(size_type r, size_type c, const_reference v) : device_matrix(r, c) {
-          fill_const(begin(), end(), v);
-          std::cout << "(delegating ctor)\n";
-          //std::cout << "(device_matrix delegating ctor)\n";
-        } 
    
-        ~device_matrix() { 
-          //
-          if (data_) {
-            traits_alloc::deallocate(allocator, data_, size()); 
-	    data_=nullptr; 
-	  }
-	  // 
-	  std::cout << "dtor\n"; 
-	  //std::cout << "device_matrix dtor\n"; 
-	}
-        
-        device_matrix(self && m) : num_rows_{std::move(m.num_rows_)}, num_cols_{std::move(m.num_cols_)}, data_{std::move(m.data_)} {
-          std::cout << "move ctor\n";
-          //std::cout << "device_matrix move ctor\n";
-          m.num_rows_ = 0;
-          m.num_cols_ = 0;
-          m.data_ = nullptr; //
-        }
+       template<std::floating_point T, typename Allocator = device_allocator<T>, typename Execution= Cuda>
+    class device_matrix : public base_matrix<T, Allocator, Execution > {
 
-        device_matrix(const self& m) : device_matrix(m.num_rows_, m.num_cols_) {
-          std::cout << "copy ctor\n";
-          //std::cout << "device_matrix copy ctor\n";
-          copy(m.begin(), m.end(), begin());
-        }
+      using self= device_matrix;
+      typedef base_matrix<T,Allocator, Execution> Parent;
 
-       self& operator=(device_matrix&& rhs) {
-          std::cout << "move assignment\n";
-          //std::cout << "device_matrix move assignment\n";
-	  //
-          if (data_) 
-            traits_alloc::deallocate(allocator, data_, size());
-          //
-	  num_rows_= std::move(rhs.num_rows_);
-          num_cols_= std::move(rhs.num_cols_);
-          data_= std::move(rhs.data_);
-          rhs.num_rows_= 0;
-          rhs.num_cols_= 0;
-          rhs.data_= nullptr; //
+      public:
+
+        typedef typename Parent::size_type  size_type;
+        typedef typename Parent::value_type  value_type;
+        typedef typename Parent::reference reference;
+        typedef typename Parent::const_reference const_reference;
+        typedef typename Parent::pointer pointer;
+        typedef typename Parent::const_pointer const_pointer;
+
+        using iterator= device_iterator<T, false>;
+        using const_iterator= device_iterator<T, true>;
+        using traits_alloc = std::allocator_traits<Allocator>;
+
+        device_matrix(Allocator a) : Parent(std::forward<Allocator>(a)) {}
+
+        constexpr device_matrix(size_type r, size_type c) : Parent(r,c) {}
+
+        constexpr device_matrix(size_type r, size_type c, const_reference v) : Parent(r,c,v)  {}
+
+        constexpr ~device_matrix() {}
+
+        constexpr device_matrix(self&& m): Parent(std::forward<device_matrix<T>>(m)) {}
+
+        constexpr device_matrix(const self& m) : Parent(m) {}
+
+        constexpr device_matrix<T>& operator=(device_matrix&& rhs) {
+          Parent::operator=(std::forward<device_matrix<T>>(rhs));
           return *this;
         }
-        
-        self& operator=(const device_matrix& rhs) {
-          if (this != &rhs) {
-            std::cout << "copy assignment (\n";
-            //std::cout << "device_matrix copy assignment (\n";
-            if (size() != rhs.size()) {
-              auto tmp{rhs};                    // use copy ctor
-              (*this)= std::move(tmp);          // finally move assignment
-            }
-            else {
-              num_rows_= rhs.num_rows_;
-              num_cols_= rhs.num_cols_;
-              copy(rhs.cbegin(), rhs.cend(), begin());
-            }
-            std::cout << ")\n";
-          }
+
+        constexpr device_matrix<T>& operator=(const device_matrix& rhs) {
+          Parent::operator=(rhs);
           return *this;
         }
+
+         iterator begin() noexcept { return iterator{Parent::data()}; }
+         iterator end()   noexcept { return iterator{Parent::data() + Parent::size()}; }
+        
+         const_iterator cbegin() const noexcept { return const_iterator{const_cast<pointer>(Parent::data())}; }
+         const_iterator cend()   const noexcept { return const_iterator{const_cast<pointer>(Parent::data() + Parent::size())}; }
          
-         size_type num_rows() const noexcept { return num_rows_; }
-         size_type num_cols() const noexcept { return num_cols_; }
-        
-         size_type size() const noexcept { return num_rows_ * num_cols_; }
-        
-         pointer data() noexcept { return data_; } 
-         const_pointer data() const noexcept { return data_; } 
-       
-         iterator begin() noexcept { return iterator{data_}; }
-         iterator end()   noexcept { return iterator{data_ + size()}; }
-        
-         const_iterator cbegin() const noexcept { return const_iterator{data_}; }
-         const_iterator cend()   const noexcept { return const_iterator{data_ + size()}; }
-         
-	 const_iterator begin() const  noexcept { return const_iterator{data_}; }
-         const_iterator end()   const  noexcept { return const_iterator{data_ + size()}; }
+	 const_iterator begin() const  noexcept { return const_iterator{Parent::data()}; }
+         const_iterator end()   const  noexcept { return const_iterator{Parent::data() + Parent::size()}; }
        
         constexpr static auto tol() noexcept { 
           if constexpr (std::is_same_v<value_type, double>) {
@@ -160,7 +100,7 @@ namespace mathcca {
         }
         
         auto toHost (cudaStream_t stream= 0) const {
-          host_matrix<T> hostA(num_rows_, num_cols_);
+          host_matrix<T> hostA(Parent::num_rows(), Parent::num_cols());
           copy(begin(), end(), hostA.begin(), stream);
           return hostA;
         }
@@ -176,7 +116,7 @@ namespace mathcca {
           const auto blocks{static_cast<unsigned int>((size + 2 * static_cast<size_type>(threads) - 1) / (2 * static_cast<size_type>(threads)))};
           constexpr dim3 dimBlock(threads, 1, 1);
           dim3 dimGrid(blocks, 1, 1);
-          addTo_kernel<value_type, threads><<<dimGrid, dimBlock>>>(data_, rhs.data(), size);
+          addTo_kernel<value_type, threads><<<dimGrid, dimBlock>>>(Parent::data(), rhs.data(), size);
           return *this;
         }
         
@@ -191,7 +131,7 @@ namespace mathcca {
           const auto blocks{static_cast<unsigned int>((size + 2 * static_cast<size_type>(threads) - 1) / (2 * static_cast<size_type>(threads)))};
           constexpr dim3 dimBlock(threads, 1, 1);
           dim3 dimGrid(blocks, 1, 1);
-          subTo_kernel<value_type, threads><<<dimGrid, dimBlock>>>(data_, rhs.data(), size);
+          subTo_kernel<value_type, threads><<<dimGrid, dimBlock>>>(Parent::data(), rhs.data(), size);
           return *this;
         }
         
@@ -206,16 +146,10 @@ namespace mathcca {
           const auto blocks{static_cast<unsigned int>((size + 2 * static_cast<size_type>(threads) - 1) / (2 * static_cast<size_type>(threads)))};
           constexpr dim3 dimBlock(threads, 1, 1);
           dim3 dimGrid(blocks, 1, 1);
-          mulTo_kernel<value_type, threads><<<dimGrid, dimBlock>>>(data_, rhs.data(), size);
+          mulTo_kernel<value_type, threads><<<dimGrid, dimBlock>>>(Parent::data(), rhs.data(), size);
           return *this;
         }
         
-      private:
-        
-        size_type num_rows_{0};
-        size_type num_cols_{0};
-        pointer data_{nullptr};
-        Allocator allocator;
     };
 
     template<std::floating_point T>
