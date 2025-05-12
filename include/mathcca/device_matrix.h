@@ -76,20 +76,20 @@ namespace mathcca {
           Parent::operator=(std::forward<device_matrix<T>>(rhs));
           return *this;
         }
-
+        
         constexpr device_matrix<T>& operator=(const device_matrix& rhs) {
           Parent::operator=(rhs);
           return *this;
         }
-
-         iterator begin() noexcept { return iterator{Parent::data()}; }
-         iterator end()   noexcept { return iterator{Parent::data() + Parent::size()}; }
         
-         const_iterator cbegin() const noexcept { return const_iterator{const_cast<pointer>(Parent::data())}; }
-         const_iterator cend()   const noexcept { return const_iterator{const_cast<pointer>(Parent::data() + Parent::size())}; }
+        constexpr iterator begin() noexcept { return iterator{Parent::data()}; }
+        constexpr iterator end()   noexcept { return iterator{Parent::data() + Parent::size()}; }
+        
+        constexpr const_iterator cbegin() const noexcept { return const_iterator{const_cast<pointer>(Parent::data())}; }
+        constexpr const_iterator cend()   const noexcept { return const_iterator{const_cast<pointer>(Parent::data() + Parent::size())}; }
          
-	 const_iterator begin() const  noexcept { return const_iterator{Parent::data()}; }
-         const_iterator end()   const  noexcept { return const_iterator{Parent::data() + Parent::size()}; }
+        constexpr const_iterator begin() const  noexcept { return const_iterator{Parent::data()}; }
+        constexpr const_iterator end()   const  noexcept { return const_iterator{Parent::data() + Parent::size()}; }
        
         constexpr static auto tol() noexcept { 
           if constexpr (std::is_same_v<value_type, double>) {

@@ -94,22 +94,49 @@ namespace mathcca {
           return *this;
         }
         
+#ifdef __CUDACC__
+	__host__ __device__ 
+#endif  
 	constexpr size_type num_rows() const noexcept { return num_rows_; }
-        constexpr size_type num_cols() const noexcept { return num_cols_; }
         
+#ifdef __CUDACC__
+	__host__ __device__ 
+#endif  
+	constexpr size_type num_cols() const noexcept { return num_cols_; }
+         
+#ifdef __CUDACC__
+	__host__ __device__ 
+#endif  
         constexpr size_type size() const noexcept { return num_rows_ * num_cols_; }
         
-        constexpr pointer data() noexcept { return data_; } 
+#ifdef __CUDACC__
+	__host__ __device__ 
+#endif  
+	constexpr pointer data() noexcept { return data_; } 
+        
+#ifdef __CUDACC__
+	__host__ __device__ 
+#endif  
         constexpr const_pointer data() const noexcept { return data_; } 
-       
-        iterator begin() noexcept { return iterator{ data()}; }
-        iterator end()   noexcept { return iterator{ data() +  size()}; }
-
-        const_iterator begin()  const noexcept { return const_iterator{ data()}; }
-        const_iterator end()    const noexcept { return const_iterator{ data() +  size()}; }
-
-        const_iterator cbegin() const noexcept { return const_iterator{ const_cast<pointer>(data())}; }
-        const_iterator cend()   const noexcept { return const_iterator{ const_cast<pointer>(data() +  size()) }; }
+        
+#ifdef __CUDACC__
+	__host__ __device__ 
+#endif  
+        constexpr reference operator[] (size_type i) noexcept {return data_[i]; }
+        
+#ifdef __CUDACC__
+	__host__ __device__ 
+#endif  
+        constexpr const_reference operator[] (size_type i) const noexcept {return  data_[i]; }
+	
+        constexpr iterator begin() noexcept { return iterator{ data()}; }
+        constexpr iterator end()   noexcept { return iterator{ data() +  size()}; }
+        
+        constexpr const_iterator begin()  const noexcept { return const_iterator{ data()}; }
+        constexpr const_iterator end()    const noexcept { return const_iterator{ data() +  size()}; }
+        
+        constexpr const_iterator cbegin() const noexcept { return const_iterator{ const_cast<pointer>(data())}; }
+        constexpr const_iterator cend()   const noexcept { return const_iterator{ const_cast<pointer>(data() +  size()) }; }
         
         constexpr static auto tol() noexcept {
           if constexpr (std::is_same_v<value_type, double>) {
