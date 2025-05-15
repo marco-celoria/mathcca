@@ -176,6 +176,9 @@ namespace mathcca {
     constexpr host_matrix<T> operator*(const host_matrix<T>& A, const T B);
    
     template<std::floating_point T>
+    constexpr host_matrix<T> operator*(const T B, const host_matrix<T>& A);
+    
+    template<std::floating_point T>
     constexpr host_matrix<T> operator*(host_matrix<T>&& A, const host_matrix<T>& B);
   
     template<std::floating_point T>

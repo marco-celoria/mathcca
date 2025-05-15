@@ -241,8 +241,8 @@ int main(int argc, char **argv)  {
       std::cout << std::boolalpha << (C4 == CHECK) << std::noboolalpha << "\n";
       
       std::cout << "--------------------------------------------------------\n";
-      C4 = C4 * static_cast<value_type>(2) * static_cast<value_type>(4);
-      mathcca::fill_const(CHECK.begin(), CHECK.end(), static_cast<value_type>(2048));
+      C4 = C4 * static_cast<value_type>(2) * static_cast<value_type>(4) * A0;
+      mathcca::fill_const(CHECK.begin(), CHECK.end(), static_cast<value_type>(4096));
       std::cout << std::boolalpha << (C4 == CHECK) << std::noboolalpha << "\n";
       std::cout << "--------------------------------------------------------\n";
 

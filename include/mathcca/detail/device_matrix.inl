@@ -206,7 +206,15 @@ namespace mathcca {
       auto res{lhs};
       return std::forward<device_matrix<T>>((res). template operator*= <THREAD_BLOCK_DIM>(rhs));
     }
-    
+   
+    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
+    device_matrix<T> operator*(const T lhs, const device_matrix<T>& rhs) {
+      std::cout <<"scalar operator*\n";
+      static_assert(THREAD_BLOCK_DIM <= 1024);
+      auto res{rhs};
+      return std::forward<device_matrix<T>>((res). template operator*= <THREAD_BLOCK_DIM>(lhs));
+    }
+
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
     device_matrix<T> operator*(device_matrix<T>&& res, const device_matrix<T>& rhs) {
       std::cout <<"operator* rvalue\n";

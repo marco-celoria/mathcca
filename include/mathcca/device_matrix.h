@@ -213,6 +213,9 @@ namespace mathcca {
     device_matrix<T> operator*(const device_matrix<T>& lhs, const T rhs);
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM= 128>
+    device_matrix<T> operator*(const T rhs, const device_matrix<T>& lhs);
+    
+    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM= 128>
     device_matrix<T> operator*(device_matrix<T>&& res, const device_matrix<T>& rhs);
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM= 128>
