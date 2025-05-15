@@ -60,7 +60,7 @@ namespace mathcca {
 //#include <mathcca/detail/device_fill_const.inl>
 //#endif
 
-#include <mathcca/detail/fill_const.inl>
+#include <mathcca/fill_const.inl>
 
 #endif
 

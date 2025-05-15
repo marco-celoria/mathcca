@@ -61,7 +61,7 @@ namespace mathcca {
 //#include <mathcca/detail/device_fill_rand.inl>
 //#endif
 
-#include <mathcca/detail/fill_rand.inl>
+#include <mathcca/fill_rand.inl>
 
 #endif
 

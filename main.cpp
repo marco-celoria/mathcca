@@ -4,9 +4,9 @@
 #include <mathcca/fill_iota.h>
 #include <mathcca/fill_rand.h>
 #include <mathcca/reduce_sum.h>
-#include <mathcca/host_matmul.h>
-#include <mathcca/host_transpose.h>
-#include <mathcca/host_norm.h>
+#include <mathcca/matmul.h>
+#include <mathcca/transpose.h>
+#include <mathcca/norm.h>
 
 //#include "randev.h"
 

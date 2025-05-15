@@ -58,7 +58,7 @@ namespace mathcca {
 //#include <mathcca/detail/device_transform_reduce_sum.inl>
 //#endif
 
-#include <mathcca/detail/transform_reduce_sum.inl>
+#include <mathcca/transform_reduce_sum.inl>
 
 #endif
 

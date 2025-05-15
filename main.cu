@@ -5,9 +5,9 @@
 #include <mathcca/fill_iota.h>
 #include <mathcca/reduce_sum.h>
 
-#include <mathcca/device_matmul.h>
-#include <mathcca/device_norm.h>
-#include <mathcca/device_transpose.h>
+#include <mathcca/matmul.h>
+#include <mathcca/norm.h>
+#include <mathcca/transpose.h>
 
 //#include "randev.h"
 

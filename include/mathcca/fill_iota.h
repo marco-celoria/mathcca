@@ -60,7 +60,7 @@ namespace mathcca {
 //#include <mathcca/detail/device_fill_iota.inl>
 //#endif
 
-#include <mathcca/detail/fill_iota.inl>
+#include <mathcca/fill_iota.inl>
 
 #endif
 

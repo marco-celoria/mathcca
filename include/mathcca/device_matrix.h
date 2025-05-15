@@ -298,7 +298,7 @@ namespace mathcca {
     };*/
 }
 
-#include <mathcca/detail/device_matrix.inl>
+#include <mathcca/device_matrix.inl>
 
 #endif
 

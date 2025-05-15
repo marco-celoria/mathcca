@@ -70,7 +70,7 @@ namespace mathcca {
 //#include <mathcca/detail/device_copy.inl>
 //#endif
 
-#include <mathcca/detail/copy.inl>
+#include <mathcca/copy.inl>
 
 #endif
 

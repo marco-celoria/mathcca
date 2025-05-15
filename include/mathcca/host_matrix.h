@@ -189,7 +189,7 @@ namespace mathcca {
 
 }
 
-#include <mathcca/detail/host_matrix.inl>
+#include <mathcca/host_matrix.inl>
 
 #endif
 
