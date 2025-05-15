@@ -115,18 +115,16 @@ namespace mathcca {
       return diffs? false : true;
     }
     
-    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
+    // Standard kernel  
+    template<std::floating_point T>
     __global__ void addTo_kernel(T* __restrict accululator, const T* __restrict to_be_op, const std::size_t size) {
-      const auto off{static_cast<std::size_t>(2 * THREAD_BLOCK_DIM * blockIdx.x + threadIdx.x)};
-      #pragma unroll 2
-      for (auto i = 0; i < 2; i++) {
-        const std::size_t idx{off + i * THREAD_BLOCK_DIM};
-        if(idx < size) {
-          accululator[idx] += to_be_op[idx];
-        }
+      const auto idx{static_cast<std::size_t>(blockIdx.x * blockDim.x + threadIdx.x)};
+      if(idx < size) {
+        accululator[idx] += to_be_op[idx];
       }
     }
-   
+    
+    // Increasing ILP kernel 
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
     __global__ void subTo_kernel(T* __restrict accululator, const T* __restrict to_be_op, const std::size_t size) {
       const auto off{static_cast<std::size_t>(2 * THREAD_BLOCK_DIM * blockIdx.x + threadIdx.x)};
@@ -138,14 +136,15 @@ namespace mathcca {
         }
       }
     }
-    
-    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
-    __global__ void mulTo_kernel(T* __restrict accululator, const T* __restrict to_be_op, const std::size_t size) {
+   
+    // Increasing ILP kernel using the class inside the kernel
+    template<std::floating_point T, typename A, typename E, unsigned int THREAD_BLOCK_DIM>
+    __global__ void mulTo_kernel(device_matrix<T,A,E>& accululator, const device_matrix<T,A,E>& to_be_op) { 
       const auto off{static_cast<std::size_t>(2 * THREAD_BLOCK_DIM * blockIdx.x + threadIdx.x)};
       #pragma unroll 2
       for (auto i = 0; i < 2; i++) {
         const std::size_t idx{off + i * THREAD_BLOCK_DIM};
-        if(idx < size) {
+        if(idx < accululator.size()) {
           accululator[idx] *= to_be_op[idx];
         }
       }

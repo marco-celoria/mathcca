@@ -32,16 +32,19 @@ namespace mathcca {
     template<std::floating_point T, typename Allocator, typename Execution>
     class host_matrix;
     
-    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
+    template<std::floating_point T, typename Allocator, typename Execution>
+    class device_matrix;
+
+    template<std::floating_point T>
     __global__ void addTo_kernel(T* __restrict accululator, const T* __restrict to_be_op, const std::size_t size);
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
     __global__ void subTo_kernel(T* __restrict accululator, const T* __restrict to_be_op, const std::size_t size);
     
-    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
-    __global__ void mulTo_kernel(T* __restrict accululator, const T* __restrict to_be_op, const std::size_t size);
+    template<std::floating_point T, typename A, typename E, unsigned int THREAD_BLOCK_DIM>
+    __global__ void mulTo_kernel(device_matrix<T,A,E>& accululator, const device_matrix<T,A,E>& to_be_op);
    
-       template<std::floating_point T, typename Allocator = device_allocator<T>, typename Execution= Cuda>
+    template<std::floating_point T, typename Allocator = device_allocator<T>, typename Execution= Cuda>
     class device_matrix : public base_matrix<T, Allocator, Execution > {
 
       using self= device_matrix;
@@ -104,7 +107,8 @@ namespace mathcca {
           copy(begin(), end(), hostA.begin(), stream);
           return hostA;
         }
-         
+        
+        // Standard kernel	
         template<unsigned int THREAD_BLOCK_DIM= 128>
         self& operator+=(const self& rhs) {
           std::cout <<"operator+= lvalue\n";
@@ -113,13 +117,14 @@ namespace mathcca {
             throw std::length_error{"Incompatible sizes for matrix-matrix addition"};
           const size_type size{this->size()};
           constexpr unsigned int threads{THREAD_BLOCK_DIM};
-          const auto blocks{static_cast<unsigned int>((size + 2 * static_cast<size_type>(threads) - 1) / (2 * static_cast<size_type>(threads)))};
+          const auto blocks{static_cast<unsigned int>((size + static_cast<size_type>(threads) - 1)/(static_cast<size_type>(threads)))};
           constexpr dim3 dimBlock(threads, 1, 1);
           dim3 dimGrid(blocks, 1, 1);
-          addTo_kernel<value_type, threads><<<dimGrid, dimBlock>>>(Parent::data(), rhs.data(), size);
+          addTo_kernel<value_type><<<dimGrid, dimBlock>>>(Parent::data(), rhs.data(), size);
           return *this;
         }
         
+	// Increasing ILP kernel 
         template<unsigned int THREAD_BLOCK_DIM= 128>
         self& operator-=(const self& rhs) {
           std::cout <<"operator-= lvalue\n";
@@ -135,21 +140,32 @@ namespace mathcca {
           return *this;
         }
         
+	// Increasing ILP kernel using the class inside the kernel
         template<unsigned int THREAD_BLOCK_DIM= 128> 
         self& operator*=(const self& rhs) {
           std::cout <<"operator*= lvalue\n";
           static_assert(THREAD_BLOCK_DIM <= 1024);
           if (!check_equal_size((*this), rhs))
             throw std::length_error{"Incompatible sizes for matrix-matrix Hadamard product"};
+
+          device_matrix<value_type>* dp_this;
+          device_matrix<value_type>* dp_rhs;
+          checkCudaErrors(cudaMalloc((void**)& dp_this, sizeof(device_matrix<value_type>)));
+          checkCudaErrors(cudaMalloc((void**)& dp_rhs, sizeof(device_matrix<value_type>)));
+          checkCudaErrors(cudaMemcpy(dp_this,  this,    sizeof(device_matrix<value_type>), cudaMemcpyHostToDevice));
+          checkCudaErrors(cudaMemcpy(dp_rhs,  &rhs,    sizeof(device_matrix<value_type>), cudaMemcpyHostToDevice));
+
           const size_type size{this->size()};
           constexpr unsigned int threads{THREAD_BLOCK_DIM};
           const auto blocks{static_cast<unsigned int>((size + 2 * static_cast<size_type>(threads) - 1) / (2 * static_cast<size_type>(threads)))};
           constexpr dim3 dimBlock(threads, 1, 1);
           dim3 dimGrid(blocks, 1, 1);
-          mulTo_kernel<value_type, threads><<<dimGrid, dimBlock>>>(Parent::data(), rhs.data(), size);
+          mulTo_kernel<value_type, Allocator, Execution, threads><<<dimGrid, dimBlock>>>(*dp_this, *dp_rhs);
+          checkCudaErrors(cudaFree(dp_this));
+          checkCudaErrors(cudaFree(dp_rhs));
           return *this;
         }
-        
+
     };
 
     template<std::floating_point T>
