@@ -19,20 +19,35 @@ namespace mathcca {
 #ifdef __CUDACC__
      class device_iterator_tag;
      class Cuda;
-    template<typename Iter , std::floating_point T, unsigned int THREAD_BLOCK_DIM= 128>
+#endif
+
+#ifdef __CUDACC__
+     template<typename Iter , std::floating_point T, unsigned int THREAD_BLOCK_DIM= 128>
     void fill_iota(Iter first, Iter last, const T v, cudaStream_t stream= 0) {
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()>){
+#ifdef _PARALG
+        fill_iota(StdPar(), first.get(), last.get(), v);
+#else
         fill_iota(Omp(), first.get(), last.get(), v);
+#endif
       }
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::device_iterator_tag()>){
+#ifdef _PARALG
+        fill_iota(Thrust(), first.get(), last.get(), v);
+#else
         fill_iota<T, THREAD_BLOCK_DIM>(Cuda(), first.get(), last.get(), v, stream);
+#endif
       }
     }
 #else
     template<typename Iter, std::floating_point T>
     void fill_iota(Iter first, Iter last, const T v){
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()> ){
+#ifdef _PARALG
+        fill_iota(StdPar(), first.get(), last.get(), v);
+#else
         fill_iota(Omp(), first.get(), last.get(), v);
+#endif
       }
     }
 #endif
@@ -41,11 +56,11 @@ namespace mathcca {
 
 
 
-#ifdef __CUDACC__
-#include <mathcca/detail/device_fill_iota.inl>
-#endif
+//#ifdef __CUDACC__
+//#include <mathcca/detail/device_fill_iota.inl>
+//#endif
 
-#include <mathcca/detail/host_fill_iota.inl>
+#include <mathcca/detail/fill_iota.inl>
 
 #endif
 

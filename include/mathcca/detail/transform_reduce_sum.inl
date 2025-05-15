@@ -1,16 +1,55 @@
 #include <cstddef>
+
+#ifdef __CUDACC__
 #include <cooperative_groups.h>
 #include <cooperative_groups/reduce.h>
 #include <mathcca/device_helper.h>
 #include <mathcca/detail/device_shmem_proxy.h>
 #include <mathcca/detail/nextPow2.h>
+#endif
+
+#ifdef _PARALG
+#include <execution>
+#include <ranges>
+#endif
 
 namespace cg = cooperative_groups;
 
 namespace mathcca {
-     
-    template <Arithmetic T>
-    __global__ void cg_reduce_kernel(const T* idata, T* odata, const std::size_t size, const T init) {
+#ifdef _PARALG
+    template<std::floating_point T, typename UnaryFunction>
+    T transform_reduce_sum(StdPar, const T* first, const T* last, UnaryFunction unary_op, const T init) {
+      std::cout << "DEBUG _PARALG\n";
+      return std::transform_reduce(std::execution::par, first, last, init, std::plus<T>(), unary_op());
+    }
+#endif
+    template<std::floating_point T, typename UnaryFunction>
+    T transform_reduce_sum(Omp, const T* first, const T* last, UnaryFunction unary_op, const T init) {
+      std::cout << "DEBUG NO _PARALG\n";
+      using value_type= T;
+      const auto size {static_cast<std::size_t>(last - first)};
+      auto res{static_cast<T>(init)};
+      #pragma omp prallel for default(shared) reduction(+:res)
+      for (std::size_t i= 0; i < size; ++i) {
+        res+= unary_op(first[i]);
+      }
+      return res;
+    }
+}
+
+
+#ifdef __CUDACC__
+
+namespace mathcca {
+    
+    template<std::floating_point T, typename UnaryFunction>
+    T transform_reduce_sum (Thrust, const T* first, const T* last, UnaryFunction unary_op, const T init) {
+      std::cout << "DEBUG _PARALG\n";
+      return thrust::transform_reduce(thrust::device, first, last, unary_op, init, thrust::plus<T>());
+    }
+
+    template <Arithmetic T, class UnaryOp>
+    __global__ void cg_transform_reduce_kernel(const T* __restrict idata, T* __restrict odata, const std::size_t size, const T init,  UnaryOp transform ) {
       // Shared memory for intermediate steps
       auto sdata = proxycca::shared_memory_proxy<T>();
       // Handle to thread block group
@@ -26,7 +65,7 @@ namespace mathcca {
         auto i{threadIndex};
         auto indexStride{numCtas * ctaSize};
         while (i < size) {
-          threadVal += idata[i];
+          threadVal += transform(idata[i]); //(idata[i] * idata[i]);
           i += indexStride;
         }
         sdata[threadRank] = threadVal;
@@ -55,11 +94,13 @@ namespace mathcca {
       if (threadRank == 0)
         odata[blockIdx.x] = threadVal;
     }
-
-    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
-    T reduce_sum(Cuda, const T* first, const T* last, const T init, cudaStream_t stream) {
+    
+    
+    template<std::floating_point T, typename UnaryFunction, unsigned int THREAD_BLOCK_DIM>
+    T transform_reduce_sum(Cuda, const T* first, const T* last, UnaryFunction unary_op, const T init, cudaStream_t stream) {
+      std::cout << "DEBUG NO _PARALG\n";
       static_assert(THREAD_BLOCK_DIM <= 1024);
-      std::size_t size{static_cast<std::size_t>(last - first)};
+      auto size{static_cast<std::size_t>(last - first)};
       constexpr unsigned int maxThreads{THREAD_BLOCK_DIM};
       unsigned int threads{size < (static_cast<std::size_t>(maxThreads) * 2) ? nextPow2((size + 1) / 2) : maxThreads};
       unsigned int blocks{static_cast<unsigned int>((size + static_cast<std::size_t>(threads * 2 - 1)) / static_cast<std::size_t>(threads * 2))};
@@ -71,7 +112,8 @@ namespace mathcca {
       dim3 dimBlock(threads, 1, 1);
       dim3 dimGrid(blocks, 1, 1);
       unsigned int smemSize = (threads <= 32) ? 2 * threads * sizeof(T) : threads * sizeof(T);
-      cg_reduce_kernel<T><<<dimGrid, dimBlock, smemSize, stream>>>(first, d_odata, size, init);
+      //auto square = []__device__(auto val) { return val * val; };
+      cg_transform_reduce_kernel<T, UnaryFunction><<<dimGrid, dimBlock, smemSize, stream>>>(first, d_odata, size, init, unary_op);
       // sum partial block sums on GPU
       unsigned int s{blocks};
       while (s > 1) {
@@ -87,8 +129,8 @@ namespace mathcca {
       checkCudaErrors(cudaFree(d_intermediateSums));
       return gpu_result;
     }
-     
+    
 }
-	
 
 
+#endif

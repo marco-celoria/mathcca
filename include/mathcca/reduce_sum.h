@@ -18,20 +18,36 @@ namespace mathcca {
 #ifdef __CUDACC__
      class device_iterator_tag;
      class Cuda;
-    template<typename Iter , std::floating_point T, unsigned int THREAD_BLOCK_DIM= 128>
+#endif
+
+ 
+#ifdef __CUDACC__
+     template<typename Iter , std::floating_point T, unsigned int THREAD_BLOCK_DIM= 128>
     T reduce_sum(Iter first, Iter last, const T init, cudaStream_t stream= 0) {
-      if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()>){
+      if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()>) {
+#ifdef _PARALG
+        return reduce_sum(StdPar(), first.get(), last.get(), init);
+#else
         return reduce_sum(Omp(), first.get(), last.get(), init);
+#endif
       }
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::device_iterator_tag()>){
+#ifdef _PARALG
+        return reduce_sum(Thrust(), first.get(), last.get(), init);
+#else
         return reduce_sum<T, THREAD_BLOCK_DIM>(Cuda(), first.get(), last.get(), init, stream);
+#endif
       }
     }
 #else
     template<typename Iter, std::floating_point T>
     T reduce_sum(Iter first, Iter last, const T init) {
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()>){
+#ifdef _PARALG
+        return reduce_sum(StdPar(), first.get(), last.get(), init);
+#else
         return reduce_sum(Omp(), first.get(), last.get(), init);
+#endif
       }
     }
 #endif
@@ -39,11 +55,11 @@ namespace mathcca {
 }
 
 
-#ifdef __CUDACC__
-#include <mathcca/detail/device_reduce_sum.inl>
-#endif
+//#ifdef __CUDACC__
+//#include <mathcca/detail/device_reduce_sum.inl>
+//#endif
 
-#include <mathcca/detail/host_reduce_sum.inl>
+#include <mathcca/detail/reduce_sum.inl>
 
 #endif
 

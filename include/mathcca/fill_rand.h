@@ -15,36 +15,53 @@ namespace mathcca {
 
      class host_iterator_tag;
      class Omp;
+     class StdPar;
 
 #ifdef __CUDACC__
      class device_iterator_tag;
      class Cuda;
+     class Thrust;
+#endif
+
+#ifdef __CUDACC__
     template<typename Iter, unsigned int THREAD_BLOCK_DIM= 128>
     void fill_rand(Iter first, Iter last, cudaStream_t stream= 0) {
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()>){
+#ifdef _PARALG
+        fill_rand(StdPar(), first.get(), last.get());
+#else
         fill_rand(Omp(), first.get(), last.get());
+#endif
       }
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::device_iterator_tag()>){
+#ifdef _PARALG
+        fill_rand(Thrust(), first.get(), last.get());
+#else
 	using T= typename Iter::value_type;
         fill_rand<T, THREAD_BLOCK_DIM>(Cuda(), first.get(), last.get(), stream);
+#endif
       }
     }
 #else
     template<typename Iter>
     void fill_rand(Iter first, Iter last){
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()> ){
+#ifdef _PARALG
+        fill_rand(StdPar(), first.get(), last.get());
+#else
         fill_rand(Omp(), first.get(), last.get());
+#endif
       }
     }
 #endif
 
 }
 
-#ifdef __CUDACC__
-#include <mathcca/detail/device_fill_rand.inl>
-#endif
+//#ifdef __CUDACC__
+//#include <mathcca/detail/device_fill_rand.inl>
+//#endif
 
-#include <mathcca/detail/host_fill_rand.inl>
+#include <mathcca/detail/fill_rand.inl>
 
 #endif
 

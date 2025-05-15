@@ -36,7 +36,7 @@ namespace mathcca {
         return x * x;
       }
     };
-    
+   /* 
     template<std::floating_point T>
     constexpr decltype(auto) frobenius_norm_Thrust(const device_matrix<T>& x) {
       std::cout << "Thrust frobenius norm\n";
@@ -47,7 +47,7 @@ namespace mathcca {
       //const T res= thrust::transform_reduce(d_x.begin(), d_x.end(), square<T>(), static_cast<T>(0), thrust::plus<T>());
       return std::sqrt(res);
     }
-    
+    */
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
     constexpr decltype(auto) frobenius_norm_Base(const device_matrix<T>& x, cudaStream_t stream) {
       std::cout << "Base frobenius norm\n";

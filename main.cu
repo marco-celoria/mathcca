@@ -368,28 +368,23 @@ int main(int argc, char **argv)  {
       using value_type= typename decltype(A)::value_type;
       mathcca::fill_rand(A.begin(), A.end());
       auto res_base= mathcca::frobenius_norm<value_type, mathcca::DevFN::Base, 256>(A); 
-      auto res_thrust= mathcca::frobenius_norm<value_type, mathcca::DevFN::Thrust>(A); 
 #ifdef _CUBLAS
       auto res_cublas= mathcca::frobenius_norm<value_type, mathcca::DevFN::Cublas>(A); 
 #endif
       std::cout << "--------------------------------------------------------\n";
-      std::cout << std::boolalpha << (fabs(res_base -   res_thrust) < decltype(A)::tol()) << " " << res_base << " " << res_thrust << std::noboolalpha << "\n";
 #ifdef _CUBLAS      
       std::cout << std::boolalpha << (fabs(res_base   - res_cublas) < decltype(A)::tol()) << " " << res_base   << " " << res_cublas << std::noboolalpha << "\n";
-      std::cout << std::boolalpha << (fabs(res_thrust - res_cublas) < decltype(A)::tol()) << " " << res_thrust << " " << res_cublas << std::noboolalpha << "\n";
 #endif
       std::cout << "--------------------------------------------------------\n";
       
       mathcca::fill_const(A.begin(), A.end(), static_cast<value_type>(3));
 
       res_base= mathcca::frobenius_norm<value_type, mathcca::DevFN::Base, 128>(A);
-      res_thrust= mathcca::frobenius_norm<value_type, mathcca::DevFN::Thrust>(A);
 #ifdef _CUBLAS
       res_cublas= mathcca::frobenius_norm<value_type, mathcca::DevFN::Cublas>(A);
 #endif        
       value_type res= std::sqrt(static_cast<value_type>(3. * 3. * r * c));
       std::cout << std::boolalpha << (fabs(res_base   - res) < decltype(A)::tol()) << " " << res_base   << " " << res << std::noboolalpha << "\n";
-      std::cout << std::boolalpha << (fabs(res_thrust - res) < decltype(A)::tol()) << " " << res_thrust << " " << res << std::noboolalpha << "\n";
 #ifdef _CUBLAS      
       std::cout << std::boolalpha << (fabs(res_cublas - res) < decltype(A)::tol()) << " " << res_cublas << " " << res << std::noboolalpha << "\n";
 #endif
@@ -402,12 +397,10 @@ int main(int argc, char **argv)  {
         value_type res= std::sqrt(n3/static_cast<value_type>(3) + n2/static_cast<value_type>(2) + n/static_cast<value_type>(6));
         mathcca::fill_iota(A.begin(), A.end(), static_cast<value_type>(1));
         res_base= mathcca::frobenius_norm<value_type, mathcca::DevFN::Base>(A);
-        res_thrust= mathcca::frobenius_norm<value_type, mathcca::DevFN::Thrust>(A);
 #ifdef _CUBLAS
         res_cublas= mathcca::frobenius_norm<value_type, mathcca::DevFN::Cublas>(A);
 #endif
         std::cout << std::boolalpha << (fabs(res_base   - res) < decltype(A)::tol()) << " " << res_base   << " " << res << std::noboolalpha << "\n";
-        std::cout << std::boolalpha << (fabs(res_thrust - res) < decltype(A)::tol()) << " " << res_thrust << " " << res << std::noboolalpha << "\n";
 #ifdef _CUBLAS
         std::cout << std::boolalpha << (fabs(res_cublas - res) < decltype(A)::tol()) << " " << res_cublas << " " << res << std::noboolalpha << "\n";
 #endif

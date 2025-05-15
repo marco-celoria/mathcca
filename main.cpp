@@ -442,38 +442,23 @@ int main(int argc, char **argv)  {
       using value_type= typename decltype(A)::value_type;
       mathcca::fill_rand(A.begin(), A.end());
       auto res_base= mathcca::frobenius_norm<value_type, mathcca::HostFN::Base>(A); 
-#ifdef _STDPAR
-      auto res_pstl= mathcca::frobenius_norm<value_type, mathcca::HostFN::Pstl>(A); 
-#endif
 #ifdef _MKL
       auto res_mkl= mathcca::frobenius_norm<value_type, mathcca::HostFN::Mkl>(A); 
 #endif
       std::cout << "--------------------------------------------------------\n";
-#ifdef _STDPAR
-      std::cout << std::boolalpha << (fabs(res_base - res_pstl) < decltype(A)::tol()) << " " << res_base  << " " << res_pstl << std::noboolalpha << "\n";
-#endif
 #ifdef _MKL      
       std::cout << std::boolalpha << (fabs(res_base - res_mkl)  < decltype(A)::tol()) << " " << res_base  << " " << res_mkl << std::noboolalpha << "\n";
-#endif
-#if defined(_STDPAR) && defined(_MKL)
-      std::cout << std::boolalpha << (fabs(res_pstl - res_mkl)  < decltype(A)::tol()) << " " << res_pstl  << " " << res_mkl << std::noboolalpha << "\n";
 #endif
       std::cout << "--------------------------------------------------------\n";
       
       mathcca::fill_const(A.begin(), A.end(), static_cast<value_type>(3));
       
       res_base= mathcca::frobenius_norm<value_type, mathcca::HostFN::Base>(A);
-#ifdef _STDPAR
-      res_pstl= mathcca::frobenius_norm<value_type, mathcca::HostFN::Pstl>(A);
-#endif
 #ifdef _MKL
       res_mkl= mathcca::frobenius_norm<value_type, mathcca::HostFN::Mkl>(A);
 #endif        
       value_type res= std::sqrt(static_cast<value_type>(3. * 3. * r * c));
       std::cout << std::boolalpha << (fabs(res_base - res) < decltype(A)::tol()) << " " << res_base << " " << res << std::noboolalpha << "\n";
-#ifdef _STDPAR
-      std::cout << std::boolalpha << (fabs(res_pstl - res) < decltype(A)::tol()) << " " << res_pstl << " " << res << std::noboolalpha << "\n";
-#endif
 #ifdef _MKL      
       std::cout << std::boolalpha << (fabs(res_mkl  - res) < decltype(A)::tol()) << " " << res_mkl  << " " << res << std::noboolalpha << "\n";
 #endif
@@ -486,16 +471,10 @@ int main(int argc, char **argv)  {
         value_type res= std::sqrt(n3/static_cast<value_type>(3) + n2/static_cast<value_type>(2) + n/static_cast<value_type>(6));
 	mathcca::fill_iota(A.begin(), A.end(), static_cast<value_type>(1));
         res_base= mathcca::frobenius_norm<value_type, mathcca::HostFN::Base>(A);
-#ifdef _STDPAR
-        res_pstl= mathcca::frobenius_norm<value_type, mathcca::HostFN::Pstl>(A);
-#endif
 #ifdef _MKL
         res_mkl= mathcca::frobenius_norm<value_type, mathcca::HostFN::Mkl>(A);
 #endif       
         std::cout << std::boolalpha << (fabs(res_base - res) < decltype(A)::tol()) << " " << res_base << " " << res << std::noboolalpha << "\n";
-#ifdef _STDPAR
-        std::cout << std::boolalpha << (fabs(res_pstl - res) < decltype(A)::tol()) << " " << res_pstl << " " << res << std::noboolalpha << "\n";
-#endif
 #ifdef _MKL      
         std::cout << std::boolalpha << (fabs(res_mkl  - res) < decltype(A)::tol()) << " " << res_mkl  << " " << res << std::noboolalpha << "\n";
 #endif

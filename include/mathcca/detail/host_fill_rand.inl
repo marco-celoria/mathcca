@@ -1,6 +1,6 @@
 #include <random>
 
-#ifdef _STDPAR
+#ifdef _PARALG
 #include <execution>
 #include <ranges>
 #endif
@@ -20,11 +20,11 @@ namespace mathcca {
       return distribution(generator);
     }
 
-#ifdef _STDPAR
+#ifdef _PARALG
     template<std::floating_point T>
     void fill_rand(Stdpar, T* first, T* last) {  
     const auto size {static_cast<std::size_t>(last - first)};
-      //std::cout << "DEBUG _STDPAR\n"; 
+      //std::cout << "DEBUG _PARALG\n"; 
       std::ranges::iota_view r(static_cast<unsigned int>(0),static_cast<unsigned int>(size));
       std::for_each(std::execution::par_unseq,r.begin(), r.end(), [&](auto i) {first[i] = Uniform(static_cast<T>(0), static_cast<T>(1));});
     }
@@ -32,7 +32,7 @@ namespace mathcca {
 #endif
     template<std::floating_point T>
     void fill_rand(Omp, T* first, T* last) {
-      //std::cout << "DEBUG NO _STDPAR\n"; 
+      //std::cout << "DEBUG NO _PARALG\n"; 
     const auto size {static_cast<std::size_t>(last - first)};
       std::random_device rd;
       #pragma omp parallel default(shared)
