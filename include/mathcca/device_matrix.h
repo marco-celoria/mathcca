@@ -41,6 +41,9 @@ namespace mathcca {
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
     __global__ void subTo_kernel(T* __restrict accululator, const T* __restrict to_be_op, const std::size_t size);
     
+    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
+    __global__ void mulScalarTo_kernel(T* __restrict accululator, const T to_be_op, const std::size_t size);
+
     template<std::floating_point T, typename A, typename E, unsigned int THREAD_BLOCK_DIM>
     __global__ void mulTo_kernel(device_matrix<T,A,E>& accululator, const device_matrix<T,A,E>& to_be_op);
    
@@ -139,6 +142,20 @@ namespace mathcca {
           subTo_kernel<value_type, threads><<<dimGrid, dimBlock>>>(Parent::data(), rhs.data(), size);
           return *this;
         }
+	
+	// Increasing ILP kernel 
+        template<unsigned int THREAD_BLOCK_DIM= 128>
+        self& operator*=(const value_type rhs) {
+          std::cout <<"scalar operator*= lvalue\n";
+          static_assert(THREAD_BLOCK_DIM <= 1024);
+          const size_type size{this->size()};
+          constexpr unsigned int threads{THREAD_BLOCK_DIM};
+          const auto blocks{static_cast<unsigned int>((size + 2 * static_cast<size_type>(threads) - 1) / (2 * static_cast<size_type>(threads)))};
+          constexpr dim3 dimBlock(threads, 1, 1);
+          dim3 dimGrid(blocks, 1, 1);
+          mulScalarTo_kernel<value_type, threads><<<dimGrid, dimBlock>>>(Parent::data(), rhs, size);
+          return *this;
+        }
         
 	// Increasing ILP kernel using the class inside the kernel
         template<unsigned int THREAD_BLOCK_DIM= 128> 
@@ -151,9 +168,9 @@ namespace mathcca {
           device_matrix<value_type>* dp_this;
           device_matrix<value_type>* dp_rhs;
           checkCudaErrors(cudaMalloc((void**)& dp_this, sizeof(device_matrix<value_type>)));
-          checkCudaErrors(cudaMalloc((void**)& dp_rhs, sizeof(device_matrix<value_type>)));
-          checkCudaErrors(cudaMemcpy(dp_this,  this,    sizeof(device_matrix<value_type>), cudaMemcpyHostToDevice));
-          checkCudaErrors(cudaMemcpy(dp_rhs,  &rhs,    sizeof(device_matrix<value_type>), cudaMemcpyHostToDevice));
+          checkCudaErrors(cudaMalloc((void**)& dp_rhs,  sizeof(device_matrix<value_type>)));
+          checkCudaErrors(cudaMemcpy(dp_this, this,     sizeof(device_matrix<value_type>), cudaMemcpyHostToDevice));
+          checkCudaErrors(cudaMemcpy(dp_rhs,  &rhs,     sizeof(device_matrix<value_type>), cudaMemcpyHostToDevice));
 
           const size_type size{this->size()};
           constexpr unsigned int threads{THREAD_BLOCK_DIM};
@@ -188,6 +205,12 @@ namespace mathcca {
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM= 128>
     device_matrix<T> operator-(const device_matrix<T>& lhs, const device_matrix<T>& rhs);
+    
+    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM= 128>
+    device_matrix<T> operator*(device_matrix<T>&& res, const T rhs);
+    
+    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM= 128>
+    device_matrix<T> operator*(const device_matrix<T>& lhs, const T rhs);
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM= 128>
     device_matrix<T> operator*(device_matrix<T>&& res, const device_matrix<T>& rhs);

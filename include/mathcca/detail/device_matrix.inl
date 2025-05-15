@@ -120,7 +120,7 @@ namespace mathcca {
     __global__ void addTo_kernel(T* __restrict accululator, const T* __restrict to_be_op, const std::size_t size) {
       const auto idx{static_cast<std::size_t>(blockIdx.x * blockDim.x + threadIdx.x)};
       if(idx < size) {
-        accululator[idx] += to_be_op[idx];
+        accululator[idx]+= to_be_op[idx];
       }
     }
     
@@ -132,11 +132,23 @@ namespace mathcca {
       for (auto i = 0; i < 2; i++) {
         const std::size_t idx{off + i * THREAD_BLOCK_DIM};
         if(idx < size) {
-          accululator[idx] -= to_be_op[idx];
+          accululator[idx]-= to_be_op[idx];
         }
       }
     }
-   
+    
+    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
+    __global__ void mulScalarTo_kernel(T* __restrict accululator, const T to_be_op, const std::size_t size) {
+      const auto off{static_cast<std::size_t>(2 * THREAD_BLOCK_DIM * blockIdx.x + threadIdx.x)};
+      #pragma unroll 2
+      for (auto i = 0; i < 2; i++) {
+        const std::size_t idx{off + i * THREAD_BLOCK_DIM};
+        if(idx < size) {
+          accululator[idx]*= to_be_op;
+        }
+      }
+    }
+
     // Increasing ILP kernel using the class inside the kernel
     template<std::floating_point T, typename A, typename E, unsigned int THREAD_BLOCK_DIM>
     __global__ void mulTo_kernel(device_matrix<T,A,E>& accululator, const device_matrix<T,A,E>& to_be_op) { 
@@ -145,7 +157,7 @@ namespace mathcca {
       for (auto i = 0; i < 2; i++) {
         const std::size_t idx{off + i * THREAD_BLOCK_DIM};
         if(idx < accululator.size()) {
-          accululator[idx] *= to_be_op[idx];
+          accululator[idx]*= to_be_op[idx];
         }
       }
     }
@@ -178,6 +190,21 @@ namespace mathcca {
       static_assert(THREAD_BLOCK_DIM <= 1024);
       auto res{lhs};
       return std::forward<device_matrix<T>>((res). template operator-= <THREAD_BLOCK_DIM>(rhs));
+    }
+    
+    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
+    device_matrix<T> operator*(device_matrix<T>&& res, const T rhs) {
+      std::cout <<"scalar operator* rvalue\n";
+      static_assert(THREAD_BLOCK_DIM <= 1024);
+      return std::forward<device_matrix<T>>((res). template operator*= <THREAD_BLOCK_DIM>(rhs));
+    }
+    
+    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
+    device_matrix<T> operator*(const device_matrix<T>& lhs, const T rhs) {
+      std::cout <<"scalar operator* lvalue\n";
+      static_assert(THREAD_BLOCK_DIM <= 1024);
+      auto res{lhs};
+      return std::forward<device_matrix<T>>((res). template operator*= <THREAD_BLOCK_DIM>(rhs));
     }
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>

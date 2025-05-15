@@ -122,7 +122,16 @@ namespace mathcca {
           return *this;
         }
         
-        constexpr self& operator*=(const self& rhs) {
+        constexpr self& operator*=(const value_type rhs) {
+          std::cout <<"scalar operator*= lvalue\n";
+          const auto size{this->size()};
+          #pragma omp parallel for default(shared)
+          for (size_type i= 0; i < size; ++i)
+            (*this)[i] *= rhs;
+          return *this;
+        }
+        
+	constexpr self& operator*=(const self& rhs) {
           std::cout <<"operator*= lvalue\n";
           if (!check_equal_size((*this), rhs))
             throw std::length_error{"Incompatible sizes for matrix-matrix Hadamard product"};
@@ -156,10 +165,16 @@ namespace mathcca {
   
     template<std::floating_point T>
     constexpr host_matrix<T> operator- (host_matrix<T>&& res, const host_matrix<T>& rhs);
-   
+    
     template<std::floating_point T>
     constexpr host_matrix<T> operator- (const host_matrix<T>& lhs, const host_matrix<T>& rhs);
+    
+    template<std::floating_point T>
+    constexpr host_matrix<T> operator*(host_matrix<T>&& A, const T B);
   
+    template<std::floating_point T>
+    constexpr host_matrix<T> operator*(const host_matrix<T>& A, const T B);
+   
     template<std::floating_point T>
     constexpr host_matrix<T> operator*(host_matrix<T>&& A, const host_matrix<T>& B);
   

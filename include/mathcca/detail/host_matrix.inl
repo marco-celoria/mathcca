@@ -69,6 +69,19 @@ namespace mathcca {
   }
   
   template<std::floating_point T>
+  constexpr host_matrix<T> operator* (host_matrix<T>&& res, const T rhs) {
+    std::cout <<"scalar operator* rvalue\n";
+    return std::forward<host_matrix<T>>(res*= rhs);
+  }
+
+  template<std::floating_point T>
+  constexpr host_matrix<T> operator* (const host_matrix<T>& lhs, const T rhs) {
+    std::cout <<"scalar operator* lvalue\n";
+    auto res{lhs};
+    return std::forward<host_matrix<T>>(res*= rhs);
+  }
+  
+  template<std::floating_point T>
   constexpr host_matrix<T> operator* (host_matrix<T>&& res, const host_matrix<T>& rhs) {
     std::cout <<"operator* rvalue\n";
     return std::forward<host_matrix<T>>(res*= rhs);
