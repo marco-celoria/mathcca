@@ -27,7 +27,7 @@ namespace mathcca {
       base_iterator(const base_iterator<T, false>& rhs) : ptr_(rhs.get()) {}
        
       template<bool IsConst_ = IsConst, class = std::enable_if_t<IsConst_>>
-      base_iterator& operator=(const base_iterator<T, false>& rhs) { ptr_ = rhs.ptr_; return *this; }
+      base_iterator& operator=(const base_iterator<T, false>& rhs) { ptr_ = rhs.get(); return *this; }
       
       template <bool Q = IsConst>
       typename std::enable_if_t<Q, const_reference> operator*() const noexcept { return *ptr_; }
