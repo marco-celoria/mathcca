@@ -37,10 +37,10 @@ namespace mathcca {
 #endif
     
     template<std::floating_point T, typename Allocator = host_allocator<T>, typename Execution= Omp>
-    class host_matrix : public base_matrix<T, Allocator, Execution > {
+    class host_matrix : public detail::base_matrix<T, Allocator, Execution > {
     
       using self= host_matrix; 
-      typedef base_matrix<T,Allocator, Execution> Parent;
+      typedef detail::base_matrix<T,Allocator, Execution> Parent;
 
       public:
         

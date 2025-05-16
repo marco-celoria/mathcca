@@ -5,7 +5,7 @@
 #include <iterator> // for std::random_access_iterator_tag
     
 namespace mathcca {
-  	
+namespace detail {  	
   template<std::floating_point T, bool IsConst>
   class base_iterator {
     public:
@@ -104,7 +104,7 @@ namespace mathcca {
   typename base_iterator<T, IsConst>::difference_type operator-(const base_iterator<T, IsConst>& lhs, const base_iterator<T, IsConst>& rhs) {
     return lhs.get() - rhs.get();
   }
-
+}
 }
 
 #endif

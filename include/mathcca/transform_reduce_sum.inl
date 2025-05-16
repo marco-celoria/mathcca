@@ -51,7 +51,7 @@ namespace mathcca {
     template <Arithmetic T, class UnaryOp>
     __global__ void cg_transform_reduce_kernel(const T* __restrict idata, T* __restrict odata, const std::size_t size, const T init,  UnaryOp transform ) {
       // Shared memory for intermediate steps
-      auto sdata = shared_memory_proxy<T>();
+      auto sdata = detail::shared_memory_proxy<T>();
       // Handle to thread block group
       cg::thread_block cta = cg::this_thread_block();
       // Handle to tile in thread block
@@ -102,7 +102,7 @@ namespace mathcca {
       static_assert(THREAD_BLOCK_DIM <= 1024);
       auto size{static_cast<std::size_t>(last - first)};
       constexpr unsigned int maxThreads{THREAD_BLOCK_DIM};
-      unsigned int threads{size < (static_cast<std::size_t>(maxThreads) * 2) ? nextPow2((size + 1) / 2) : maxThreads};
+      unsigned int threads{size < (static_cast<std::size_t>(maxThreads) * 2) ? detail::nextPow2((size + 1) / 2) : maxThreads};
       unsigned int blocks{static_cast<unsigned int>((size + static_cast<std::size_t>(threads * 2 - 1)) / static_cast<std::size_t>(threads * 2))};
       auto gpu_result{static_cast<T>(0)};
       T* d_odata = nullptr;
@@ -117,7 +117,7 @@ namespace mathcca {
       // sum partial block sums on GPU
       unsigned int s{blocks};
       while (s > 1) {
-        threads = (s < maxThreads * 2) ? nextPow2((s + 1) / 2) : maxThreads;
+        threads = (s < maxThreads * 2) ? detail::nextPow2((s + 1) / 2) : maxThreads;
         blocks  = (s + (threads * 2 - 1)) / (threads * 2);
         //std::cout << "s = " << s << "; threads = " << threads << "; blocks = " << blocks << "\n";
         checkCudaErrors(cudaMemcpy(d_intermediateSums, d_odata, s * sizeof(T), cudaMemcpyDeviceToDevice));

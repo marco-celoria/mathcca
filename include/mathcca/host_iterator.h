@@ -10,11 +10,11 @@ namespace mathcca {
   class host_iterator_tag{};
   
   template<std::floating_point T, bool IsConst>
-  class host_iterator : public base_iterator<T, IsConst> {
+  class host_iterator : public detail::base_iterator<T, IsConst> {
     
     private:
         
-      typedef base_iterator<T, IsConst> Parent;
+      typedef detail::base_iterator<T, IsConst> Parent;
       
     public:
     

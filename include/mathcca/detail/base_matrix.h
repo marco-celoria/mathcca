@@ -12,7 +12,7 @@
 
 
 namespace mathcca {
-    
+   namespace detail { 
     template<std::floating_point T, typename Allocator, typename Execution>
     class base_matrix {
     
@@ -154,7 +154,7 @@ namespace mathcca {
         Allocator allocator;
 
     };  
-    
+   }
 }
 
 #endif

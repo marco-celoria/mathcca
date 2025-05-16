@@ -48,10 +48,10 @@ namespace mathcca {
     __global__ void mulTo_kernel(device_matrix<T,A,E>& accululator, const device_matrix<T,A,E>& to_be_op);
    
     template<std::floating_point T, typename Allocator = device_allocator<T>, typename Execution= Cuda>
-    class device_matrix : public base_matrix<T, Allocator, Execution > {
+    class device_matrix : public detail::base_matrix<T, Allocator, Execution > {
 
       using self= device_matrix;
-      typedef base_matrix<T,Allocator, Execution> Parent;
+      typedef detail::base_matrix<T,Allocator, Execution> Parent;
 
       public:
 

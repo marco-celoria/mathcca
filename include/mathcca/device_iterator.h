@@ -10,11 +10,11 @@ namespace mathcca {
   class device_iterator_tag{};
   
   template<std::floating_point T, bool IsConst>
-  class device_iterator : public base_iterator<T, IsConst> {
+  class device_iterator : public detail::base_iterator<T, IsConst> {
     
     private:
         
-      typedef base_iterator<T, IsConst> Parent;
+      typedef detail::base_iterator<T, IsConst> Parent;
       
     public:
     
