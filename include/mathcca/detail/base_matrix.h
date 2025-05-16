@@ -6,7 +6,7 @@
 #include <concepts>
 #include <iostream>
 
-#include <mathcca/base_iterator.h>
+#include <mathcca/detail/base_iterator.h>
 #include <mathcca/copy.h>
 #include <mathcca/fill_const.h>
 

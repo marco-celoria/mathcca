@@ -1,6 +1,6 @@
 #include <mathcca/device_helper.h>
 #include <mathcca/detail/nextPow2.h>
-#include <mathcca/detail/device_shmem_proxy.h>
+#include <mathcca/detail/shared_memory_proxy.h>
 #include <mathcca/reduce_sum.h>
 #include <cstddef>
 #include <cstdio>
@@ -28,7 +28,7 @@ namespace mathcca {
     __global__ void cg_count_if_diffs_kernel(const T* __restrict lhs, const T* __restrict rhs, T* __restrict odata, 
 		    const std::size_t size, const T tol) {
       // Shared memory for intermediate steps
-      auto sdata = proxycca::shared_memory_proxy<T>();
+      auto sdata = shared_memory_proxy<T>();
       // Handle to thread block group
       cg::thread_block cta = cg::this_thread_block();
       // Handle to tile in thread block

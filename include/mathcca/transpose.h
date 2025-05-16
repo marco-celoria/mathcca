@@ -112,11 +112,11 @@ namespace mathcca {
 }
 #endif
 
-#ifdef __CUDACC__
-#include <mathcca/detail/device_transpose.inl>
-#endif
+//#ifdef __CUDACC__
+//#include <mathcca/transpose.inl>
+//#endif
 
-#include <mathcca/detail/host_transpose.inl>
+#include <mathcca/transpose.inl>
 
 #endif
 

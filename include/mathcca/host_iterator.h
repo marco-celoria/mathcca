@@ -3,7 +3,7 @@
 #pragma once
 #include <cstddef>  // for std::ptrdiff_t
 #include <iterator> // for std::random_access_iterator_tag
-#include <mathcca/base_iterator.h> 
+#include <mathcca/detail/base_iterator.h> 
 
 namespace mathcca {
     

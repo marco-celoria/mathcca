@@ -4,7 +4,7 @@
 #include <cooperative_groups.h>
 #include <cooperative_groups/reduce.h>
 #include <mathcca/device_helper.h>
-#include <mathcca/detail/device_shmem_proxy.h>
+#include <mathcca/detail/shared_memory_proxy.h>
 #include <mathcca/detail/nextPow2.h>
 #endif
 
@@ -51,7 +51,7 @@ namespace mathcca {
     template <Arithmetic T, class UnaryOp>
     __global__ void cg_transform_reduce_kernel(const T* __restrict idata, T* __restrict odata, const std::size_t size, const T init,  UnaryOp transform ) {
       // Shared memory for intermediate steps
-      auto sdata = proxycca::shared_memory_proxy<T>();
+      auto sdata = shared_memory_proxy<T>();
       // Handle to thread block group
       cg::thread_block cta = cg::this_thread_block();
       // Handle to tile in thread block

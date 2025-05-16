@@ -6,7 +6,7 @@
 #include <concepts>
 #include <iostream>
 
-#include <mathcca/base_matrix.h>
+#include <mathcca/detail/base_matrix.h>
 
 #include <mathcca/host_allocator.h>
 #include <mathcca/host_iterator.h>
