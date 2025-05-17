@@ -7,8 +7,8 @@
 #include <iostream>
 
 #include <mathcca/detail/base_iterator.h>
-#include <mathcca/copy.h>
-#include <mathcca/fill_const.h>
+#include <mathcca/detail/copy_impl.h>
+#include <mathcca/detail/fill_const_impl.h>
 
 
 namespace mathcca {
@@ -38,7 +38,7 @@ namespace mathcca {
         }
         
         constexpr base_matrix(size_type r, size_type c, const_reference v) : base_matrix(r, c) {
-          mathcca::fill_const(Execution(), data(), data()+size(), v);
+          fill_const(Execution(), data(), data()+size(), v);
           std::cout << "(delegating ctor)\n";
         } 
          

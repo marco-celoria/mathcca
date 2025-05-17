@@ -11,6 +11,8 @@
 #include <cuda_runtime.h>
 #endif
 
+#include <mathcca/detail/copy_impl.h>
+
 namespace mathcca {
 
      class host_iterator_tag;
@@ -31,23 +33,23 @@ namespace mathcca {
     void copy(Iter1 s_first, Iter1 s_last, Iter2 d_first, cudaStream_t stream=0) {
       if constexpr (std::is_same_v<typename Iter1::iterator_system(), mathcca::host_iterator_tag()> && std::is_same_v<typename Iter2::iterator_system(), mathcca::host_iterator_tag()>){
 #ifdef _PARALG
-      	      copy(StdPar(), s_first.get(), s_last.get(), d_first.get());
+	      detail::copy(StdPar(), s_first.get(), s_last.get(), d_first.get());
 #else
-      	      copy(CudaHtoHcpy(), s_first.get(), s_last.get(), d_first.get());
+      	      detail::copy(CudaHtoHcpy(), s_first.get(), s_last.get(), d_first.get());
 #endif
       }
       if constexpr (std::is_same_v<typename Iter1::iterator_system(), mathcca::device_iterator_tag()> && std::is_same_v<typename Iter2::iterator_system(), mathcca::device_iterator_tag()>) {
 #ifdef _PARALG
-        copy(Thrust(), s_first.get(), s_last.get(), d_first.get());
+        detail::copy(Thrust(), s_first.get(), s_last.get(), d_first.get());
 #else
-        copy(Cuda(), s_first.get(), s_last.get(), d_first.get(), stream);
+        detail::copy(Cuda(), s_first.get(), s_last.get(), d_first.get(), stream);
 #endif
       } 
       else if constexpr (std::is_same_v<typename Iter1::iterator_system(), mathcca::host_iterator_tag()> && std::is_same_v<typename Iter2::iterator_system(), mathcca::device_iterator_tag()>) {
-        copy(CudaHtoDcpy(), s_first.get(), s_last.get(), d_first.get(), stream);
+        detail::copy(CudaHtoDcpy(), s_first.get(), s_last.get(), d_first.get(), stream);
       }
       else if constexpr (std::is_same_v<typename Iter1::iterator_system(), mathcca::device_iterator_tag()> && std::is_same_v<typename Iter2::iterator_system(), mathcca::host_iterator_tag()>) {
-        copy(CudaDtoHcpy(), s_first.get(), s_last.get(), d_first.get(), stream);
+        detail::copy(CudaDtoHcpy(), s_first.get(), s_last.get(), d_first.get(), stream);
       }
     }
     
@@ -56,9 +58,9 @@ namespace mathcca {
     void copy(Iter1 s_first, Iter1 s_last, Iter2 d_first){
       if constexpr (std::is_same_v<typename Iter1::iterator_system(), mathcca::host_iterator_tag()> && std::is_same_v<typename Iter2::iterator_system(), mathcca::host_iterator_tag()>){
 #ifdef _PARALG
-              copy(StdPar(), s_first.get(), s_last.get(), d_first.get());
+              detail::copy(StdPar(), s_first.get(), s_last.get(), d_first.get());
 #else
-              copy(Omp(), s_first.get(), s_last.get(), d_first.get());
+              detail::copy(Omp(), s_first.get(), s_last.get(), d_first.get());
 #endif
       }
    }
@@ -70,7 +72,6 @@ namespace mathcca {
 //#include <mathcca/detail/device_copy.inl>
 //#endif
 
-#include <mathcca/copy.inl>
 
 #endif
 

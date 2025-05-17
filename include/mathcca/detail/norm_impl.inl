@@ -10,6 +10,7 @@
 #endif
 
 namespace mathcca {
+namespace detail {
 
 
           #ifdef _STDPAR
@@ -66,10 +67,10 @@ namespace mathcca {
 
 }
 
-
+}
 #ifdef __CUDACC__
 namespace mathcca {
-  
+ namespace detail { 
 #ifdef _CUBLAS
     template<std::floating_point T>
     constexpr decltype(auto) frobenius_norm_Cublas(const device_matrix<T>& x) {
@@ -118,5 +119,5 @@ namespace mathcca {
       return std::sqrt(transform_reduce_sum<Iter, T, Square<T>, THREAD_BLOCK_DIM>( x.cbegin(), x.cend(), Square<T>(), static_cast<T>(0), stream));
   }
 }
-
+}
 #endif

@@ -10,6 +10,8 @@
 #include <mathcca/device_matrix.h>
 #endif
 
+#include <mathcca/detail/matmul_impl.h>
+
 namespace mathcca {
 
     enum class HostMM {
@@ -20,16 +22,6 @@ namespace mathcca {
 #endif
     };
 
-    template<std::floating_point T>
-    constexpr void mm_parallel_Base(const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C);
-
-    template<std::floating_point T, unsigned int LINEAR_TILE_DIM= 32>
-    constexpr void mm_parallel_Tiled(const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C);
-
-#ifdef _MKL
-    template<std::floating_point T>
-    constexpr void mm_parallel_Mkl(const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C);
-#endif
 
     template<std::floating_point T, HostMM O, unsigned int LINEAR_TILE_DIM= 32>
     void matmul(const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) {
@@ -39,15 +31,15 @@ namespace mathcca {
 #endif
                    );
       if constexpr(O == HostMM::Tiled) {
-        mm_parallel_Tiled<T, LINEAR_TILE_DIM>(A, B, C);
+	      detail::mm_parallel_Tiled<T, LINEAR_TILE_DIM>(A, B, C);
       }
 #ifdef _MKL
       else if constexpr(O == HostMM::Mkl) {
-        mm_parallel_Mkl<T>(A, B, C);
+	      detail::mm_parallel_Mkl<T>(A, B, C);
       }
 #endif
       else {
-        mm_parallel_Base<T>(A, B, C);
+	      detail::mm_parallel_Base<T>(A, B, C);
       }
     }
 
@@ -71,14 +63,6 @@ namespace mathcca {
 #endif
     };
 
-    template <std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM= 16>
-    void mm_device_Base(const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C, cudaStream_t stream= 0);
-
-    template <std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM= 16>
-    void mm_device_Tiled(const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C, cudaStream_t stream= 0);
-
-    template <std::floating_point T>
-    void  mm_device_Cublas(const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C);
 
     template<std::floating_point T, DevMM O, unsigned int LINEAR_THREAD_BLOCK_DIM= 16 >
     void matmul(const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C, cudaStream_t stream= 0) {
@@ -88,15 +72,15 @@ namespace mathcca {
 #endif
                    );
       if constexpr(O == DevMM::Tiled) {
-        mm_device_Tiled<T, LINEAR_THREAD_BLOCK_DIM>(A, B, C, stream);
+	      detail::mm_device_Tiled<T, LINEAR_THREAD_BLOCK_DIM>(A, B, C, stream);
       }
 #ifdef _CUBLAS
       else if constexpr(O == DevMM::Cublas) {
-        mm_device_Cublas<T>(A, B, C);
+	      detail::mm_device_Cublas<T>(A, B, C);
       }
 #endif
       else {
-        mm_device_Base<T, LINEAR_THREAD_BLOCK_DIM>(A, B, C, stream);
+	      detail::mm_device_Base<T, LINEAR_THREAD_BLOCK_DIM>(A, B, C, stream);
       }
     }
 
@@ -110,7 +94,7 @@ namespace mathcca {
 }
 #endif
 
-#include <mathcca/matmul.inl>
+//#include <mathcca/detail/matmul_impl.h>
 
 //#ifdef __CUDACC__
 //#include <mathcca/detail/device_matmul.inl>

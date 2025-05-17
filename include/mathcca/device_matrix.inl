@@ -1,7 +1,7 @@
 #include <mathcca/device_helper.h>
 #include <mathcca/detail/nextPow2.h>
 #include <mathcca/detail/shared_memory_proxy.h>
-#include <mathcca/reduce_sum.h>
+#include <mathcca/detail/reduce_sum_impl.h>
 #include <cstddef>
 #include <cstdio>
 #include "cooperative_groups.h"
@@ -94,7 +94,7 @@ namespace mathcca {
         blocks  = (s + (threads * 2 - 1)) / (threads * 2);
         //std::cout << "s = " << s << "; threads = " << threads << "; blocks = " << blocks << "\n";
         checkCudaErrors(cudaMemcpy(d_intermediateSums, d_odata, s * sizeof(T), cudaMemcpyDeviceToDevice));
-	mathcca::cg_reduce_kernel<T><<<blocks, threads, smemSize>>>(d_intermediateSums, d_odata, s, static_cast<T>(0));
+	mathcca::detail::cg_reduce_kernel<T><<<blocks, threads, smemSize>>>(d_intermediateSums, d_odata, s, static_cast<T>(0));
         s = (s + (threads * 2 - 1)) / (threads * 2);
       }
       checkCudaErrors(cudaMemcpy(&gpu_result, d_odata, sizeof(T), cudaMemcpyDeviceToHost));

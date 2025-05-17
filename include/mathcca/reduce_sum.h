@@ -10,6 +10,8 @@
 #include <cuda_runtime.h>
 #endif
 
+#include <mathcca/detail/reduce_sum_impl.h>
+
 namespace mathcca {
 
      class host_iterator_tag;
@@ -26,16 +28,16 @@ namespace mathcca {
     T reduce_sum(Iter first, Iter last, const T init, cudaStream_t stream= 0) {
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()>) {
 #ifdef _PARALG
-        return reduce_sum(StdPar(), first.get(), last.get(), init);
+        return detail::reduce_sum(StdPar(), first.get(), last.get(), init);
 #else
-        return reduce_sum(Omp(), first.get(), last.get(), init);
+        return detail::reduce_sum(Omp(), first.get(), last.get(), init);
 #endif
       }
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::device_iterator_tag()>){
 #ifdef _PARALG
-        return reduce_sum(Thrust(), first.get(), last.get(), init);
+        return detail::reduce_sum(Thrust(), first.get(), last.get(), init);
 #else
-        return reduce_sum<T, THREAD_BLOCK_DIM>(Cuda(), first.get(), last.get(), init, stream);
+        return detail::reduce_sum<T, THREAD_BLOCK_DIM>(Cuda(), first.get(), last.get(), init, stream);
 #endif
       }
     }
@@ -44,9 +46,9 @@ namespace mathcca {
     T reduce_sum(Iter first, Iter last, const T init) {
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()>){
 #ifdef _PARALG
-        return reduce_sum(StdPar(), first.get(), last.get(), init);
+        return detail::reduce_sum(StdPar(), first.get(), last.get(), init);
 #else
-        return reduce_sum(Omp(), first.get(), last.get(), init);
+        return detail::reduce_sum(Omp(), first.get(), last.get(), init);
 #endif
       }
     }
@@ -59,7 +61,7 @@ namespace mathcca {
 //#include <mathcca/detail/device_reduce_sum.inl>
 //#endif
 
-#include <mathcca/reduce_sum.inl>
+//#include <mathcca/reduce_sum.inl>
 
 #endif
 

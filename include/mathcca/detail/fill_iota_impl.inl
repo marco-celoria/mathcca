@@ -12,7 +12,7 @@
 #endif
 
 namespace mathcca {
-
+namespace detail {
 #ifdef _PARALG
     template<std::floating_point T>
     void fill_iota(StdPar, T* first, T* last, const T v) {
@@ -33,13 +33,13 @@ namespace mathcca {
         first[i]= v + static_cast<value_type>(i);
       }
     }
-
+}
 }
 
 
 #ifdef __CUDACC__
 namespace mathcca {
-
+namespace detail {
     template<std::floating_point T>
     void fill_iota(Thrust, T* first, T* last, const T v) {
       thrust::sequence(thrust::device, first, last, v);
@@ -64,7 +64,7 @@ namespace mathcca {
       dim3 dimGrid(blocks, 1, 1);
       fill_iota_kernel<value_type><<<dimGrid, dimBlock, 0, stream>>>(first, size, v);
     }
-    
+}
 }
 #endif
 

@@ -11,6 +11,8 @@
 #include <cuda_runtime.h>
 #endif
 
+#include <mathcca/detail/transform_reduce_sum_impl.h>
+
 namespace mathcca {
      class host_iterator_tag;
      class StdPar;
@@ -26,16 +28,16 @@ namespace mathcca {
     T transform_reduce_sum(Iter first, Iter last, UnaryFunction unary_op, const T init, cudaStream_t stream= 0) {
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()>){
 #ifdef _PARALG
-        return transform_reduce_sum(StdPar(), first.get(), last.get(), unary_op, init);
+        return detail::transform_reduce_sum(StdPar(), first.get(), last.get(), unary_op, init);
 #else
-        return transform_reduce_sum(Omp(), first.get(), last.get(), unary_op, init);
+        return detail::transform_reduce_sum(Omp(), first.get(), last.get(), unary_op, init);
 #endif
       }
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::device_iterator_tag()>){
 #ifdef _PARALG
-        return transform_reduce_sum(Thrust(), first.get(), last.get(), unary_op, init);
+        return detail::transform_reduce_sum(Thrust(), first.get(), last.get(), unary_op, init);
 #else
-        return transform_reduce_sum<T, UnaryFunction, THREAD_BLOCK_DIM>(Cuda(), first.get(), last.get(), unary_op, init, stream);
+        return detail::transform_reduce_sum<T, UnaryFunction, THREAD_BLOCK_DIM>(Cuda(), first.get(), last.get(), unary_op, init, stream);
 #endif
       }
     }
@@ -44,9 +46,9 @@ namespace mathcca {
     T transform_reduce_sum(Iter first, Iter last, UnaryFunction unary_op, const T init) {
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()>){
 #ifdef _PARALG
-        return transform_reduce_sum(StdPar(), first.get(), last.get(), unary_op, init);
+        return detail::transform_reduce_sum(StdPar(), first.get(), last.get(), unary_op, init);
 #else
-        return transform_reduce_sum(Omp(), first.get(), last.get(), unary_op, init);
+        return detail::transform_reduce_sum(Omp(), first.get(), last.get(), unary_op, init);
 #endif
       }
     }
@@ -58,7 +60,7 @@ namespace mathcca {
 //#include <mathcca/detail/device_transform_reduce_sum.inl>
 //#endif
 
-#include <mathcca/transform_reduce_sum.inl>
+//#include <mathcca/transform_reduce_sum.inl>
 
 #endif
 

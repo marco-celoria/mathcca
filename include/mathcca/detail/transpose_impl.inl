@@ -5,7 +5,7 @@
 #endif
 
 namespace mathcca {
-
+namespace detail {
               template<std::floating_point T>
     constexpr inline auto check_transposition_compatible_size(const host_matrix<T>& lhs, const host_matrix<T>& rhs) {
       if ((lhs.num_cols() == rhs.num_rows()) && (lhs.num_rows() == rhs.num_cols()))
@@ -69,11 +69,11 @@ namespace mathcca {
   }
 #endif
 
-}
+}}
 
 #ifdef __CUDACC__
 namespace mathcca {
-  
+  namespace detail {
     template<std::floating_point T>
     constexpr inline auto check_transposition_compatible_size(const device_matrix<T>& lhs, const device_matrix<T>& rhs) {
       if ((lhs.num_cols() == rhs.num_rows()) && (lhs.num_rows() == rhs.num_cols()))
@@ -186,6 +186,6 @@ namespace mathcca {
       checkCudaErrors(cublasDestroy(handle));
     }
 #endif
-
+  }
 }
 #endif

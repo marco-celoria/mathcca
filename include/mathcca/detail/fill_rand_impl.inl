@@ -23,7 +23,7 @@
 
 
 namespace mathcca {
-
+namespace detail {
     template<std::floating_point T>
       inline static T Uniform(T min, T max) {
       static thread_local std::mt19937 generator{std::random_device{}()};
@@ -61,13 +61,13 @@ namespace mathcca {
         }
       }
     }
-
+}
 
 }
 
 #ifdef __CUDACC__
 namespace mathcca {
-
+namespace detail {
 template<std::floating_point T>
 struct GenRand {
 
@@ -127,6 +127,6 @@ struct GenRand {
       fill_rand_kernel<value_type><<<dimGrid, dimBlock, 0, stream>>>(d_state, first, size);
       checkCudaErrors(cudaFree(d_state));
     }
-    
+}
 }
 #endif

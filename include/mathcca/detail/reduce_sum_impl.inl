@@ -17,6 +17,7 @@ namespace cg = cooperative_groups;
 #endif
 
 namespace mathcca {
+namespace detail {
 
 #ifdef _PARALG
     template<std::floating_point T>
@@ -39,10 +40,10 @@ namespace mathcca {
     }
 
 }
-
+}
 #ifdef __CUDACC__
 namespace mathcca {
-
+namespace detail {
     template<std::floating_point T>
     T reduce_sum (Thrust, const T* first, const T* last, const T init) {
       std::cout << "DEBUG _PARALG\n";
@@ -128,7 +129,7 @@ namespace mathcca {
       return gpu_result;
     }
      
-}
+}}
 #endif
 
 

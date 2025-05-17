@@ -11,6 +11,8 @@
 #include <cuda_runtime.h>
 #endif
 
+#include <mathcca/detail/fill_rand_impl.h>
+
 namespace mathcca {
 
      class host_iterator_tag;
@@ -28,17 +30,17 @@ namespace mathcca {
     void fill_rand(Iter first, Iter last, cudaStream_t stream= 0) {
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()>){
 #ifdef _PARALG
-        fill_rand(StdPar(), first.get(), last.get());
+	      detail::fill_rand(StdPar(), first.get(), last.get());
 #else
-        fill_rand(Omp(), first.get(), last.get());
+	      detail::fill_rand(Omp(), first.get(), last.get());
 #endif
       }
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::device_iterator_tag()>){
 #ifdef _PARALG
-        fill_rand(Thrust(), first.get(), last.get());
+	      detail::fill_rand(Thrust(), first.get(), last.get());
 #else
 	using T= typename Iter::value_type;
-        fill_rand<T, THREAD_BLOCK_DIM>(Cuda(), first.get(), last.get(), stream);
+	detail::fill_rand<T, THREAD_BLOCK_DIM>(Cuda(), first.get(), last.get(), stream);
 #endif
       }
     }
@@ -47,9 +49,9 @@ namespace mathcca {
     void fill_rand(Iter first, Iter last){
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()> ){
 #ifdef _PARALG
-        fill_rand(StdPar(), first.get(), last.get());
+	      detail::fill_rand(StdPar(), first.get(), last.get());
 #else
-        fill_rand(Omp(), first.get(), last.get());
+	      detail::fill_rand(Omp(), first.get(), last.get());
 #endif
       }
     }
@@ -61,7 +63,6 @@ namespace mathcca {
 //#include <mathcca/detail/device_fill_rand.inl>
 //#endif
 
-#include <mathcca/fill_rand.inl>
 
 #endif
 

@@ -16,6 +16,7 @@
 namespace cg = cooperative_groups;
 
 namespace mathcca {
+namespace detail {
 #ifdef _PARALG
     template<std::floating_point T, typename UnaryFunction>
     T transform_reduce_sum(StdPar, const T* first, const T* last, UnaryFunction unary_op, const T init) {
@@ -36,12 +37,12 @@ namespace mathcca {
       return res;
     }
 }
-
+}
 
 #ifdef __CUDACC__
 
 namespace mathcca {
-    
+ namespace detail {   
     template<std::floating_point T, typename UnaryFunction>
     T transform_reduce_sum (Thrust, const T* first, const T* last, UnaryFunction unary_op, const T init) {
       std::cout << "DEBUG _PARALG\n";
@@ -131,6 +132,6 @@ namespace mathcca {
     }
     
 }
-
+}
 
 #endif

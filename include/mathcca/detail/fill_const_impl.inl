@@ -11,7 +11,7 @@
 #endif
 
 namespace mathcca {
-
+namespace detail {
 #ifdef _PARALG
     template<std::floating_point T>
     void fill_const(StdPar, T* first, T* last, const T v) {
@@ -28,14 +28,14 @@ namespace mathcca {
         first[i]= v;
       }
     }
-
+}
 }
 
 
 #ifdef __CUDACC__
 
 namespace mathcca {
-	
+namespace detail {	
     template<std::floating_point T>
     void fill_const(Thrust, T* first, T* last, const T v) {
       std::cout << "DEBUG _PARALG\n";
@@ -50,8 +50,8 @@ namespace mathcca {
       }
     }
 
-    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM=128>
-    void fill_const(Cuda, T* first, T* last, const T v, cudaStream_t stream=0) {
+    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
+    void fill_const(Cuda, T* first, T* last, const T v, cudaStream_t stream) {
       std::cout << "DEBUG NO _PARALG\n";
       static_assert(THREAD_BLOCK_DIM <= 1024);
       using value_type= T;
@@ -62,7 +62,7 @@ namespace mathcca {
       dim3 dimGrid(blocks, 1, 1);
       fill_const_kernel<value_type><<<dimGrid, dimBlock, 0, stream>>>(first, size, v);
     }
-
+}
 }
 
 #endif

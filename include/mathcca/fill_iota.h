@@ -11,6 +11,8 @@
 #include <cuda_runtime.h>
 #endif
 
+#include <mathcca/detail/fill_iota_impl.inl>
+
 namespace mathcca {
 
      class host_iterator_tag;
@@ -26,16 +28,16 @@ namespace mathcca {
     void fill_iota(Iter first, Iter last, const T v, cudaStream_t stream= 0) {
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()>){
 #ifdef _PARALG
-        fill_iota(StdPar(), first.get(), last.get(), v);
+	      detail::fill_iota(StdPar(), first.get(), last.get(), v);
 #else
-        fill_iota(Omp(), first.get(), last.get(), v);
+	      detail::fill_iota(Omp(), first.get(), last.get(), v);
 #endif
       }
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::device_iterator_tag()>){
 #ifdef _PARALG
-        fill_iota(Thrust(), first.get(), last.get(), v);
+	      detail::fill_iota(Thrust(), first.get(), last.get(), v);
 #else
-        fill_iota<T, THREAD_BLOCK_DIM>(Cuda(), first.get(), last.get(), v, stream);
+	      detail::fill_iota<T, THREAD_BLOCK_DIM>(Cuda(), first.get(), last.get(), v, stream);
 #endif
       }
     }
@@ -44,9 +46,9 @@ namespace mathcca {
     void fill_iota(Iter first, Iter last, const T v){
       if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()> ){
 #ifdef _PARALG
-        fill_iota(StdPar(), first.get(), last.get(), v);
+	      detail::fill_iota(StdPar(), first.get(), last.get(), v);
 #else
-        fill_iota(Omp(), first.get(), last.get(), v);
+	      detail::fill_iota(Omp(), first.get(), last.get(), v);
 #endif
       }
     }
@@ -60,7 +62,6 @@ namespace mathcca {
 //#include <mathcca/detail/device_fill_iota.inl>
 //#endif
 
-#include <mathcca/fill_iota.inl>
 
 #endif
 
