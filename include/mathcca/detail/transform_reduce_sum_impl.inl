@@ -30,7 +30,7 @@ namespace detail {
       using value_type= T;
       const auto size {static_cast<std::size_t>(last - first)};
       auto res{static_cast<T>(init)};
-      #pragma omp prallel for default(shared) reduction(+:res)
+      #pragma omp parallel for default(shared) reduction(+:res)
       for (std::size_t i= 0; i < size; ++i) {
         res+= unary_op(first[i]);
       }

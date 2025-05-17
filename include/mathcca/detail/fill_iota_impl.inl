@@ -28,7 +28,7 @@ namespace detail {
       //std::cout << "DEBUG NO _PARALG\n";
       using value_type= T;
       const auto size {static_cast<std::size_t>(last - first)};
-      #pragma omp prallel for default(shared)
+      #pragma omp parallel for default(shared)
       for (std::size_t i= 0; i < size; ++i) {
         first[i]= v + static_cast<value_type>(i);
       }

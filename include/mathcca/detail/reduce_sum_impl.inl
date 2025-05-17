@@ -16,6 +16,10 @@ namespace cg = cooperative_groups;
 #include <ranges>
 #endif
 
+#ifdef _OPENMP
+ #include <omp.h>
+#endif
+
 namespace mathcca {
 namespace detail {
 
@@ -31,8 +35,8 @@ namespace detail {
       std::cout << "DEBUG NO _PARALG\n";
       using value_type= T;
       const auto size {static_cast<std::size_t>(last - first)};
-      auto res{static_cast<T>(init)};
-      #pragma omp prallel for default(shared) reduction(+:res)
+      auto res{static_cast<value_type>(init)};
+      #pragma omp parallel for default(shared) reduction(+:res)
       for (std::size_t i= 0; i < size; ++i) {
         res+= first[i];
       }

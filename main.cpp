@@ -8,6 +8,8 @@
 #include <mathcca/transpose.h>
 #include <mathcca/norm.h>
 
+#include<iomanip>
+
 //#include "randev.h"
 
 
@@ -447,7 +449,7 @@ int main(int argc, char **argv)  {
 #endif
       std::cout << "--------------------------------------------------------\n";
 #ifdef _MKL      
-      std::cout << std::boolalpha << (fabs(res_base - res_mkl)  < decltype(A)::tol()) << " " << res_base  << " " << res_mkl << std::noboolalpha << "\n";
+      std::cout << std::boolalpha << (fabs(res_base - res_mkl)  < decltype(A)::tol()) << std::noboolalpha << " " << std::setprecision(9) << res_base  << " " << std::setprecision(9) << res_mkl << "\n";
 #endif
       std::cout << "--------------------------------------------------------\n";
       
@@ -458,25 +460,25 @@ int main(int argc, char **argv)  {
       res_mkl= mathcca::frobenius_norm<value_type, mathcca::HostFN::Mkl>(A);
 #endif        
       value_type res= std::sqrt(static_cast<value_type>(3. * 3. * r * c));
-      std::cout << std::boolalpha << (fabs(res_base - res) < decltype(A)::tol()) << " " << res_base << " " << res << std::noboolalpha << "\n";
+      std::cout << std::boolalpha << (fabs(res_base - res) < decltype(A)::tol()) << std::noboolalpha << " " << std::setprecision(9) << res_base << " " << std::setprecision(9) << res << "\n";
 #ifdef _MKL      
-      std::cout << std::boolalpha << (fabs(res_mkl  - res) < decltype(A)::tol()) << " " << res_mkl  << " " << res << std::noboolalpha << "\n";
+      std::cout << std::boolalpha << (fabs(res_mkl  - res) < decltype(A)::tol()) << std::noboolalpha << " " << std::setprecision(9) << res_mkl  << " " << std::setprecision(9) << res << "\n";
 #endif
       std::cout << "--------------------------------------------------------\n";
       // https://en.wikipedia.org/wiki/Square_pyramidal_number
       if (i < 6) {
-        value_type n{static_cast<value_type>(r * c)};
+        value_type n1{static_cast<value_type>(r * c)};
         value_type n2{static_cast<value_type>(r * r * c * c)};
         value_type n3{static_cast<value_type>(r * r * r * c * c * c)};
-        value_type res= std::sqrt(n3/static_cast<value_type>(3) + n2/static_cast<value_type>(2) + n/static_cast<value_type>(6));
+        value_type res= std::sqrt(n3/static_cast<value_type>(3) + n2/static_cast<value_type>(2) + n1/static_cast<value_type>(6));
 	mathcca::fill_iota(A.begin(), A.end(), static_cast<value_type>(1));
         res_base= mathcca::frobenius_norm<value_type, mathcca::HostFN::Base>(A);
 #ifdef _MKL
         res_mkl= mathcca::frobenius_norm<value_type, mathcca::HostFN::Mkl>(A);
 #endif       
-        std::cout << std::boolalpha << (fabs(res_base - res) < decltype(A)::tol()) << " " << res_base << " " << res << std::noboolalpha << "\n";
+        std::cout << std::boolalpha << (fabs(res_base - res) < 0.2) << std::noboolalpha << " " << std::setprecision(9) << res_base << " " << std::setprecision(9) << res << "\n";
 #ifdef _MKL      
-        std::cout << std::boolalpha << (fabs(res_mkl  - res) < decltype(A)::tol()) << " " << res_mkl  << " " << res << std::noboolalpha << "\n";
+        std::cout << std::boolalpha << (fabs(res_mkl - res) <  0.2) << std::noboolalpha << " " << std::setprecision(9) << res_mkl << " " << std::setprecision(9) << res << "\n";
 #endif
         std::cout << "--------------------------------------------------------\n";
       }

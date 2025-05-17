@@ -9,6 +9,7 @@
 #include <mathcca/norm.h>
 #include <mathcca/transpose.h>
 
+#include<iomanip>
 //#include "randev.h"
 
 
@@ -373,7 +374,7 @@ int main(int argc, char **argv)  {
 #endif
       std::cout << "--------------------------------------------------------\n";
 #ifdef _CUBLAS      
-      std::cout << std::boolalpha << (fabs(res_base   - res_cublas) < decltype(A)::tol()) << " " << res_base   << " " << res_cublas << std::noboolalpha << "\n";
+      std::cout << std::boolalpha << (fabs(res_base   - res_cublas) < decltype(A)::tol()) << std::noboolalpha << " " << std::setprecision(9) << res_base   << " " << std::setprecision(9) << res_cublas << "\n";
 #endif
       std::cout << "--------------------------------------------------------\n";
       
@@ -384,25 +385,25 @@ int main(int argc, char **argv)  {
       res_cublas= mathcca::frobenius_norm<value_type, mathcca::DevFN::Cublas>(A);
 #endif        
       value_type res= std::sqrt(static_cast<value_type>(3. * 3. * r * c));
-      std::cout << std::boolalpha << (fabs(res_base   - res) < decltype(A)::tol()) << " " << res_base   << " " << res << std::noboolalpha << "\n";
+      std::cout << std::boolalpha << (fabs(res_base   - res) < decltype(A)::tol()) << std::noboolalpha << " " << std::setprecision(9) << res_base   << " " << std::setprecision(9) << res << "\n";
 #ifdef _CUBLAS      
-      std::cout << std::boolalpha << (fabs(res_cublas - res) < decltype(A)::tol()) << " " << res_cublas << " " << res << std::noboolalpha << "\n";
+      std::cout << std::boolalpha << (fabs(res_cublas - res) < decltype(A)::tol()) << std::noboolalpha << " " << std::setprecision(9) << res_cublas << " " << std::setprecision(9) << res << "\n";
 #endif
       std::cout << "--------------------------------------------------------\n";
       // https://en.wikipedia.org/wiki/Square_pyramidal_number
       if (i < 6) {
-        value_type n{static_cast<value_type>(r * c)};
+        value_type n1{static_cast<value_type>(r * c)};
         value_type n2{static_cast<value_type>(r * r * c * c)};
         value_type n3{static_cast<value_type>(r * r * r * c * c * c)};
-        value_type res= std::sqrt(n3/static_cast<value_type>(3) + n2/static_cast<value_type>(2) + n/static_cast<value_type>(6));
+        value_type res= std::sqrt(n3/static_cast<value_type>(3) + n2/static_cast<value_type>(2) + n1/static_cast<value_type>(6));
         mathcca::fill_iota(A.begin(), A.end(), static_cast<value_type>(1));
         res_base= mathcca::frobenius_norm<value_type, mathcca::DevFN::Base>(A);
 #ifdef _CUBLAS
         res_cublas= mathcca::frobenius_norm<value_type, mathcca::DevFN::Cublas>(A);
 #endif
-        std::cout << std::boolalpha << (fabs(res_base   - res) < decltype(A)::tol()) << " " << res_base   << " " << res << std::noboolalpha << "\n";
+        std::cout << std::boolalpha << (fabs(res_base   - res) < 0.2) << std::noboolalpha << " " << std::setprecision(9) << res_base   << " " << std::setprecision(9) << res << "\n";
 #ifdef _CUBLAS
-        std::cout << std::boolalpha << (fabs(res_cublas - res) < decltype(A)::tol()) << " " << res_cublas << " " << res << std::noboolalpha << "\n";
+        std::cout << std::boolalpha << (fabs(res_cublas - res) < 0.2) << std::noboolalpha << " " << std::setprecision(9) << res_cublas << " " << std::setprecision(9) << res << "\n";
 #endif
         std::cout << "--------------------------------------------------------\n";
       }

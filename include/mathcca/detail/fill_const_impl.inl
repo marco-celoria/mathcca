@@ -23,7 +23,7 @@ namespace detail {
     void fill_const(Omp, T* first, T* last, const T v) {
       std::cout << "DEBUG NO _PARALG\n";
       const std::size_t size= static_cast<std::size_t>(last - first);
-      #pragma omp prallel for default(shared)
+      #pragma omp parallel for default(shared)
       for (std::size_t i= 0; i < size; ++i) {
         first[i]= v;
       }
