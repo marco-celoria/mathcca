@@ -2,8 +2,9 @@
 #define DEVICE_ALLOCATOR_H_
 #pragma once
 
-#include <cstddef>
-#include <concepts>
+#include <cstddef>  // std::size_t
+#include <concepts> // std::floating_point 
+
 #include <cuda_runtime.h>
 #include <mathcca/device_helper.h>
 
@@ -16,7 +17,7 @@ namespace mathcca {
       
       using value_type= T;
       using reference= T&;
-      using const_reference = const T&;
+      using const_reference= const T&;
       
       device_allocator()= default;
       
@@ -47,3 +48,5 @@ namespace mathcca {
 }
 
 #endif
+
+

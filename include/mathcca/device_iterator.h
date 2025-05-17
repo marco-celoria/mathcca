@@ -1,6 +1,8 @@
 #ifndef DEVICE_ITERATOR_H_
 #define DEVICE_ITERATOR_H_
 #pragma once
+
+#include <concepts>  // std::floating_point
 #include <cstddef>  // for std::ptrdiff_t
 #include <iterator> // for std::random_access_iterator_tag
 #include <mathcca/detail/base_iterator.h> 

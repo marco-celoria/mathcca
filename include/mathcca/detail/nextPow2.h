@@ -1,9 +1,11 @@
 #ifndef NEXTPOW2_H
 #define NEXTPOW2_H
-
+    
 namespace mathcca {
-	namespace detail { 
-  constexpr unsigned int nextPow2(unsigned int x) noexcept {
+    
+  namespace detail { 
+    
+    constexpr unsigned int nextPow2(unsigned int x) noexcept {
       x--;
       x |= x >> 1;
       x |= x >> 2;
@@ -12,6 +14,11 @@ namespace mathcca {
       x |= x >> 16;
       return ++x;
     }
-	}
-}
+    
+  } 
+    
+}    
+
 #endif
+
+

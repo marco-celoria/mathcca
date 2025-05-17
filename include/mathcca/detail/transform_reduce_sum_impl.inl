@@ -1,32 +1,50 @@
-#include <cstddef>
+
+#include <cstddef>  // std::size_t
+#include <concepts> // std::floating_point
+#include <iostream> // std::cout
+
+// StdPar Omp Thrust Cuda
+#include <mathcca/common_algorithm.h>
+
+#ifdef _STDPAR
+ #include <execution>
+ #include <ranges>
+#endif
 
 #ifdef __CUDACC__
-#include <cooperative_groups.h>
-#include <cooperative_groups/reduce.h>
-#include <mathcca/device_helper.h>
-#include <mathcca/detail/shared_memory_proxy.h>
-#include <mathcca/detail/nextPow2.h>
+ #include <cuda_runtime.h>
+ #include <cooperative_groups.h>
+ #include <cooperative_groups/reduce.h>
+ #include <mathcca/device_helper.h>
+ #include <mathcca/detail/shared_memory_proxy.h>
+ #include <mathcca/detail/nextPow2.h>
+ #ifdef _THRUST
+  #include <thrust/reduce.h>
+  #include <thrust/execution_policy.h>
+ #endif
 #endif
 
-#ifdef _PARALG
-#include <execution>
-#include <ranges>
+#ifdef _OPENMP
+ #include <omp.h>
 #endif
-
-namespace cg = cooperative_groups;
 
 namespace mathcca {
-namespace detail {
-#ifdef _PARALG
+    
+  namespace detail {
+    
+#ifdef _STDPAR
+    
     template<std::floating_point T, typename UnaryFunction>
     T transform_reduce_sum(StdPar, const T* first, const T* last, UnaryFunction unary_op, const T init) {
-      std::cout << "DEBUG _PARALG\n";
-      return std::transform_reduce(std::execution::par, first, last, init, std::plus<T>(), unary_op());
+      std::cout << "DEBUG STDPAR\n";
+      return std::transform_reduce(std::execution::par, first, last, init, std::plus<T>(), unary_op);
     }
+    
 #endif
+    
     template<std::floating_point T, typename UnaryFunction>
     T transform_reduce_sum(Omp, const T* first, const T* last, UnaryFunction unary_op, const T init) {
-      std::cout << "DEBUG NO _PARALG\n";
+      std::cout << "DEBUG OMP\n";
       using value_type= T;
       const auto size {static_cast<std::size_t>(last - first)};
       auto res{static_cast<T>(init)};
@@ -36,27 +54,27 @@ namespace detail {
       }
       return res;
     }
-}
-}
-
+    
 #ifdef __CUDACC__
-
-namespace mathcca {
- namespace detail {   
+    
+#ifdef _THRUST
+    
     template<std::floating_point T, typename UnaryFunction>
     T transform_reduce_sum (Thrust, const T* first, const T* last, UnaryFunction unary_op, const T init) {
-      std::cout << "DEBUG _PARALG\n";
+      std::cout << "DEBUG THRUST\n";
       return thrust::transform_reduce(thrust::device, first, last, unary_op, init, thrust::plus<T>());
     }
-
+    
+#endif
+    
     template <Arithmetic T, class UnaryOp>
     __global__ void cg_transform_reduce_kernel(const T* __restrict idata, T* __restrict odata, const std::size_t size, const T init,  UnaryOp transform ) {
       // Shared memory for intermediate steps
       auto sdata = detail::shared_memory_proxy<T>();
       // Handle to thread block group
-      cg::thread_block cta = cg::this_thread_block();
+      cooperative_groups::thread_block cta = cooperative_groups::this_thread_block();
       // Handle to tile in thread block
-      cg::thread_block_tile<32> tile = cg::tiled_partition<32>(cta);
+      cooperative_groups::thread_block_tile<32> tile = cooperative_groups::tiled_partition<32>(cta);
       const auto ctaSize = static_cast<std::size_t>(cta.size());
       const auto numCtas = static_cast<std::size_t>(gridDim.x);
       const auto threadRank = static_cast<std::size_t>(cta.thread_rank());
@@ -89,7 +107,7 @@ namespace mathcca {
       {
         cta.sync();
         if (tile.meta_group_rank() == 0) {
-          threadVal = cg::reduce(tile, threadVal, cg::plus<T>()); //cg_reduce_n(threadVal, tile);
+          threadVal = cooperative_groups::reduce(tile, threadVal, cooperative_groups::plus<T>()); //cg_reduce_n(threadVal, tile);
         }
       }
       if (threadRank == 0)
@@ -99,7 +117,7 @@ namespace mathcca {
     
     template<std::floating_point T, typename UnaryFunction, unsigned int THREAD_BLOCK_DIM>
     T transform_reduce_sum(Cuda, const T* first, const T* last, UnaryFunction unary_op, const T init, cudaStream_t stream) {
-      std::cout << "DEBUG NO _PARALG\n";
+      std::cout << "DEBUG CUDA\n";
       static_assert(THREAD_BLOCK_DIM <= 1024);
       auto size{static_cast<std::size_t>(last - first)};
       constexpr unsigned int maxThreads{THREAD_BLOCK_DIM};
@@ -131,7 +149,10 @@ namespace mathcca {
       return gpu_result;
     }
     
-}
-}
-
 #endif
+    
+  } 
+    
+}   
+
+

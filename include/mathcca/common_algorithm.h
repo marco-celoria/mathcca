@@ -4,23 +4,38 @@
 #include <type_traits>
 
 namespace mathcca {
-  
-    template<typename T>
-    concept Arithmetic = std::is_arithmetic_v<T>;
     
-    class Omp{};
-#ifdef _PARALG
-    class StdPar{};
+  template<typename T>
+  concept Arithmetic = std::is_arithmetic_v<T>;
+    
+  class Omp{};
+    
+#ifdef _STDPAR
+   
+  class StdPar{};
+    
 #endif
+     
 #ifdef __CUDACC__
-    class Cuda{};
-    class Thrust{};
-    class CudaDtoHcpy{};
-    class CudaHtoHcpy{};
-    class CudaHtoDcpy{};
-    class CudaDtoDcpy{};
+    
+#ifdef _THRUST 
+    
+  class Thrust{};
+    
+#endif   
+    
+  class Cuda{};
+       
+  class CudaDtoHcpy{};
+     
+  class CudaHtoHcpy{};
+    
+  class CudaHtoDcpy{};
+     
+  class CudaDtoDcpy{};
+     
 #endif
-
+     
 }
 
 #endif

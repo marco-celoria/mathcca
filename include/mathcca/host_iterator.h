@@ -1,23 +1,25 @@
 #ifndef HOST_ITERATOR_H_
 #define HOST_ITERATOR_H_
 #pragma once
+
+#include <concepts>  // std::floating_point
 #include <cstddef>  // for std::ptrdiff_t
 #include <iterator> // for std::random_access_iterator_tag
-#include <mathcca/detail/base_iterator.h> 
+#include <mathcca/detail/base_iterator.h>
 
 namespace mathcca {
     
   class host_iterator_tag{};
-  
+     
   template<std::floating_point T, bool IsConst>
   class host_iterator : public detail::base_iterator<T, IsConst> {
     
     private:
-        
+         
       typedef detail::base_iterator<T, IsConst> Parent;
-      
+        
     public:
-    
+         
       typedef typename Parent::value_type value_type;
       typedef typename Parent::difference_type difference_type;
       typedef typename Parent::pointer pointer;
@@ -40,8 +42,8 @@ namespace mathcca {
       template<bool IsConst_ = IsConst, class = std::enable_if_t<IsConst_> >
       host_iterator& operator=(const host_iterator<T, false>& rhs) { Parent::operator=(rhs); return *this; } 
       
-  };
-  
+  };  
+      
   template<std::floating_point T, bool IsConst>
   bool operator==(const host_iterator<T, IsConst>& x, const host_iterator<T, IsConst>& y) { return x.get() == y.get(); }
       
@@ -66,24 +68,27 @@ namespace mathcca {
     tmp+= n;
     return tmp;
   }
-
+     
   template<std::floating_point T, bool IsConst>
   typename host_iterator<T, IsConst>::difference_type operator+(const typename host_iterator<T, IsConst>::difference_type n, const host_iterator<T, IsConst>& it) {
     return it + n;
   }
-  
+       
   template<std::floating_point T, bool IsConst>
   host_iterator<T, IsConst> operator-(const host_iterator<T, IsConst>& it, const typename host_iterator<T, IsConst>::difference_type n) {
     host_iterator tmp{it};
     tmp-= n;
     return tmp;
   }
-
+    
   template<std::floating_point T, bool IsConst>
   typename host_iterator<T,IsConst>::difference_type operator-(const host_iterator<T, IsConst>& lhs, const host_iterator<T, IsConst>& rhs) {
     return lhs.get() - rhs.get();
   }
-
+     
 }
 
 #endif
+
+
+

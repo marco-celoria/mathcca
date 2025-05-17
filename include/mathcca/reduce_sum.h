@@ -2,66 +2,70 @@
 #define REDUCE_SUM_H_
 #pragma once
 
-#include <concepts>
+#include <concepts>    // std::floating_point
+#include <type_traits> // std::is_same
+
+// StdPar() Omp() Thrust() Cuda()
 #include <mathcca/common_algorithm.h>
-#include <mathcca/host_matrix.h>
+
+#include <mathcca/host_iterator.h> // mathcca::host_iterator_tag()
+
 #ifdef __CUDACC__
-#include <mathcca/device_matrix.h>
-#include <cuda_runtime.h>
+ #include <mathcca/device_matrix.h> // mathcca::device_iterator_tag()
+ #include <cuda_runtime.h> // cudaStream_t
 #endif
 
 #include <mathcca/detail/reduce_sum_impl.h>
 
 namespace mathcca {
-
-     class host_iterator_tag;
-     class Omp;
-
+     
+  class host_iterator_tag;
+  class Omp;
+      
 #ifdef __CUDACC__
-     class device_iterator_tag;
-     class Cuda;
+      
+  class device_iterator_tag;
+  class Cuda;
+      
 #endif
-
- 
+        
 #ifdef __CUDACC__
-     template<typename Iter , std::floating_point T, unsigned int THREAD_BLOCK_DIM= 128>
-    T reduce_sum(Iter first, Iter last, const T init, cudaStream_t stream= 0) {
-      if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()>) {
-#ifdef _PARALG
-        return detail::reduce_sum(StdPar(), first.get(), last.get(), init);
-#else
-        return detail::reduce_sum(Omp(), first.get(), last.get(), init);
-#endif
-      }
-      if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::device_iterator_tag()>){
-#ifdef _PARALG
-        return detail::reduce_sum(Thrust(), first.get(), last.get(), init);
-#else
-        return detail::reduce_sum<T, THREAD_BLOCK_DIM>(Cuda(), first.get(), last.get(), init, stream);
-#endif
-      }
+       
+  template<typename Iter , std::floating_point T, unsigned int THREAD_BLOCK_DIM= 128>
+  T reduce_sum(Iter first, Iter last, const T init, cudaStream_t stream= 0) {
+    if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()>) {
+#ifdef _STDPAR
+      return detail::reduce_sum(StdPar(), first.get(), last.get(), init);
+#else       
+      return detail::reduce_sum(Omp(), first.get(), last.get(), init);
+#endif    
+    }    
+    if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::device_iterator_tag()>) {
+#ifdef _THRUST
+      return detail::reduce_sum(Thrust(), first.get(), last.get(), init);
+#else     
+      return detail::reduce_sum<T, THREAD_BLOCK_DIM>(Cuda(), first.get(), last.get(), init, stream);
+#endif    
     }
+  }
+      
 #else
-    template<typename Iter, std::floating_point T>
-    T reduce_sum(Iter first, Iter last, const T init) {
-      if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()>){
-#ifdef _PARALG
-        return detail::reduce_sum(StdPar(), first.get(), last.get(), init);
+         
+  template<typename Iter, std::floating_point T>
+  T reduce_sum(Iter first, Iter last, const T init) {
+    if constexpr (std::is_same_v<typename Iter::iterator_system(), mathcca::host_iterator_tag()>) {
+#ifdef _STDPAR
+      return detail::reduce_sum(StdPar(), first.get(), last.get(), init);
 #else
-        return detail::reduce_sum(Omp(), first.get(), last.get(), init);
+      return detail::reduce_sum(Omp(), first.get(), last.get(), init);
 #endif
-      }
     }
+  }
+
 #endif
 
 }
 
-
-//#ifdef __CUDACC__
-//#include <mathcca/detail/device_reduce_sum.inl>
-//#endif
-
-//#include <mathcca/reduce_sum.inl>
-
 #endif
+
 
