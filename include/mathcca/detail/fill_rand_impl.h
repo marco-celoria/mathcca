@@ -4,7 +4,7 @@
 
 #include <concepts> //std::floating_point
 
-// StdPar Omp Thrust CudaD
+// StdPar Omp Thrust Cuda
 #include <mathcca/execution_policy.h>
 
 #ifdef __CUDACC__
@@ -31,7 +31,7 @@ namespace mathcca {
 #endif
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
-    void fill_rand(CudaD, T* first, T* last, cudaStream_t stream);     
+    void fill_rand(Cuda, T* first, T* last, cudaStream_t stream);     
     
 #endif
     

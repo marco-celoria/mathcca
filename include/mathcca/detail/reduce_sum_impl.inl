@@ -3,7 +3,7 @@
 #include <concepts> // std::floating_point
 #include <iostream> // std::cout
 
-// StdPar Omp Thrust CudaD
+// StdPar Omp Thrust Cuda
 #include <mathcca/execution_policy.h>
 
 #include <mathcca/arithmetic_type.h> // Arithmetic
@@ -117,7 +117,7 @@ namespace mathcca {
     }
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
-    T reduce_sum(CudaD, const T* first, const T* last, const T init, cudaStream_t stream) {
+    T reduce_sum(Cuda, const T* first, const T* last, const T init, cudaStream_t stream) {
       std::cout << "DEBUG CUDA\n";
       static_assert(THREAD_BLOCK_DIM <= 1024);
       std::size_t size{static_cast<std::size_t>(last - first)};

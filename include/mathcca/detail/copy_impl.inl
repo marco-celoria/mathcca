@@ -3,7 +3,7 @@
 #include <concepts> // std::floating_point
 #include <iostream> // std::cout
 
-// StdPar Omp Thrust CudaDtoDcpy CudaHtoHcpy CudaHtoDcpy CudaDtoHcpy
+// StdPar Omp Thrust Cuda CudaHtoDcpy CudaDtoHcpy
 #include <mathcca/execution_policy.h>
 
 #ifdef _STDPAR
@@ -61,15 +61,7 @@ namespace mathcca {
 #endif
     
     template<std::floating_point T>
-    void copy(CudaD, const T* s_first, const T* s_last, T* d_first, cudaStream_t stream) {
-      std::cout << "DEBUG CUDADEV_CPY\n";
-      const auto size{static_cast<std::size_t>(s_last - s_first)};
-      const std::size_t nbytes{size * sizeof(T)};
-      checkCudaErrors(cudaMemcpy(d_first, s_first, nbytes, cudaMemcpyDeviceToDevice));
-    }
-    
-    template<std::floating_point T>
-    void copy(CudaDtoDcpy, const T* s_first, const T* s_last, T* d_first, cudaStream_t stream) {
+    void copy(Cuda, const T* s_first, const T* s_last, T* d_first, cudaStream_t stream) {
       std::cout << "DEBUG CUDADTODCPY\n";
       const auto size{static_cast<std::size_t>(s_last - s_first)};
       const std::size_t nbytes{size * sizeof(T)};
@@ -77,19 +69,16 @@ namespace mathcca {
     }
     
     template<std::floating_point T>
-    void copy(CudaHtoHcpy, const T* s_first, const T* s_last, T* d_first, cudaStream_t stream) {
-      std::cout << "DEBUG CUDAHTOHCPY\n";
-      const auto size{static_cast<std::size_t>(s_last - s_first)};
-      const auto bytes{size * sizeof(T)};
-      checkCudaErrors(cudaMemcpyAsync(d_first, s_first, bytes, cudaMemcpyHostToHost, stream));
-    }
-    
-    template<std::floating_point T>
     void copy(CudaDtoHcpy, const T* s_first, const T* s_last, T* d_first, cudaStream_t stream) {
       std::cout << "DEBUG CUDADTOHCPY\n";
       const auto size{static_cast<std::size_t>(s_last - s_first)};
       const auto bytes{size * sizeof(T)};
+#ifdef _PINNED 
+      std::cout << "DEBUG PINNED\n";
       checkCudaErrors(cudaMemcpyAsync(d_first, s_first, bytes, cudaMemcpyDeviceToHost, stream));
+#else
+      checkCudaErrors(cudaMemcpy(d_first, s_first, bytes, cudaMemcpyDeviceToHost));
+#endif
     }
     
     template<std::floating_point T>
@@ -97,7 +86,12 @@ namespace mathcca {
       std::cout << "DEBUG CUDAHTODCPY\n";
       const auto size{static_cast<std::size_t>(s_last - s_first)};
       const auto bytes{size * sizeof(T)};
+#ifdef _PINNED 
+      std::cout << "DEBUG PINNED\n";
       checkCudaErrors(cudaMemcpyAsync(d_first, s_first, bytes, cudaMemcpyHostToDevice, stream));
+#else   
+      checkCudaErrors(cudaMemcpy(d_first, s_first, bytes, cudaMemcpyHostToDevice));
+#endif
     }
 
 #endif

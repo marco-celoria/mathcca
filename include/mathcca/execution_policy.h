@@ -19,17 +19,11 @@ namespace mathcca {
     
 #endif   
     
-  class CudaD{};
-  
-  class CudaPH{};
+  class Cuda{};
        
   class CudaDtoHcpy{};
      
-  class CudaHtoHcpy{};
-    
   class CudaHtoDcpy{};
-     
-  class CudaDtoDcpy{};
      
 #endif
      

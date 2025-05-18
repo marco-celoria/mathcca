@@ -23,7 +23,7 @@
 
 #include <cuda_runtime.h>
 
-#include <mathcca/execution_policy.h> // CudaD
+#include <mathcca/execution_policy.h> // Cuda
       
 #include <mathcca/detail/base_matrix.h>
 

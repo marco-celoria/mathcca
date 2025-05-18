@@ -4,7 +4,7 @@
 
 #include <type_traits> // std::is_same
 
-// StdPar() Omp() Thrust() CudaD()
+// StdPar() Omp() Thrust() Cuda()
 #include <mathcca/execution_policy.h>
 
 #include <mathcca/host_iterator.h> // mathcca::host_iterator_tag()
@@ -27,7 +27,7 @@ namespace mathcca {
       
   class device_iterator_tag;
      
-  class CudaD;
+  class Cuda;
   class Thrust;
      
 #endif
@@ -48,7 +48,7 @@ namespace mathcca {
       detail::fill_rand(Thrust(), first.get(), last.get());
 #else     
       using T= typename Iter::value_type;
-      detail::fill_rand<T, THREAD_BLOCK_DIM>(CudaD(), first.get(), last.get(), stream);
+      detail::fill_rand<T, THREAD_BLOCK_DIM>(Cuda(), first.get(), last.get(), stream);
 #endif  
     }  
   }     

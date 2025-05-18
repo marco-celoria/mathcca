@@ -12,29 +12,24 @@
 #include <mathcca/detail/base_matrix.h>
 
 #include <mathcca/execution_policy.h> // Omp
-
+#ifdef _PINNED
+#include <mathcca/pinnedhost_allocator.h>
+#else
 #include <mathcca/host_allocator.h>
+#endif
 #include <mathcca/host_iterator.h>
 
 #ifdef _OPENMP
  #include <omp.h>
 #endif
 
-/*
-#include <mathcca/copy.h>
-#ifdef __CUDACC__
- #include <mathcca/device_matrix.h>
-#endif
-*/
-
 namespace mathcca {
     
-//#ifdef __CUDACC__
-//  template<std::floating_point T, typename Allocator>	
-//  class device_matrix;
-//#endif
-    
+#ifdef _PINNED
+  template<std::floating_point T, typename Allocator = pinnedhost_allocator<T>>
+#else	
   template<std::floating_point T, typename Allocator = host_allocator<T>>
+#endif
   class host_matrix : public detail::base_matrix<T, Allocator > {
     
     using self= host_matrix; 
@@ -89,15 +84,6 @@ namespace mathcca {
         
       const_iterator cbegin() const noexcept { return const_iterator{ const_cast<pointer>(Parent::data())}; }
       const_iterator cend()   const noexcept { return const_iterator{ const_cast<pointer>(Parent::data() +  Parent::size()) }; }
-              
-        
-//#ifdef __CUDACC__
-//        auto toDevice () const {
-//          device_matrix<T, device_allocator<T>, CudaD> devMat(Parent::num_rows(), Parent::num_cols());
-//          copy(begin(), end(), devMat.begin());
-//          return devMat;
-//        }
-//#endif      
         
       constexpr self& operator+=(const self& rhs) {
         std::cout <<"operator+= lvalue\n";

@@ -4,7 +4,7 @@
 #include <iostream> //std::cout
 #include <random>
 
-// StdPar Omp Thrust CudaD
+// StdPar Omp Thrust Cuda
 #include <mathcca/execution_policy.h>
 
 #ifdef __CUDACC__
@@ -118,7 +118,7 @@ namespace mathcca {
     }
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
-    void fill_rand(CudaD, T* first, T* last, cudaStream_t stream) {
+    void fill_rand(Cuda, T* first, T* last, cudaStream_t stream) {
       std::cout << "DEBUG CUDA\n";    
       static_assert(THREAD_BLOCK_DIM <= 1024);
       using value_type= T;

@@ -66,9 +66,9 @@ namespace mathcca {
         constexpr base_matrix(const self& m) : base_matrix{m.num_rows_, m.num_cols_} {
           std::cout << "copy ctor\n";
 /*#ifdef __CUDACC__
-	  if constexpr (std::is_same_v<Execution, CudaD>) { 
+	  if constexpr (std::is_same_v<Execution, Cuda>) { 
             
-            copy(CudaDtoDcpy(), m.data(), m.data() + m.size(), data());
+            copy(Cuda(), m.data(), m.data() + m.size(), data());
           }
 #endif
 	  if constexpr (std::is_same_v<Execution, Omp>) {
@@ -102,8 +102,8 @@ namespace mathcca {
               num_rows_= rhs.num_rows_;
               num_cols_= rhs.num_cols_;
 /*#ifdef __CUDACC__
-	      if constexpr (std::is_same_v<Execution, CudaD>) { 
-                copy(CudaDtoDcpy(), rhs.data(), rhs.data() + rhs.size(), data());
+	      if constexpr (std::is_same_v<Execution, Cuda>) { 
+                copy(Cuda(), rhs.data(), rhs.data() + rhs.size(), data());
               }
 #endif
 	      if constexpr (std::is_same_v<Execution, Omp>) {
