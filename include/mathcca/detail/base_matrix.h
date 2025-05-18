@@ -16,7 +16,7 @@ namespace mathcca {
         
   namespace detail { 
        
-    template<std::floating_point T, typename Allocator, typename Execution>
+    template<std::floating_point T, typename Allocator>
     class base_matrix {
          
       using self= base_matrix; 
@@ -32,7 +32,8 @@ namespace mathcca {
         using traits_alloc= std::allocator_traits<Allocator>;
         using iterator= base_iterator<T, false>;
         using const_iterator= base_iterator<T, true>;
-        
+        using Execution= typename Allocator::execution;
+
         base_matrix(Allocator a) : allocator{std::move(a)} {}
         
         constexpr base_matrix(size_type r, size_type c) : num_rows_{r}, num_cols_{c} {
@@ -76,7 +77,7 @@ namespace mathcca {
 	  copy(Execution(), m.data(), m.data() + m.size(), data());
 	}
         
-        constexpr base_matrix<T, Allocator, Execution>& operator=(base_matrix&& rhs) {
+        constexpr base_matrix<T, Allocator>& operator=(base_matrix&& rhs) {
           std::cout << "move assignment\n";
           num_rows_= std::move(rhs.num_rows_);
           num_cols_= std::move(rhs.num_cols_);
@@ -90,7 +91,7 @@ namespace mathcca {
           return *this;
         }
         
-        constexpr base_matrix<T, Allocator, Execution>& operator=(const base_matrix& rhs) {
+        constexpr base_matrix<T, Allocator>& operator=(const base_matrix& rhs) {
           if (this != &rhs) {
             std::cout << "copy assignment (\n";
             if (this->size() != rhs.size()) {

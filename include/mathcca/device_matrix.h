@@ -38,10 +38,10 @@
 
 namespace mathcca {
     
-//  template<std::floating_point T, typename Allocator, typename Execution>
+//  template<std::floating_point T, typename Allocator>
 //  class host_matrix;
     
-  template<std::floating_point T, typename Allocator, typename Execution>
+  template<std::floating_point T, typename Allocator>
   class device_matrix;
   
   template<std::floating_point T>
@@ -54,13 +54,13 @@ namespace mathcca {
   __global__ void mulScalarTo_kernel(T* __restrict accululator, const T to_be_op, const std::size_t size);
   
   template<std::floating_point T, typename A, typename E, unsigned int THREAD_BLOCK_DIM>
-  __global__ void mulTo_kernel(device_matrix<T,A,E>& accululator, const device_matrix<T,A,E>& to_be_op);
+  __global__ void mulTo_kernel(device_matrix<T,A>& accululator, const device_matrix<T,A>& to_be_op);
    
-  template<std::floating_point T, typename Allocator = device_allocator<T>, typename Execution= CudaD>
-  class device_matrix : public detail::base_matrix<T, Allocator, Execution > {
+  template<std::floating_point T, typename Allocator = device_allocator<T>>
+  class device_matrix : public detail::base_matrix<T, Allocator> {
     
     using self= device_matrix;
-    typedef detail::base_matrix<T,Allocator, Execution> Parent;
+    typedef detail::base_matrix<T,Allocator> Parent;
           
     public:
         
@@ -178,7 +178,7 @@ namespace mathcca {
         const auto blocks{static_cast<unsigned int>((size + 2 * static_cast<size_type>(threads) - 1) / (2 * static_cast<size_type>(threads)))};
         constexpr dim3 dimBlock(threads, 1, 1);
         dim3 dimGrid(blocks, 1, 1);
-        mulTo_kernel<value_type, Allocator, Execution, threads><<<dimGrid, dimBlock>>>(*dp_this, *dp_rhs);
+        mulTo_kernel<value_type, Allocator, threads><<<dimGrid, dimBlock>>>(*dp_this, *dp_rhs);
         checkCudaErrors(cudaFree(dp_this));
         checkCudaErrors(cudaFree(dp_rhs));
         return *this;

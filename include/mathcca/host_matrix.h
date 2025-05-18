@@ -30,15 +30,15 @@
 namespace mathcca {
     
 //#ifdef __CUDACC__
-//  template<std::floating_point T, typename Allocator, typename Execution>	
+//  template<std::floating_point T, typename Allocator>	
 //  class device_matrix;
 //#endif
     
-  template<std::floating_point T, typename Allocator = host_allocator<T>, typename Execution= Omp>
-  class host_matrix : public detail::base_matrix<T, Allocator, Execution > {
+  template<std::floating_point T, typename Allocator = host_allocator<T>>
+  class host_matrix : public detail::base_matrix<T, Allocator > {
     
     using self= host_matrix; 
-    typedef detail::base_matrix<T,Allocator, Execution> Parent;
+    typedef detail::base_matrix<T,Allocator> Parent;
       
     public:
         

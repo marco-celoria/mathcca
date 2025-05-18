@@ -7,6 +7,7 @@
 
 #include <cuda_runtime.h>
 #include <mathcca/device_helper.h>
+#include <mathcca/execution_policy.h>
 
 namespace mathcca {
         
@@ -18,7 +19,8 @@ namespace mathcca {
       using value_type= T;
       using reference= T&;
       using const_reference= const T&;
-      
+      using execution= CudaD;
+
       device_allocator()= default;
       
       device_allocator(const device_allocator& )= default;

@@ -157,8 +157,8 @@ namespace mathcca {
   }
      
   // Increasing ILP kernel using the class inside the kernel
-  template<std::floating_point T, typename A, typename E, unsigned int THREAD_BLOCK_DIM>
-  __global__ void mulTo_kernel(device_matrix<T,A,E>& accululator, const device_matrix<T,A,E>& to_be_op) { 
+  template<std::floating_point T, typename A, unsigned int THREAD_BLOCK_DIM>
+  __global__ void mulTo_kernel(device_matrix<T,A>& accululator, const device_matrix<T,A>& to_be_op) { 
     const auto off{static_cast<std::size_t>(2 * THREAD_BLOCK_DIM * blockIdx.x + threadIdx.x)};
     #pragma unroll 2
     for (auto i= 0; i < 2; i++) {

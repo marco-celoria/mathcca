@@ -5,6 +5,8 @@
 #include <cstddef>  // std::size_t
 #include <concepts> // std::floating_point
 
+#include <mathcca/execution_policy.h>
+
 namespace mathcca {
         
   template<std::floating_point T>
@@ -15,7 +17,8 @@ namespace mathcca {
       using value_type= T;
       using reference= T&;
       using const_reference= const T&;
-         
+      using execution= Omp;
+
       host_allocator()= default;
          
       host_allocator(const host_allocator& )= default;
