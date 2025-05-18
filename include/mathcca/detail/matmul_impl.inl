@@ -35,7 +35,7 @@ namespace mathcca {
     }
     
     template<std::floating_point T>
-    constexpr void mm_parallel_Base(const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) {
+    constexpr void matmul(MM::Base, const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) {
       std::cout << "Base matmul\n";
       if (!check_matmul_compatible_size(A, B))
         throw std::length_error{"Incompatible length matrix-matrix product"};
@@ -58,7 +58,7 @@ namespace mathcca {
     }
        
     template<std::floating_point T, unsigned int LINEAR_TILE_DIM>
-    constexpr void mm_parallel_Tiled(const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) {
+    constexpr void matmul(MM::Tiled, const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) {
       std::cout << "Tiled matmul\n";
       if (!check_matmul_compatible_size(A, B))
         throw std::length_error{"Incompatible length matrix-matrix product"};
@@ -91,7 +91,7 @@ namespace mathcca {
 #ifdef _MKL
        
     template<std::floating_point T>
-    constexpr void mm_parallel_Mkl(const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) {
+    constexpr void matmul(MM::Mkl, const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) {
       std::cout << "Mkl matmul\n";
       if (!check_matmul_compatible_size(A, B))
         throw std::length_error{"Incompatible length matrix-matrix product"};
@@ -137,7 +137,7 @@ namespace mathcca {
     } 
       
     template <std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM>
-    void mm_device_Base(const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C, cudaStream_t stream) {
+    void matmul(MM::Base, const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C, cudaStream_t stream) {
       std::cout << "Base matmul\n";
       static_assert(LINEAR_THREAD_BLOCK_DIM * LINEAR_THREAD_BLOCK_DIM <= 1024);
       if (!check_matmul_compatible_size(A, B))
@@ -197,7 +197,7 @@ namespace mathcca {
     }
       
     template <std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM>
-    void mm_device_Tiled(const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C, cudaStream_t stream)  {
+    void matmul(MM::Tiled, const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C, cudaStream_t stream)  {
       std::cout << "Tiled matmul\n";
       static_assert(LINEAR_THREAD_BLOCK_DIM * LINEAR_THREAD_BLOCK_DIM <= 1024);
       if (!check_matmul_compatible_size(A, B))
@@ -216,7 +216,7 @@ namespace mathcca {
 #ifdef _CUBLAS
     
     template <std::floating_point T>
-    void  mm_device_Cublas(const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C)  {
+    void matmul(MM::Cublas, const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C)  {
       std::cout << "Cublas matmul\n";
       if (!check_matmul_compatible_size(A, B))
         throw std::length_error{"Incompatible length matrix-matrix product"};

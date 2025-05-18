@@ -35,7 +35,7 @@ namespace mathcca {
     };
      
     template<std::floating_point T>
-    constexpr decltype(auto) frobenius_norm_Base(const host_matrix<T>& x) {
+    constexpr decltype(auto) frobenius_norm(Norm::Base, const host_matrix<T>& x) {
       std::cout << "Base frobenius norm\n";
       return std::sqrt(transform_reduce_sum(x.cbegin(), x.cend(), Square<T>(), static_cast<T>(0)));
     }
@@ -43,7 +43,7 @@ namespace mathcca {
 #ifdef _MKL
     
     template<std::floating_point T>
-    constexpr decltype(auto) frobenius_norm_Mkl(const host_matrix<T>& x) {
+    constexpr decltype(auto) frobenius_norm(Norm::Mkl, const host_matrix<T>& x) {
       std::cout << "Mkl frobenius norm\n";
       T result;
       const auto size{x.size()};
@@ -67,7 +67,7 @@ namespace mathcca {
 #ifdef _CUBLAS
     
     template<std::floating_point T>
-    constexpr decltype(auto) frobenius_norm_Cublas(const device_matrix<T>& x) {
+    constexpr decltype(auto) frobenius_norm(Norm::Cublas, const device_matrix<T>& x) {
       std::cout << "Cublas frobenius norm\n";
       T result;
       const auto size{x.size()};
@@ -87,7 +87,7 @@ namespace mathcca {
 #endif
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
-    constexpr decltype(auto) frobenius_norm_Base(const device_matrix<T>& x, cudaStream_t stream) {
+    constexpr decltype(auto) frobenius_norm(Norm::Base, const device_matrix<T>& x, cudaStream_t stream) {
       std::cout << "Base frobenius norm\n";
       static_assert(THREAD_BLOCK_DIM <= 1024);
       using Iter= device_matrix<T>::const_iterator;

@@ -12,30 +12,41 @@
 #endif
 
 namespace mathcca {
-    
+
+  namespace Norm {
+    class Base{};
+#ifdef _MKL
+    class Mkl{};
+#endif
+#ifdef _CUBLAS
+    class Cublas{};
+#endif
+  }
+
+
   namespace detail {
     
 #ifdef _MKL
     
     template<std::floating_point T>
-    constexpr decltype(auto) frobenius_norm_Mkl(const host_matrix<T>& x) ;
+    constexpr decltype(auto) frobenius_norm(Norm::Mkl, const host_matrix<T>& x) ;
     
 #endif
     
     template<std::floating_point T>
-    constexpr decltype(auto) frobenius_norm_Base (const host_matrix<T>& A);
+    constexpr decltype(auto) frobenius_norm(Norm::Base, const host_matrix<T>& A);
     
 #ifdef __CUDACC__
     
 #ifdef _CUBLAS
     
     template<std::floating_point T>
-    constexpr decltype(auto) frobenius_norm_Cublas(const device_matrix<T>& x);
+    constexpr decltype(auto) frobenius_norm(Norm::Cublas, const device_matrix<T>& x);
     
 #endif
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
-    constexpr decltype(auto) frobenius_norm_Base(const device_matrix<T>& x, cudaStream_t stream);
+    constexpr decltype(auto) frobenius_norm(Norm::Base, const device_matrix<T>& x, cudaStream_t stream);
     
 #endif
     

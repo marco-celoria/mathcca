@@ -14,17 +14,6 @@
 #include <mathcca/detail/transpose_impl.h>
 
 namespace mathcca {
-
-    namespace Trans {
-    class Base{};
-    class Tiled{};
-#ifdef _MKL
-    class Mkl{};
-#endif
-#ifdef _CUBLAS
-    class Cublas{};
-#endif
-  }
      
   template<std::floating_point T, typename Implementation, unsigned int LINEAR_TILE_DIM= 32 >
   void transpose(const host_matrix<T>& A, host_matrix<T>& B, Implementation) {
@@ -34,14 +23,14 @@ namespace mathcca {
 #endif
                  );
     if constexpr(std::is_same_v< Implementation, Trans::Base>) {
-      detail::transpose_parallel_Base<T>(A, B);
+      detail::transpose<T>(Trans::Base(), A, B);
     }
     else if constexpr(std::is_same_v< Implementation, Trans::Tiled>) {
-      detail::transpose_parallel_Tiled<T, LINEAR_TILE_DIM>(A, B);
+      detail::transpose<T, LINEAR_TILE_DIM>(Trans::Tiled(), A, B);
     }
 #ifdef _MKL
     else if constexpr(std::is_same_v< Implementation, Trans::Mkl>) {
-      detail::transpose_parallel_Mkl<T>(A, B);
+      detail::transpose<T>(Trans::Mkl(), A, B);
     }
 #endif
   }
@@ -64,14 +53,14 @@ namespace mathcca {
 #endif
                  );
     if constexpr (std::is_same_v< Implementation, Trans::Base>) {
-      detail::transpose_device_Base<T, LINEAR_THREAD_BLOCK_DIM>(A, B, stream);
+      detail::transpose<T, LINEAR_THREAD_BLOCK_DIM>(Trans::Base(), A, B, stream);
     }
     else if constexpr(std::is_same_v< Implementation, Trans::Tiled>) {
-      detail::transpose_device_Tiled<T, LINEAR_THREAD_BLOCK_DIM>(A, B, stream);
+      detail::transpose<T, LINEAR_THREAD_BLOCK_DIM>(Trans::Tiled(), A, B, stream);
     }
 #ifdef _CUBLAS
     else if constexpr(std::is_same_v< Implementation, Trans::Cublas>) {
-      detail::transpose_device_Cublas<T>(A, B);
+      detail::transpose<T>(Trans::Cublas(), A, B);
     }
 #endif
   }

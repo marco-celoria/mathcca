@@ -14,17 +14,6 @@
 #include <mathcca/detail/matmul_impl.h>
 
 namespace mathcca {
-  
-  namespace MM {
-    class Base{};
-    class Tiled{};  
-#ifdef _MKL
-    class Mkl{};
-#endif
-#ifdef _CUBLAS
-    class Cublas{};
-#endif    
-  }
       
   template<std::floating_point T, typename Implementation, unsigned int LINEAR_TILE_DIM= 32>
   void matmul(const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C, Implementation) {
@@ -34,14 +23,14 @@ namespace mathcca {
 #endif            
                  );
     if constexpr(std::is_same_v< Implementation, MM::Base>) {
-      detail::mm_parallel_Base<T>(A, B, C);
+      detail::matmul<T>(MM::Base(), A, B, C);
     }
     else if constexpr(std::is_same_v< Implementation, MM::Tiled>) {
-      detail::mm_parallel_Tiled<T, LINEAR_TILE_DIM>(A, B, C);
+      detail::matmul<T, LINEAR_TILE_DIM>(MM::Tiled(), A, B, C);
     }
 #ifdef _MKL
     else if constexpr(std::is_same_v< Implementation, MM::Mkl>) {
-      detail::mm_parallel_Mkl<T>(A, B, C);
+      detail::matmul<T>(MM::Mkl(), A, B, C);
     }
 #endif
   }
@@ -63,14 +52,14 @@ namespace mathcca {
 #endif
                  );
     if constexpr(std::is_same_v< Implementation, MM::Base>) {
-      detail::mm_device_Base<T, LINEAR_THREAD_BLOCK_DIM>(A, B, C, stream);
+      detail::matmul<T, LINEAR_THREAD_BLOCK_DIM>(MM::Base(), A, B, C, stream);
     }
     else if constexpr(std::is_same_v< Implementation, MM::Tiled>) {
-      detail::mm_device_Tiled<T, LINEAR_THREAD_BLOCK_DIM>(A, B, C, stream);
+      detail::matmul<T, LINEAR_THREAD_BLOCK_DIM>(MM::Tiled(), A, B, C, stream);
     }
 #ifdef _CUBLAS
     else if constexpr(std::is_same_v< Implementation, MM::Cublas>) {
-      detail::mm_device_Cublas<T>(A, B, C);
+      detail::matmul<T>(MM::Cublas(), A, B, C);
     }
 #endif
   }

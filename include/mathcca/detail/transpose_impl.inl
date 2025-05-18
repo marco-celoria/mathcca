@@ -35,7 +35,7 @@ namespace mathcca {
     }
      
     template<std::floating_point T>
-    constexpr void transpose_parallel_Base(const host_matrix<T>& A, host_matrix<T>& B) {
+    constexpr void transpose(Trans::Base, const host_matrix<T>& A, host_matrix<T>& B) {
       std::cout << "Base transposition\n";
       if (!check_transposition_compatible_size(A, B))
         throw std::length_error{"Incompatible sizes for matrix transposition"};
@@ -51,7 +51,7 @@ namespace mathcca {
     }
      
     template<std::floating_point T, unsigned int LINEAR_TILE_DIM>
-    constexpr void transpose_parallel_Tiled(const host_matrix<T>& A, host_matrix<T>& B) {
+    constexpr void transpose(Trans::Tiled, const host_matrix<T>& A, host_matrix<T>& B) {
       std::cout << "Tiled transposition\n";
       if (!check_transposition_compatible_size(A, B))
         throw std::length_error{"Incompatible sizes for matrix transposition"};
@@ -77,7 +77,7 @@ namespace mathcca {
 #ifdef _MKL
      
     template<std::floating_point T>
-    constexpr void transpose_parallel_Mkl(const host_matrix<T>& A, host_matrix<T>& B) {
+    constexpr void transpose(Trans::Mkl, const host_matrix<T>& A, host_matrix<T>& B) {
       std::cout << "Mkl transposition\n";
       if (!check_transposition_compatible_size(A, B))
         throw std::length_error{"Incompatible sizes for matrix transposition"};
@@ -118,7 +118,7 @@ namespace mathcca {
     }
         
     template <std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM>
-    void transpose_device_Base(const device_matrix<T>& A, device_matrix<T>& B, cudaStream_t stream) {
+    void transpose(Trans::Base, const device_matrix<T>& A, device_matrix<T>& B, cudaStream_t stream) {
       std::cout << "Base transposition\n";
       static_assert(LINEAR_THREAD_BLOCK_DIM * LINEAR_THREAD_BLOCK_DIM <= 1024);
       if (!check_transposition_compatible_size(A, B))
@@ -164,7 +164,7 @@ namespace mathcca {
     }
      
     template <std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM>
-    void transpose_device_Tiled(const device_matrix<T>& A, device_matrix<T>& B, cudaStream_t stream) {
+    void transpose(Trans::Tiled, const device_matrix<T>& A, device_matrix<T>& B, cudaStream_t stream) {
       std::cout << "Tiled transposition\n";
       static_assert(LINEAR_THREAD_BLOCK_DIM * LINEAR_THREAD_BLOCK_DIM <= 1024);
       if (!check_transposition_compatible_size(A, B))////////////////////////////////////////////
@@ -182,7 +182,7 @@ namespace mathcca {
 #ifdef _CUBLAS
      
     template <std::floating_point T>
-    void  transpose_device_Cublas(const device_matrix<T>& A, device_matrix<T>& B) {
+    void  transpose(Trans::Cublas, const device_matrix<T>& A, device_matrix<T>& B) {
       std::cout << "Cublas transposition\n";
       if (!check_transposition_compatible_size(A, B))
         throw std::length_error{"Incompatible sizes for matrix transposition"};

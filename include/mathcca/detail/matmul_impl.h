@@ -12,31 +12,43 @@
 #endif
     
 namespace mathcca {
-    
+
+
+  namespace MM {
+    class Base{};
+    class Tiled{};
+#ifdef _MKL
+    class Mkl{};
+#endif
+#ifdef _CUBLAS
+    class Cublas{};
+#endif
+  }
+
   namespace detail {
     
     template<std::floating_point T>
-    constexpr void mm_parallel_Base(const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) ;
+    constexpr void matmul(MM::Base, const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) ;
     
     template<std::floating_point T, unsigned int LINEAR_TILE_DIM>
-    constexpr void mm_parallel_Tiled(const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) ;
+    constexpr void matmul(MM::Tiled, const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) ;
     
 #ifdef _MKL
     template<std::floating_point T>
-    constexpr void mm_parallel_Mkl(const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) ;
+    constexpr void matmul(MM::Mkl, const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) ;
 #endif 
      
 #ifdef __CUDACC__ 
       
     template <std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM>
-    void mm_device_Base(const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C, cudaStream_t stream) ;     
+    void matmul(MM::Base, const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C, cudaStream_t stream) ;     
     
     template <std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM>
-    void mm_device_Tiled(const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C, cudaStream_t stream);     
+    void matmul(MM::Tiled, const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C, cudaStream_t stream);     
     
 #ifdef _CUBLAS
     template <std::floating_point T>
-    void  mm_device_Cublas(const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C) ; 
+    void  matmul(MM::Cublas, const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C) ; 
 #endif
     
 #endif

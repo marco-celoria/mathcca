@@ -14,16 +14,6 @@
 #include <mathcca/detail/norm_impl.h>
 
 namespace mathcca {
-
-  namespace Norm {
-    class Base{};
-#ifdef _MKL
-    class Mkl{};
-#endif
-#ifdef _CUBLAS
-    class Cublas{};
-#endif
-  }
       
   template<std::floating_point T, typename Implementation>
   T frobenius_norm (const host_matrix<T>& x, Implementation) {
@@ -33,11 +23,11 @@ namespace mathcca {
 #endif
                  );
     if constexpr(std::is_same_v< Implementation, Norm::Base>) {
-      return detail::frobenius_norm_Base<T>(x);
+      return detail::frobenius_norm<T>(Norm::Base(), x);
     }
 #ifdef _MKL
     else if constexpr(std::is_same_v< Implementation, Norm::Mkl>) {
-      return detail::frobenius_norm_Mkl(x);
+      return detail::frobenius_norm(Norm::Mkl(), x);
     }
 #endif
   }
@@ -52,11 +42,11 @@ namespace mathcca {
 #endif
                  );
     if constexpr(std::is_same_v< Implementation, Norm::Base>) {
-      return detail::frobenius_norm_Base<T, THREAD_BLOCK_DIM>(x, stream);
+      return detail::frobenius_norm<T, THREAD_BLOCK_DIM>(Norm::Base(), x, stream);
     }
 #ifdef _CUBLAS
     else if constexpr(std::is_same_v< Implementation, Norm::Cublas>) {
-      return detail::frobenius_norm_Cublas<T>(x);
+      return detail::frobenius_norm<T>(Norm::Cublas(), x);
     }
 #endif
   }
