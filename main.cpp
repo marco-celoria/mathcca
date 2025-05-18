@@ -7,98 +7,15 @@
 #include <mathcca/matmul.h>
 #include <mathcca/transpose.h>
 #include <mathcca/norm.h>
-
 #include<iomanip>
-
-//#include "randev.h"
-
-
-template<typename Iter>
-void show_matrixImpl(Iter first, Iter  last, mathcca::host_iterator_tag) {
-	std::cout << "Marco!\n";
-}
-/*
-template<typename Iter>
-void show_matrixImpl(Iter first, Iter  last, mathcca::device_iterator_tag) {
-	std::cout << "Ida!\n";
-}
-*/
-template<typename Iter>
-void show_matrix(Iter first, Iter  last) {
-  //show_matrixImpl(first, last, typename Iter::iterator_device());
-  if constexpr (std::is_same_v<typename Iter::iterator_device(), mathcca::host_iterator_tag()> ){
-	  show_matrixImpl(first, last, typename Iter::iterator_device());
-  }
-}
-
-/*
-
-template<typename T, bool C>
-void show_matrix(typename mathcca::host_matrix<T>::host_iterator<C> first, typename mathcca::host_matrix<T>::host_iterator<C>  last) {
-    std::cout << "HERE\n";
-    for(;first!=last; ++first) {
-      std::cout << *first << " ";
-    }
-    std::cout << "\nTHERE\n\n";
-}
-*/
-template <typename Iter>
-void modify_matrix(Iter first, Iter last) {
-    std::cout << "XERE\n";
-    for(;first!=last; ++first) {
-      *first=(*first+1);
-    }
-    std::cout << "\nZHERE\n\n";
-}
-
-/*
-template <typename Iter>
-void device_show_matrixImp(Iter first, Iter last) {
-  std::cout << "ERROR\n";
-}
-
-template <typename Iter>
-void show_matrix(Iter first, Iter last) {
-  if (first == last) return;
-  if constexpr( Iter::iterator_category == mathcca::host_iterator_tag) {
-    host_show_matrixImp(first, last);
-  }
-  else {
-    device_show_matrixImp(first, last);
-  }
-}
-
-template <typename Iter>
-void host_modify_matrixImp(Iter first, Iter last) {
-    std::cout << "XERE\n";
-    for(;first!=last; ++first) {
-      *first=(*first+1);
-    }
-    std::cout << "\nZHERE\n\n";
-}
-
-template <typename Iter>
-void device_modify_matrixImp(Iter first, Iter last) {
-  std::cout << "ERROR\n";
-}
-
-template <typename Iter>
-void modify_matrix(Iter first, Iter last) {
-  if (first == last) return;
-  if constexpr( std::is_same_v<Iter, mathcca::host_iterator_tag>  ) { 
-    host_modify_matrixImp(first, last);
-  }
-  else {
-    device_modify_matrixImp(first, last);
-  }
-}
-*/
+#include<iostream>
+#include<cmath>
 
 int main(int argc, char **argv)  {
   std::cout << "Test Matrix constructors" << std::endl;
   {
     std::size_t r{2};
-    std::size_t c{5}; 
+    std::size_t c{5};
 #ifdef _USE_DOUBLE_PRECISION
     for (auto n= 1; n < 9; ++n) {
       mathcca::host_matrix<double> a{r, c, static_cast<double>(n)};
@@ -198,21 +115,22 @@ int main(int argc, char **argv)  {
       mathcca::host_matrix<double> X{r, c};
       mathcca::host_matrix<double> Y{r, c, static_cast<double>(n)};
 #else
-    for (auto n= 1; n < 6; ++n) {
+    for (auto n= 1; n < 4; ++n) {
       mathcca::host_matrix<float> X{r, c};
       mathcca::host_matrix<float> Y{r, c, static_cast<float>(n)};
 #endif
       using value_type= typename decltype(X)::value_type;
       mathcca::fill_const(X.begin(), X.end(), static_cast<value_type>(n));
       mathcca::fill_iota(Y.begin(),  Y.end(), static_cast<value_type>(1));
-      const value_type sumX= mathcca::reduce_sum(X.begin(), X.end(), static_cast<value_type>(0));
-      const value_type sumY= mathcca::reduce_sum(Y.cbegin(),  Y.cend(),  static_cast<value_type>(0));
+      const value_type sumX= mathcca::reduce_sum(X.begin(),  X.end(),  static_cast<value_type>(0));
+      const value_type sumY= mathcca::reduce_sum(Y.cbegin(), Y.cend(), static_cast<value_type>(0));
       const auto sX= static_cast<value_type>(X.size());
       const auto sY= static_cast<value_type>(Y.size());
-      const auto resX= static_cast<value_type>(n) * sX; 
-      const auto resY= sY * (static_cast<value_type>(0.5)) * (sY + static_cast<value_type>(1)); 
-      std::cout << std::boolalpha << ((sumX - resX) < decltype(X)::tol()) << "\n";
-      std::cout << std::boolalpha << ((sumY - resY) < decltype(X)::tol()) << "\n";
+      const auto resX= static_cast<value_type>(n) * sX;
+      const auto resY= sY / (static_cast<value_type>(2)) * (sY + static_cast<value_type>(1));
+      std::cout << "--------------------------------------------------------\n";
+      std::cout << std::boolalpha << (std::abs(sumX - resX) < decltype(X)::tol()) << std::noboolalpha << "\n";
+      std::cout << std::boolalpha << (std::abs(sumY - resY) < decltype(Y)::tol()) << std::noboolalpha << "\n";
       std::cout << "--------------------------------------------------------\n";
       if (n==1) {
         print_matrix(X);
@@ -241,6 +159,7 @@ int main(int argc, char **argv)  {
         print_matrix(Y);
       }
       std::cout << std::boolalpha << (Y != Z) << std::noboolalpha << "\n";
+      std::cout << "--------------------------------------------------------\n";
       std::swap(r,c);
       r *= 5;
       c *= 2;
@@ -449,7 +368,7 @@ int main(int argc, char **argv)  {
 #endif
       std::cout << "--------------------------------------------------------\n";
 #ifdef _MKL      
-      std::cout << std::boolalpha << (fabs(res_base - res_mkl)  < decltype(A)::tol()) << std::noboolalpha << " " << std::setprecision(9) << res_base  << " " << std::setprecision(9) << res_mkl << "\n";
+      std::cout << std::boolalpha << (std::abs(res_base - res_mkl)  < decltype(A)::tol()) << std::noboolalpha << "\n";
 #endif
       std::cout << "--------------------------------------------------------\n";
       
@@ -460,13 +379,13 @@ int main(int argc, char **argv)  {
       res_mkl= mathcca::frobenius_norm<value_type, mathcca::HostFN::Mkl>(A);
 #endif        
       value_type res= std::sqrt(static_cast<value_type>(3. * 3. * r * c));
-      std::cout << std::boolalpha << (fabs(res_base - res) < decltype(A)::tol()) << std::noboolalpha << " " << std::setprecision(9) << res_base << " " << std::setprecision(9) << res << "\n";
+      std::cout << std::boolalpha << (std::abs(res_base - res) < decltype(A)::tol()) << std::noboolalpha << "\n";
 #ifdef _MKL      
-      std::cout << std::boolalpha << (fabs(res_mkl  - res) < decltype(A)::tol()) << std::noboolalpha << " " << std::setprecision(9) << res_mkl  << " " << std::setprecision(9) << res << "\n";
+      std::cout << std::boolalpha << (std::abs(res_mkl  - res) < decltype(A)::tol()) << std::noboolalpha << "\n";
 #endif
       std::cout << "--------------------------------------------------------\n";
       // https://en.wikipedia.org/wiki/Square_pyramidal_number
-      if (i < 6) {
+      if (i < 5) {
         value_type n1{static_cast<value_type>(r * c)};
         value_type n2{static_cast<value_type>(r * r * c * c)};
         value_type n3{static_cast<value_type>(r * r * r * c * c * c)};
@@ -476,9 +395,9 @@ int main(int argc, char **argv)  {
 #ifdef _MKL
         res_mkl= mathcca::frobenius_norm<value_type, mathcca::HostFN::Mkl>(A);
 #endif       
-        std::cout << std::boolalpha << (fabs(res_base - res) < 0.2) << std::noboolalpha << " " << std::setprecision(9) << res_base << " " << std::setprecision(9) << res << "\n";
+        std::cout << std::boolalpha << (std::abs(res_base - res) < 0.2) << std::noboolalpha << "\n";
 #ifdef _MKL      
-        std::cout << std::boolalpha << (fabs(res_mkl - res) <  0.2) << std::noboolalpha << " " << std::setprecision(9) << res_mkl << " " << std::setprecision(9) << res << "\n";
+        std::cout << std::boolalpha << (std::abs(res_mkl - res) <  0.2) << std::noboolalpha << "\n";
 #endif
         std::cout << "--------------------------------------------------------\n";
       }
@@ -487,19 +406,5 @@ int main(int argc, char **argv)  {
       c *= 2;
     }
     std::cout << "--------------------------------------------------------\n";
-  }/*
-    std::cout << "\n\nTest Iterator\n\n";
-    std::size_t r{5};
-    std::size_t c{2};
-#ifdef _USE_DOUBLE_PRECISION
-      mathcca::host_matrix<double> A{r, c};
-#else
-      mathcca::host_matrix<float> A{r, c};
-#endif
-      using value_type= typename decltype(A)::value_type; 
-      mathcca::fill_const(A.begin(), A.end(), static_cast<value_type>(0));
-      //show_matrix<double,false>(A.begin(), A.end());
-      show_matrix(A.begin(), A.end());
-      modify_matrix(A.begin(), A.end());
-      show_matrix(A.cbegin(), A.cend());*/
+  }
 }

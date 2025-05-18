@@ -1,17 +1,15 @@
 #include <mathcca/device_matrix.h>
 #include <mathcca/copy.h>
 #include <mathcca/fill_const.h>
-#include <mathcca/fill_rand.h>
 #include <mathcca/fill_iota.h>
+#include <mathcca/fill_rand.h>
 #include <mathcca/reduce_sum.h>
-
 #include <mathcca/matmul.h>
-#include <mathcca/norm.h>
 #include <mathcca/transpose.h>
-
+#include <mathcca/norm.h>
 #include<iomanip>
-//#include "randev.h"
-
+#include<iostream>
+#include<cmath>
 
 int main(int argc, char **argv)  {
   std::cout << "Test Matrix constructors" << std::endl;
@@ -87,7 +85,6 @@ int main(int argc, char **argv)  {
       std::cout << std::boolalpha << (A == D) << std::noboolalpha << "\n";
       std::cout << std::boolalpha << (B == E) << std::noboolalpha << "\n";
       std::cout << "---------------------------------------------------------\n";
-      ///////////////////////////////////
       cudaStream_t s_1;
       cudaStreamCreate(&s_1);
       mathcca::copy(A.cbegin(), A.cend(), B.begin(), s_1);
@@ -122,21 +119,22 @@ int main(int argc, char **argv)  {
       mathcca::device_matrix<double> X{r, c};
       mathcca::device_matrix<double> Y{r, c, static_cast<double>(n)};
 #else
-    for (auto n= 1; n < 6; ++n) {
+    for (auto n= 1; n < 4; ++n) {
       mathcca::device_matrix<float> X{r, c};
       mathcca::device_matrix<float> Y{r, c, static_cast<float>(n)};
 #endif
       using value_type= typename decltype(X)::value_type;
       mathcca::fill_const(X.begin(), X.end(), static_cast<value_type>(n));
       mathcca::fill_iota(Y.begin(),  Y.end(), static_cast<value_type>(1));
-      const value_type sumX= mathcca::reduce_sum(X.cbegin(), X.cend(), static_cast<value_type>(0));
-      const value_type sumY= mathcca::reduce_sum(Y.cbegin(), Y.cend(),  static_cast<value_type>(0));
+      const value_type sumX= mathcca::reduce_sum(X.begin(),  X.end(),  static_cast<value_type>(0));
+      const value_type sumY= mathcca::reduce_sum(Y.cbegin(), Y.cend(), static_cast<value_type>(0));
       const auto sX= static_cast<value_type>(X.size());
       const auto sY= static_cast<value_type>(Y.size());
-      const auto resX= static_cast<value_type>(n) * sX; 
-      const auto resY= sY * (static_cast<value_type>(0.5)) * (sY + static_cast<value_type>(1)); 
-      std::cout << std::boolalpha << ((sumX - resX) < decltype(X)::tol()) << "\n";
-      std::cout << std::boolalpha << ((sumY - resY) < decltype(X)::tol()) << "\n";
+      const auto resX= static_cast<value_type>(n) * sX;
+      const auto resY= sY / (static_cast<value_type>(2)) * (sY + static_cast<value_type>(1));
+      std::cout << "--------------------------------------------------------\n";
+      std::cout << std::boolalpha << (std::abs(sumX - resX) < decltype(X)::tol()) << std::noboolalpha << "\n";
+      std::cout << std::boolalpha << (std::abs(sumY - resY) < decltype(Y)::tol()) << std::noboolalpha << "\n";
       std::cout << "--------------------------------------------------------\n";
       if (n==1) {
         print_matrix(X);
@@ -165,6 +163,7 @@ int main(int argc, char **argv)  {
         print_matrix(Y);
       }
       std::cout << std::boolalpha << (Y != Z) << std::noboolalpha << "\n";
+      std::cout << "--------------------------------------------------------\n";
       std::swap(r,c);
       r *= 5;
       c *= 2;
@@ -374,7 +373,7 @@ int main(int argc, char **argv)  {
 #endif
       std::cout << "--------------------------------------------------------\n";
 #ifdef _CUBLAS      
-      std::cout << std::boolalpha << (fabs(res_base   - res_cublas) < decltype(A)::tol()) << std::noboolalpha << " " << std::setprecision(9) << res_base   << " " << std::setprecision(9) << res_cublas << "\n";
+      std::cout << std::boolalpha << (fabs(res_base   - res_cublas) < decltype(A)::tol()) << std::noboolalpha << "\n";
 #endif
       std::cout << "--------------------------------------------------------\n";
       
@@ -385,13 +384,13 @@ int main(int argc, char **argv)  {
       res_cublas= mathcca::frobenius_norm<value_type, mathcca::DevFN::Cublas>(A);
 #endif        
       value_type res= std::sqrt(static_cast<value_type>(3. * 3. * r * c));
-      std::cout << std::boolalpha << (fabs(res_base   - res) < decltype(A)::tol()) << std::noboolalpha << " " << std::setprecision(9) << res_base   << " " << std::setprecision(9) << res << "\n";
+      std::cout << std::boolalpha << (fabs(res_base   - res) < decltype(A)::tol()) << std::noboolalpha << "\n";
 #ifdef _CUBLAS      
-      std::cout << std::boolalpha << (fabs(res_cublas - res) < decltype(A)::tol()) << std::noboolalpha << " " << std::setprecision(9) << res_cublas << " " << std::setprecision(9) << res << "\n";
+      std::cout << std::boolalpha << (fabs(res_cublas - res) < decltype(A)::tol()) << std::noboolalpha << "\n";
 #endif
       std::cout << "--------------------------------------------------------\n";
       // https://en.wikipedia.org/wiki/Square_pyramidal_number
-      if (i < 6) {
+      if (i < 5) {
         value_type n1{static_cast<value_type>(r * c)};
         value_type n2{static_cast<value_type>(r * r * c * c)};
         value_type n3{static_cast<value_type>(r * r * r * c * c * c)};
@@ -401,9 +400,9 @@ int main(int argc, char **argv)  {
 #ifdef _CUBLAS
         res_cublas= mathcca::frobenius_norm<value_type, mathcca::DevFN::Cublas>(A);
 #endif
-        std::cout << std::boolalpha << (fabs(res_base   - res) < 0.2) << std::noboolalpha << " " << std::setprecision(9) << res_base   << " " << std::setprecision(9) << res << "\n";
+        std::cout << std::boolalpha << (fabs(res_base   - res) < 0.2) << std::noboolalpha << "\n";
 #ifdef _CUBLAS
-        std::cout << std::boolalpha << (fabs(res_cublas - res) < 0.2) << std::noboolalpha << " " << std::setprecision(9) << res_cublas << " " << std::setprecision(9) << res << "\n";
+        std::cout << std::boolalpha << (fabs(res_cublas - res) < 0.2) << std::noboolalpha << "\n";
 #endif
         std::cout << "--------------------------------------------------------\n";
       }

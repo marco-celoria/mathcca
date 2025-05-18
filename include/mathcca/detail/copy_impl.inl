@@ -61,6 +61,14 @@ namespace mathcca {
 #endif
     
     template<std::floating_point T>
+    void copy(Cuda, const T* s_first, const T* s_last, T* d_first, cudaStream_t stream) {
+      std::cout << "DEBUG CUDADEV_CPY\n";
+      const auto size{static_cast<std::size_t>(s_last - s_first)};
+      const std::size_t nbytes{size * sizeof(T)};
+      checkCudaErrors(cudaMemcpy(d_first, s_first, nbytes, cudaMemcpyDeviceToDevice));
+    }
+    
+    template<std::floating_point T>
     void copy(CudaDtoDcpy, const T* s_first, const T* s_last, T* d_first, cudaStream_t stream) {
       std::cout << "DEBUG CUDADTODCPY\n";
       const auto size{static_cast<std::size_t>(s_last - s_first)};

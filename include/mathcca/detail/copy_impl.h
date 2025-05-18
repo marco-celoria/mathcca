@@ -31,6 +31,9 @@ namespace mathcca {
 #endif
     
     template<std::floating_point T>
+    void copy(Cuda, const T* s_first, const T* s_last, T* d_first, cudaStream_t stream=0);
+    
+    template<std::floating_point T>
     void copy(CudaDtoDcpy, const T* s_first, const T* s_last, T* d_first, cudaStream_t stream=0);
     
     template<std::floating_point T>
