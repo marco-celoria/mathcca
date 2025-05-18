@@ -11,7 +11,7 @@
 
 #include <mathcca/detail/base_matrix.h>
 
-#include <mathcca/common_algorithm.h> // Omp
+#include <mathcca/execution_policy.h> // Omp
 
 #include <mathcca/host_allocator.h>
 #include <mathcca/host_iterator.h>
@@ -93,7 +93,7 @@ namespace mathcca {
         
 //#ifdef __CUDACC__
 //        auto toDevice () const {
-//          device_matrix<T, device_allocator<T>, Cuda> devMat(Parent::num_rows(), Parent::num_cols());
+//          device_matrix<T, device_allocator<T>, CudaD> devMat(Parent::num_rows(), Parent::num_cols());
 //          copy(begin(), end(), devMat.begin());
 //          return devMat;
 //        }

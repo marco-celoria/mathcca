@@ -3,8 +3,8 @@
 #include <concepts> // std::floating_point
 #include <iostream> // std::cout
 
-// StdPar Omp Thrust Cuda
-#include <mathcca/common_algorithm.h>
+// StdPar Omp Thrust CudaD
+#include <mathcca/execution_policy.h>
 
 #ifdef _STDPAR
  #include <execution>
@@ -116,7 +116,7 @@ namespace mathcca {
     
     
     template<std::floating_point T, typename UnaryFunction, unsigned int THREAD_BLOCK_DIM>
-    T transform_reduce_sum(Cuda, const T* first, const T* last, UnaryFunction unary_op, const T init, cudaStream_t stream) {
+    T transform_reduce_sum(CudaD, const T* first, const T* last, UnaryFunction unary_op, const T init, cudaStream_t stream) {
       std::cout << "DEBUG CUDA\n";
       static_assert(THREAD_BLOCK_DIM <= 1024);
       auto size{static_cast<std::size_t>(last - first)};

@@ -5,7 +5,7 @@
 #include <concepts> // std::floating_point
 
 // StdPar Omp Thrust CudaDtoDcpy CudaHtoHcpy CudaHtoDcpy CudaDtoHcpy
-#include <mathcca/common_algorithm.h> 
+#include <mathcca/execution_policy.h> 
 
 #ifdef __CUDACC__
 #include <cuda_runtime.h> // cudaStream_t
@@ -31,7 +31,7 @@ namespace mathcca {
 #endif
     
     template<std::floating_point T>
-    void copy(Cuda, const T* s_first, const T* s_last, T* d_first, cudaStream_t stream=0);
+    void copy(CudaD, const T* s_first, const T* s_last, T* d_first, cudaStream_t stream=0);
     
     template<std::floating_point T>
     void copy(CudaDtoDcpy, const T* s_first, const T* s_last, T* d_first, cudaStream_t stream=0);

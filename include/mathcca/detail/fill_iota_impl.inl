@@ -3,8 +3,8 @@
 #include <concepts> // std::floating_point 
 #include <iostream> // std::cout
 
-// StdPar Omp Thrust Cuda
-#include <mathcca/common_algorithm.h>
+// StdPar Omp Thrust CudaD
+#include <mathcca/execution_policy.h>
 
 #ifdef __CUDACC__
  #include <cuda_runtime.h>
@@ -73,7 +73,7 @@ namespace mathcca {
     }
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
-    void fill_iota(Cuda, T* first, T* last, const T v, cudaStream_t stream) {
+    void fill_iota(CudaD, T* first, T* last, const T v, cudaStream_t stream) {
        std::cout << "DEBUG CUDA\n";
       static_assert(THREAD_BLOCK_DIM <= 1024);
       using value_type= T;

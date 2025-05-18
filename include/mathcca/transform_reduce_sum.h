@@ -5,8 +5,8 @@
 #include <concepts>    // std::floating_point
 #include <type_traits> // std::is_same
 
-// StdPar() Omp() Thrust() Cuda()
-#include <mathcca/common_algorithm.h>
+// StdPar() Omp() Thrust() CudaD()
+#include <mathcca/execution_policy.h>
 
 #include <mathcca/host_iterator.h> // mathcca::host_iterator_tag()
 
@@ -28,7 +28,7 @@ namespace mathcca {
       
   class device_iterator_tag;
      
-  class Cuda;
+  class CudaD;
   class Thrust;
       
 #endif
@@ -48,7 +48,7 @@ namespace mathcca {
 #ifdef _THRUST
       return detail::transform_reduce_sum(Thrust(), first.get(), last.get(), unary_op, init);
 #else
-      return detail::transform_reduce_sum<T, UnaryFunction, THREAD_BLOCK_DIM>(Cuda(), first.get(), last.get(), unary_op, init, stream);
+      return detail::transform_reduce_sum<T, UnaryFunction, THREAD_BLOCK_DIM>(CudaD(), first.get(), last.get(), unary_op, init, stream);
 #endif
     }
   }

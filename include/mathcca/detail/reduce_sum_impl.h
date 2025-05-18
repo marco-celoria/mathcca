@@ -4,8 +4,8 @@
 
 #include <concepts> // std::floating_point
 
-// StdPar Omp Thrust Cuda
-#include <mathcca/common_algorithm.h>
+// StdPar Omp Thrust CudaD
+#include <mathcca/execution_policy.h>
 
 #ifdef __CUDACC__
 #include <cuda_runtime.h> // cudaStream_t
@@ -35,7 +35,7 @@ namespace mathcca {
 #endif
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
-    T reduce_sum(Cuda, const T* first, const T* last, const T init, cudaStream_t stream); 
+    T reduce_sum(CudaD, const T* first, const T* last, const T init, cudaStream_t stream); 
     
 #endif
     

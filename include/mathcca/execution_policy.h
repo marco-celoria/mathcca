@@ -1,12 +1,7 @@
-#ifndef COMMON_ALGORITHM_H_
-#define COMMON_ALGORITHM_H_
-
-#include <type_traits>
+#ifndef EXECUTION_POLICY_H_
+#define EXECUTION_POLICY_H_
 
 namespace mathcca {
-    
-  template<typename T>
-  concept Arithmetic = std::is_arithmetic_v<T>;
     
   class Omp{};
     
@@ -24,7 +19,9 @@ namespace mathcca {
     
 #endif   
     
-  class Cuda{};
+  class CudaD{};
+  
+  class CudaPH{};
        
   class CudaDtoHcpy{};
      

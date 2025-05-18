@@ -4,7 +4,7 @@
 
 #include <type_traits> // std::is_same_v
 
-#include <mathcca/common_algorithm.h>
+#include <mathcca/execution_policy.h>
 
 #include <mathcca/host_iterator.h>
 

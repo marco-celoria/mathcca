@@ -23,7 +23,7 @@
 
 #include <cuda_runtime.h>
 
-#include <mathcca/common_algorithm.h> // Cuda
+#include <mathcca/execution_policy.h> // CudaD
       
 #include <mathcca/detail/base_matrix.h>
 
@@ -56,7 +56,7 @@ namespace mathcca {
   template<std::floating_point T, typename A, typename E, unsigned int THREAD_BLOCK_DIM>
   __global__ void mulTo_kernel(device_matrix<T,A,E>& accululator, const device_matrix<T,A,E>& to_be_op);
    
-  template<std::floating_point T, typename Allocator = device_allocator<T>, typename Execution= Cuda>
+  template<std::floating_point T, typename Allocator = device_allocator<T>, typename Execution= CudaD>
   class device_matrix : public detail::base_matrix<T, Allocator, Execution > {
     
     using self= device_matrix;
