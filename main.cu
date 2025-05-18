@@ -272,7 +272,7 @@ int main(int argc, char **argv)  {
       std::cout << "l = " << l << " m = " << m << " n = " << n << "\n";
       using value_type= typename decltype(A0)::value_type;
       try {
-        mathcca::matmul<value_type, mathcca::DevMM::Base, 32>(A0,ERR);
+        mathcca::matmul<value_type, mathcca::MM::Base, 32>(A0,ERR, mathcca::MM::Base());
       }
       catch(std::exception &e) {
         std::cout << "Caught exception: " << e.what() << std::endl;
@@ -283,10 +283,10 @@ int main(int argc, char **argv)  {
       std::cout << "--------------------------------------------------------\n";
       std::cout << std::boolalpha << (A0 != B0) << std::noboolalpha << "\n";
       std::cout << "--------------------------------------------------------\n";
-      mathcca::matmul<value_type, mathcca::DevMM::Base, 32>(A0, B0, C0);
-      auto C1 = mathcca::matmul<value_type, mathcca::DevMM::Tiled, 32>(A0, B0);
+      mathcca::matmul<value_type, mathcca::MM::Base, 32>(A0, B0, C0, mathcca::MM::Base());
+      auto C1 = mathcca::matmul<value_type, mathcca::MM::Tiled, 32>(A0, B0, mathcca::MM::Tiled());
 #ifdef _CUBLAS
-      auto C2 = mathcca::matmul<value_type, mathcca::DevMM::Cublas>(A0, B0);
+      auto C2 = mathcca::matmul<value_type, mathcca::MM::Cublas>(A0, B0, mathcca::MM::Cublas());
 #endif
       std::cout << "--------------------------------------------------------\n";
       std::cout << std::boolalpha << (C0 == C1) << std::noboolalpha << "\n";
@@ -321,7 +321,7 @@ int main(int argc, char **argv)  {
       std::cout << "r = " << r << " c = " << c << "\n";
       using value_type= typename decltype(A)::value_type;
       try {
-        mathcca::transpose<value_type, mathcca::DevT::Base, 32>(A,ERR);
+        mathcca::transpose<value_type, mathcca::Trans::Base, 32>(A,ERR, mathcca::Trans::Base());
       }
       catch(std::exception &e) {
         std::cout << "Caught exception: " << e.what() << std::endl;
@@ -329,14 +329,14 @@ int main(int argc, char **argv)  {
 
       mathcca::fill_rand(A.begin(), A.end());
       std::cout << "--------------------------------------------------------\n";
-      mathcca::transpose<value_type, mathcca::DevT::Base, 32>(A, B0);
-      mathcca::transpose<value_type, mathcca::DevT::Base, 32>(B0, C0);
+      mathcca::transpose<value_type, mathcca::Trans::Base, 32>(A,  B0, mathcca::Trans::Base());
+      mathcca::transpose<value_type, mathcca::Trans::Base, 32>(B0, C0, mathcca::Trans::Base());
 
-      auto B1 = mathcca::transpose<value_type, mathcca::DevT::Tiled, 32>(A);
-      auto C1 = mathcca::transpose<value_type, mathcca::DevT::Tiled, 32>(B1);
+      auto B1 = mathcca::transpose<value_type, mathcca::Trans::Tiled, 32>(A,  mathcca::Trans::Tiled());
+      auto C1 = mathcca::transpose<value_type, mathcca::Trans::Tiled, 32>(B1, mathcca::Trans::Tiled());
 #ifdef _CUBLAS
-      auto B2 = mathcca::transpose<value_type, mathcca::DevT::Cublas, 32>(A);
-      auto C2 = mathcca::transpose<value_type, mathcca::DevT::Cublas, 32>(B2);
+      auto B2 = mathcca::transpose<value_type, mathcca::Trans::Cublas, 32>(A,  mathcca::Trans::Cublas());
+      auto C2 = mathcca::transpose<value_type, mathcca::Trans::Cublas, 32>(B2, mathcca::Trans::Cublas());
 #endif
       std::cout << "--------------------------------------------------------\n";
       std::cout << std::boolalpha << (A  == C0) << std::noboolalpha << "\n";
@@ -367,9 +367,9 @@ int main(int argc, char **argv)  {
       std::cout << "r = " << r << " c = " << c << "\n";
       using value_type= typename decltype(A)::value_type;
       mathcca::fill_rand(A.begin(), A.end());
-      auto res_base= mathcca::frobenius_norm<value_type, mathcca::DevFN::Base, 256>(A); 
+      auto res_base= mathcca::frobenius_norm<value_type, mathcca::Norm::Base, 256>(A, mathcca::Norm::Base()); 
 #ifdef _CUBLAS
-      auto res_cublas= mathcca::frobenius_norm<value_type, mathcca::DevFN::Cublas>(A); 
+      auto res_cublas= mathcca::frobenius_norm<value_type, mathcca::Norm::Cublas>(A, mathcca::Norm::Cublas()); 
 #endif
       std::cout << "--------------------------------------------------------\n";
 #ifdef _CUBLAS      
@@ -379,9 +379,9 @@ int main(int argc, char **argv)  {
       
       mathcca::fill_const(A.begin(), A.end(), static_cast<value_type>(3));
 
-      res_base= mathcca::frobenius_norm<value_type, mathcca::DevFN::Base, 128>(A);
+      res_base= mathcca::frobenius_norm<value_type, mathcca::Norm::Base, 128>(A, mathcca::Norm::Base());
 #ifdef _CUBLAS
-      res_cublas= mathcca::frobenius_norm<value_type, mathcca::DevFN::Cublas>(A);
+      res_cublas= mathcca::frobenius_norm<value_type, mathcca::Norm::Cublas>(A, mathcca::Norm::Cublas());
 #endif        
       value_type res= std::sqrt(static_cast<value_type>(3. * 3. * r * c));
       std::cout << std::boolalpha << (fabs(res_base   - res) < decltype(A)::tol()) << std::noboolalpha << "\n";
@@ -396,9 +396,9 @@ int main(int argc, char **argv)  {
         value_type n3{static_cast<value_type>(r * r * r * c * c * c)};
         value_type res= std::sqrt(n3/static_cast<value_type>(3) + n2/static_cast<value_type>(2) + n1/static_cast<value_type>(6));
         mathcca::fill_iota(A.begin(), A.end(), static_cast<value_type>(1));
-        res_base= mathcca::frobenius_norm<value_type, mathcca::DevFN::Base>(A);
+        res_base= mathcca::frobenius_norm<value_type, mathcca::Norm::Base>(A, mathcca::Norm::Base());
 #ifdef _CUBLAS
-        res_cublas= mathcca::frobenius_norm<value_type, mathcca::DevFN::Cublas>(A);
+        res_cublas= mathcca::frobenius_norm<value_type, mathcca::Norm::Cublas>(A, mathcca::Norm::Cublas());
 #endif
         std::cout << std::boolalpha << (fabs(res_base   - res) < 0.2) << std::noboolalpha << "\n";
 #ifdef _CUBLAS

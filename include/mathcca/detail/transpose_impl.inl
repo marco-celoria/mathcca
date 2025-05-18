@@ -67,7 +67,7 @@ namespace mathcca {
           size_type j_end= std::min(jj + Ac_blocksize, jj_end);
           for (size_type i= ii; i < i_end; ++i) {
             for (size_type j= jj; j < j_end; ++j) {
-              B(j, i)+= A(i, j);
+              B(j, i)= A(i, j);
             }
           }
         }
