@@ -104,6 +104,9 @@ int main(int argc, char **argv)  {
       std::cout << std::boolalpha << (A != E) << std::noboolalpha << "\n";
       std::cout << std::boolalpha << (C == E) << std::noboolalpha << "\n";
       std::cout << "--------------------------------------------------------\n";
+      std::swap(r,c);
+      r *= 5;
+      c *= 2;
     }
   }
   std::cout << "Test reduce and rand\n";

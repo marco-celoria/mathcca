@@ -24,8 +24,8 @@
 #endif
 
 namespace mathcca {
-    
-#ifdef _PINNED
+
+#if defined (__CUDACC__) && defined(_PINNED)	
   template<std::floating_point T, typename Allocator = pinnedhost_allocator<T>>
 #else	
   template<std::floating_point T, typename Allocator = host_allocator<T>>

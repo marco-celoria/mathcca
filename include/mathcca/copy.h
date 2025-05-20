@@ -26,11 +26,14 @@ namespace mathcca {
     
   class device_iterator_tag;
     
-  class CudaDtoDcpy;
+  class Cuda;
   class CudaHtoDcpy;
   class CudaDtoHcpy;
-  class CudaHtoHcpy;
-    
+
+#ifdef _THRUST
+  class Thrust;
+#endif
+
 #endif
         
 #ifdef __CUDACC__
@@ -42,7 +45,7 @@ namespace mathcca {
 #ifdef _STDPAR
       detail::copy(StdPar(), s_first.get(), s_last.get(), d_first.get());
 #else  
-      detail::copy(CudaHtoHcpy(), s_first.get(), s_last.get(), d_first.get());
+      detail::copy(Omp(), s_first.get(), s_last.get(), d_first.get());
 #endif
     }  
     if constexpr (std::is_same_v<typename Iter1::iterator_system(), mathcca::device_iterator_tag()> && 
@@ -50,7 +53,7 @@ namespace mathcca {
 #ifdef _THRUST
       detail::copy(Thrust(), s_first.get(), s_last.get(), d_first.get());
 #else  
-      detail::copy(CudaDtoDcpy(), s_first.get(), s_last.get(), d_first.get(), stream);
+      detail::copy(Cuda(), s_first.get(), s_last.get(), d_first.get(), stream);
 #endif
     }  
     else if constexpr (std::is_same_v<typename Iter1::iterator_system(), mathcca::host_iterator_tag()> && 

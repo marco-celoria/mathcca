@@ -35,7 +35,7 @@ namespace mathcca {
 #ifdef __CUDACC__
      
   template<std::floating_point T, typename Implementation, unsigned int THREAD_BLOCK_DIM= 128>
-  constexpr decltype(auto) frobenius_norm (const device_matrix<T>& x, Implementation, cudaStream_t stream= 0) {
+  T frobenius_norm (const device_matrix<T>& x, Implementation, cudaStream_t stream= 0) {
     static_assert(std::is_same_v<Implementation, Norm::Base>  
 #ifdef _CUBLAS       
                   || std::is_same_v<Implementation, Norm::Cublas>

@@ -33,6 +33,16 @@ namespace mathcca {
         return x * x;
       }
     };
+    
+    template<typename T>
+    struct InverseSquare {
+#ifdef __CUDACC__ 
+      __host__ __device__
+#endif
+      T operator()(const T &x) const {
+        return 1/(x * x);
+      }
+    };
      
     template<std::floating_point T>
     constexpr decltype(auto) frobenius_norm(Norm::Base, const host_matrix<T>& x) {
