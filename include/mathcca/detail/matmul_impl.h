@@ -10,20 +10,10 @@
 #include <cuda_runtime.h> // cudaStream_t
 #include <mathcca/device_matrix.h>
 #endif
-    
+
+#include <mathcca/implementation_policy.h>
+
 namespace mathcca {
-
-
-  namespace MM {
-    class Base{};
-    class Tiled{};
-#ifdef _MKL
-    class Mkl{};
-#endif
-#ifdef _CUBLAS
-    class Cublas{};
-#endif
-  }
 
   namespace detail {
     

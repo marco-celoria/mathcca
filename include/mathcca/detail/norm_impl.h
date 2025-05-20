@@ -6,23 +6,14 @@
 
 #include <mathcca/host_matrix.h>
 
+#include <mathcca/implementation_policy.h>
+
 #ifdef __CUDACC__
  #include <cuda_runtime.h>
  #include <mathcca/device_matrix.h>
 #endif
 
 namespace mathcca {
-
-  namespace Norm {
-    class Base{};
-#ifdef _MKL
-    class Mkl{};
-#endif
-#ifdef _CUBLAS
-    class Cublas{};
-#endif
-  }
-
 
   namespace detail {
     

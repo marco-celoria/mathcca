@@ -120,6 +120,7 @@ namespace mathcca {
     T reduce_sum(Cuda, const T* first, const T* last, const T init, cudaStream_t stream) {
       std::cout << "DEBUG CUDA\n";
       static_assert(THREAD_BLOCK_DIM <= 1024);
+      static_assert(THREAD_BLOCK_DIM % 32 == 0);
       std::size_t size{static_cast<std::size_t>(last - first)};
       constexpr unsigned int maxThreads{THREAD_BLOCK_DIM};
       unsigned int threads{size < (static_cast<std::size_t>(maxThreads) * 2) ? detail::nextPow2((size + 1) / 2) : maxThreads};

@@ -11,18 +11,9 @@
 #include <mathcca/device_matrix.h>
 #endif
 
-namespace mathcca {
+#include <mathcca/implementation_policy.h>
 
-  namespace Trans {
-    class Base{};
-    class Tiled{};
-#ifdef _MKL
-    class Mkl{};
-#endif
-#ifdef _CUBLAS
-    class Cublas{};
-#endif
-  }
+namespace mathcca {
 
   namespace detail {
       

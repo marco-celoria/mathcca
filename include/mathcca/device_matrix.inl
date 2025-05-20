@@ -83,6 +83,7 @@ namespace mathcca {
   template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
   T count_if_diffs(const T* lhs, const T* rhs, const std::size_t size, const T tol) {
     static_assert(THREAD_BLOCK_DIM <= 1024);
+    static_assert(THREAD_BLOCK_DIM %32 == 0);
     constexpr unsigned int maxThreads{THREAD_BLOCK_DIM};
     unsigned int threads{size < (static_cast<std::size_t>(maxThreads) * 2) ? detail::nextPow2((size + 1) / 2) : maxThreads};
     unsigned int blocks{static_cast<unsigned int>((size + static_cast<std::size_t>(threads * 2 - 1)) / static_cast<std::size_t>(threads * 2))};
