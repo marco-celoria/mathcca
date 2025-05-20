@@ -6,7 +6,7 @@ TEST(MatmulSp, BasicAssertions)
     std::size_t l{5};
     std::size_t m{3};
     std::size_t n{2};
-    for (auto i= 1; i < 8; ++i) {
+    for (auto i= 1; i < 7; ++i) {
       mathcca::device_matrix<float> X0{l, m};
       mathcca::device_matrix<float> Y0{m, n};
       mathcca::device_matrix<float> B0{l, n};

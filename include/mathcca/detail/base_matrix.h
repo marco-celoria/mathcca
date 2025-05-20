@@ -162,7 +162,7 @@ namespace mathcca {
         
         constexpr static auto tol() noexcept {
           if constexpr (std::is_same_v<value_type, float>) {
-            return static_cast<float>(1e-2);
+            return static_cast<float>(1e-3);
           } else {
             return static_cast<double>(1e-5);
           }
