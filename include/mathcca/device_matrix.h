@@ -183,7 +183,9 @@ namespace mathcca {
         checkCudaErrors(cudaFree(dp_rhs));
         return *this;
       }
-      
+
+      device_allocator<T> get_allocator() const { return Parent::get_allocator();}
+
   };
 
   template<std::floating_point T>

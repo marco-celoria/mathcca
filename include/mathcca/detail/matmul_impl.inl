@@ -26,61 +26,60 @@
 namespace mathcca {
     
   namespace detail {
-    
+   /* 
     template<std::floating_point T>
     constexpr inline auto check_matmul_compatible_size(const host_matrix<T>& lhs, const host_matrix<T>& rhs) {
       if (lhs.num_cols() == rhs.num_rows())
         return true;
       return false;
     }
-    
+    */
     template<std::floating_point T>
-    constexpr void matmul(MM::Base, const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) {
-      std::cout << "Base matmul\n";
-      if (!check_matmul_compatible_size(A, B))
-        throw std::length_error{"Incompatible length matrix-matrix product"};
-      using size_type= typename host_matrix<T>::size_type;
+    constexpr void matmul(Omp, const std::size_t A_num_rows, const std::size_t B_num_cols, const std::size_t A_num_cols, const T* A, const T* B, T* C, MM::Base) {
+      std::cout << "OMP Base matmul\n";
+      //if (!check_matmul_compatible_size(A, B))
+      //  throw std::length_error{"Incompatible length matrix-matrix product"};
+      using size_type= std::size_t;
       using value_type= T;
-      const auto i_end{A.num_rows()};
-      const auto j_end{B.num_cols()};
-      const auto k_end{A.num_cols()};
+      auto idx_Ac = [&A_num_cols](size_type i, size_type j){ return i * A_num_cols + j; };
+      auto idx_Bc = [&B_num_cols](size_type i, size_type j){ return i * B_num_cols + j; };
       #pragma omp parallel for collapse(2) default(shared)
-      for (size_type i= 0; i < i_end; ++i) {
-        for (size_type j= 0; j < j_end; ++j) {
+      for (size_type i= 0; i < A_num_rows; ++i) {
+        for (size_type j= 0; j < B_num_cols; ++j) {
           auto sum{static_cast<value_type>(0)};
           #pragma omp simd reduction(+:sum)
-          for (size_type k= 0; k < k_end; ++k) {
-            sum+= A(i, k) * B(k, j);
+          for (size_type k= 0; k < A_num_cols; ++k) {
+            sum+= A[idx_Ac(i, k)] * B[idx_Bc(k,j)];
           }
-          C(i, j)= sum;
+          C[idx_Bc(i,j)]= sum;
         }
       }
     }
        
     template<std::floating_point T, unsigned int LINEAR_TILE_DIM>
-    constexpr void matmul(MM::Tiled, const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) {
-      std::cout << "Tiled matmul\n";
-      if (!check_matmul_compatible_size(A, B))
-        throw std::length_error{"Incompatible length matrix-matrix product"};
-      using size_type= typename host_matrix<T>::size_type;
-      const auto ii_end{A.num_rows()};
-      const auto jj_end{B.num_cols()};
-      const auto kk_end{A.num_cols()};
-      const auto Ar_blocksize = std::min(static_cast<unsigned int>(ii_end), LINEAR_TILE_DIM);
-      const auto Bc_blocksize = std::min(static_cast<unsigned int>(jj_end), LINEAR_TILE_DIM);
-      const auto Ac_blocksize = std::min(static_cast<unsigned int>(kk_end), LINEAR_TILE_DIM);
+    constexpr void matmul(Omp, const std::size_t A_num_rows, const std::size_t B_num_cols, const std::size_t A_num_cols, const T* A, const T* B, T* C, MM::Tiled) {
+      std::cout << "OMP Tiled matmul\n";
+      //if (!check_matmul_compatible_size(A, B))
+      //  throw std::length_error{"Incompatible length matrix-matrix product"};
+      using size_type= std::size_t;
+      using value_type= T;
+      auto idx_Ac = [&A_num_cols](size_type i, size_type j){ return i * A_num_cols + j; };
+      auto idx_Bc = [&B_num_cols](size_type i, size_type j){ return i * B_num_cols + j; };
+      const auto Ar_blocksize = std::min(static_cast<unsigned int>(A_num_rows), LINEAR_TILE_DIM);
+      const auto Bc_blocksize = std::min(static_cast<unsigned int>(B_num_cols), LINEAR_TILE_DIM);
+      const auto Ac_blocksize = std::min(static_cast<unsigned int>(A_num_cols), LINEAR_TILE_DIM);
       #pragma omp parallel for collapse(2) default(shared)
-      for (size_type ii= 0; ii < ii_end; ii+= Ar_blocksize) {
-        for (size_type jj= 0; jj < jj_end; jj+= Bc_blocksize) {
-          size_type i_end= std::min(ii + Ar_blocksize, ii_end);
-          size_type j_end= std::min(jj + Bc_blocksize, jj_end);
-          for (size_type kk= 0; kk < kk_end; kk+= Ac_blocksize) {
-            size_type k_end = std::min(kk + Ac_blocksize, kk_end);
+      for (size_type ii= 0; ii < A_num_rows; ii+= Ar_blocksize) {
+        for (size_type jj= 0; jj < B_num_cols; jj+= Bc_blocksize) {
+          size_type i_end= std::min(ii + Ar_blocksize, A_num_rows);
+          size_type j_end= std::min(jj + Bc_blocksize, B_num_cols);
+          for (size_type kk= 0; kk < A_num_cols; kk+= Ac_blocksize) {
+            size_type k_end = std::min(kk + Ac_blocksize, A_num_cols);
             for (size_type i= ii; i < i_end; ++i) {
               for (size_type k= kk; k < k_end; ++k) {
                 for (size_type j= jj; j < j_end; ++j) {
-                  C(i, j)+= A(i, k) * B(k, j);
-                }
+                  C[idx_Bc(i,j)]+= A[idx_Ac(i, k)] * B[idx_Bc(k,j)];
+		}
               }
             }
           }
@@ -91,34 +90,34 @@ namespace mathcca {
 #ifdef _MKL
        
     template<std::floating_point T>
-    constexpr void matmul(MM::Mkl, const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) {
-      std::cout << "Mkl matmul\n";
-      if (!check_matmul_compatible_size(A, B))
-        throw std::length_error{"Incompatible length matrix-matrix product"};
+    constexpr void matmul(Omp, const std::size_t A_num_rows, const std::size_t B_num_cols, const std::size_t A_num_cols, const T* A, const T* B, T* C, MM::Mkl) {
+      std::cout << "OMP Mkl matmul\n";
+      //if (!check_matmul_compatible_size(A, B))
+      //  throw std::length_error{"Incompatible length matrix-matrix product"};
       //using size_type= typename host_matrix<T>::size_type;
       using value_type= T;
       value_type alpha{1};
       value_type beta{0};
       if constexpr(std::is_same_v<T,double>) {
-        cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A.num_rows(), B.num_cols(), A.num_cols(),
-                 alpha, A.data(), A.num_cols(), B.data(), B.num_cols(), beta, C.data(), C.num_cols());
+        cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_num_rows, B_num_cols, A_num_cols,
+                 alpha, A, A_num_cols, B, B_num_cols, beta, C, C_num_cols);
       } else {
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A.num_rows(), B.num_cols(), A.num_cols(),
-                 alpha, A.data(), A.num_cols(), B.data(), B.num_cols(), beta, C.data(), C.num_cols());
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_num_rows, B_num_cols, A_num_cols,
+                 alpha, A, A_num_cols, B, B_num_cols, beta, C, C_num_cols);
       }
     }
        
 #endif
     
 #ifdef __CUDACC__ 
-    
+    /*
     template<std::floating_point T>
     constexpr auto check_matmul_compatible_size(const device_matrix<T>& lhs, const device_matrix<T>& rhs) {
       if (lhs.num_cols() == rhs.num_rows())
         return true;
       return false;
     }
-      
+      */
     template < std::floating_point T>
     __global__ void mm_device_Base_kernel(const std::size_t A_num_rows, const std::size_t B_num_cols, const std::size_t A_num_cols,
                                           const T * __restrict A,       const T * __restrict B,       T * __restrict C) {
@@ -137,24 +136,23 @@ namespace mathcca {
     } 
       
     template <std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM>
-    void matmul(MM::Base, const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C, cudaStream_t stream) {
-      std::cout << "Base matmul\n";
+    void matmul(Cuda, const std::size_t A_num_rows, const std::size_t B_num_cols, const std::size_t A_num_cols, const T* A, const T* B, T* C, MM::Base, cudaStream_t stream) {
+      std::cout << "CUDA Base matmul\n";
       static_assert(LINEAR_THREAD_BLOCK_DIM * LINEAR_THREAD_BLOCK_DIM <= 1024);
-      if (!check_matmul_compatible_size(A, B))
-        throw std::length_error{"Incompatible length matrix-matrix product"};      
-      using size_type = typename device_matrix<T>::size_type;
-      using value_type = T;
+      //if (!check_matmul_compatible_size(A, B))
+      //  throw std::length_error{"Incompatible length matrix-matrix product"};      
+      using size_type= std::size_t;
+      using value_type= T;
       constexpr unsigned int tile{LINEAR_THREAD_BLOCK_DIM};
       constexpr dim3 dimBlock = {tile, tile, 1}; // square
-      dim3 dimGrid = {static_cast<unsigned int>((B.num_cols() + static_cast<size_type>(dimBlock.x) - 1) / static_cast<size_type>(dimBlock.x)),
-                      static_cast<unsigned int>((A.num_rows() + static_cast<size_type>(dimBlock.y) - 1) / static_cast<size_type>(dimBlock.y)),
+      dim3 dimGrid = {static_cast<unsigned int>((B_num_cols + static_cast<size_type>(dimBlock.x) - 1) / static_cast<size_type>(dimBlock.x)),
+                      static_cast<unsigned int>((A_num_rows + static_cast<size_type>(dimBlock.y) - 1) / static_cast<size_type>(dimBlock.y)),
                       1};
-      mm_device_Base_kernel<value_type><<<dimGrid, dimBlock, 0, stream>>>(A.num_rows(), B.num_cols(), A.num_cols(), A.data(), B.data(), C.data());
+      mm_device_Base_kernel<value_type><<<dimGrid, dimBlock, 0, stream>>>(A_num_rows, B_num_cols, A_num_cols, A, B, C);
     }  
       
     template < std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM >
-    __global__ void mm_device_Tiled_kernel(const std::size_t A_num_rows, const std::size_t B_num_cols, const std::size_t A_num_cols,
-                                           const T * __restrict A, const T * __restrict B, T * __restrict C) {
+    __global__ void mm_device_Tiled_kernel(const std::size_t A_num_rows, const std::size_t B_num_cols, const std::size_t A_num_cols, const T * __restrict A, const T * __restrict B, T * __restrict C) {
       // Declaration of the shared memory array As used to store the sub-matrix of A: tile A e.g. [16][16]
       __shared__ T Atile[LINEAR_THREAD_BLOCK_DIM][LINEAR_THREAD_BLOCK_DIM];
       // extern __shared__ T Atile[];
@@ -197,44 +195,42 @@ namespace mathcca {
     }
       
     template <std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM>
-    void matmul(MM::Tiled, const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C, cudaStream_t stream)  {
-      std::cout << "Tiled matmul\n";
+    void matmul(Cuda, const std::size_t A_num_rows, const std::size_t B_num_cols, const std::size_t A_num_cols, const T* A, const T* B, T* C, MM::Tiled, cudaStream_t stream)  {
+      std::cout << "CUDA Tiled matmul\n";
       static_assert(LINEAR_THREAD_BLOCK_DIM * LINEAR_THREAD_BLOCK_DIM <= 1024);
-      if (!check_matmul_compatible_size(A, B))
-        throw std::length_error{"Incompatible length matrix-matrix product"};
+      //if (!check_matmul_compatible_size(A, B))
+      //  throw std::length_error{"Incompatible length matrix-matrix product"};
       
-      using size_type = typename device_matrix<T>::size_type;
+      using size_type = std::size_t;
       using value_type = T;
       constexpr unsigned int tile{LINEAR_THREAD_BLOCK_DIM};
       constexpr dim3 dimBlock = {tile, tile, 1}; // square
-      dim3 dimGrid = {static_cast<unsigned int>((B.num_cols() + static_cast<size_type>(dimBlock.x) - 1) / static_cast<size_type>(dimBlock.x)),
-                      static_cast<unsigned int>((A.num_rows() + static_cast<size_type>(dimBlock.y) - 1) / static_cast<size_type>(dimBlock.y)),
+      dim3 dimGrid = {static_cast<unsigned int>((B_num_cols + static_cast<size_type>(dimBlock.x) - 1) / static_cast<size_type>(dimBlock.x)),
+                      static_cast<unsigned int>((A_num_rows + static_cast<size_type>(dimBlock.y) - 1) / static_cast<size_type>(dimBlock.y)),
                       1};
-      mm_device_Tiled_kernel<value_type, LINEAR_THREAD_BLOCK_DIM><<<dimGrid, dimBlock, 0, stream>>>(A.num_rows(), B.num_cols(), A.num_cols(), A.data(), B.data(), C.data());
+      mm_device_Tiled_kernel<value_type, LINEAR_THREAD_BLOCK_DIM><<<dimGrid, dimBlock, 0, stream>>>(A_num_rows, B_num_cols, A_num_cols, A, B, C);
     }  
     
 #ifdef _CUBLAS
     
     template <std::floating_point T>
-    void matmul(MM::Cublas, const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C)  {
-      std::cout << "Cublas matmul\n";
-      if (!check_matmul_compatible_size(A, B))
-        throw std::length_error{"Incompatible length matrix-matrix product"};
+    void matmul(Cuda, const std::size_t A_num_rows, const std::size_t B_num_cols, const std::size_t A_num_cols, const T* A, const T* B, T* C, MM::Cublas)  {
+      std::cout << "CUDA Cublas matmul\n";
+      //if (!check_matmul_compatible_size(A, B))
+      //  throw std::length_error{"Incompatible length matrix-matrix product"};
       const T alpha{static_cast<T>(1)};
       const T  beta{static_cast<T>(0)};;
       cublasHandle_t handle;
       checkCudaErrors(cublasCreate(&handle));
       if constexpr(std::is_same_v<T, double>) {
         checkCudaErrors(cublasDgemm(
-            handle, CUBLAS_OP_N, CUBLAS_OP_N, B.num_cols(), A.num_rows(), A.num_cols(),
-            &alpha, B.data(), B.num_cols(), A.data(), A.num_cols(),
-            &beta,  C.data(), B.num_cols()));
+            handle, CUBLAS_OP_N, CUBLAS_OP_N, B_num_cols, A_num_rows, A_num_cols,
+            &alpha, B, B_num_cols, A, A_num_cols, &beta,  C, B_num_cols));
       }
       else {
         checkCudaErrors(cublasSgemm(
-            handle, CUBLAS_OP_N, CUBLAS_OP_N, B.num_cols(), A.num_rows(), A.num_cols(),
-            &alpha, B.data(), B.num_cols(), A.data(), A.num_cols(),
-            &beta,  C.data(), B.num_cols()));
+            handle, CUBLAS_OP_N, CUBLAS_OP_N, B_num_cols, A_num_rows, A_num_cols,
+            &alpha, B, B_num_cols, A, A_num_cols, &beta,  C, B_num_cols));
       }
       checkCudaErrors(cublasDestroy(handle));
     }

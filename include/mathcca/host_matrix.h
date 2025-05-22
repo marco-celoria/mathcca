@@ -126,7 +126,9 @@ namespace mathcca {
           (*this)[i] *= rhs[i];
         return *this;
       }
-        
+
+      Allocator get_allocator() const { return Parent::get_allocator();}
+
   };  
     
   /* Swap and checks */

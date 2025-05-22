@@ -37,22 +37,22 @@ TEST(MatmulDp, BasicAssertions)
       EXPECT_THROW({mathcca::matmul(dX0, dERR, mathcca::MM::Tiled());}, std::length_error);
       EXPECT_THROW({mathcca::matmul(hX0, hERR, mathcca::MM::Tiled());}, std::length_error);
       
-      mathcca::matmul<value_type, mathcca::MM::Base, 8>(dX0, dY0, dB0, mathcca::MM::Base());
-      mathcca::matmul<value_type, mathcca::MM::Base>   (hX0, hY0, hB0,  mathcca::MM::Base());
-      auto dB1= mathcca::matmul<value_type, mathcca::MM::Base, 16>(dX0, dY0, mathcca::MM::Base());
-      auto dB2= mathcca::matmul<value_type, mathcca::MM::Base, 32>(dX0, dY0, mathcca::MM::Base());
-      auto hB1= mathcca::matmul<value_type, mathcca::MM::Base>    (hX0, hY0, mathcca::MM::Base());
+      mathcca::matmul<mathcca::device_matrix<double>, mathcca::MM::Base, 8>(dX0, dY0, dB0, mathcca::MM::Base());
+      mathcca::matmul<mathcca::host_matrix<double>, mathcca::MM::Base>   (hX0, hY0, hB0,  mathcca::MM::Base());
+      auto dB1= mathcca::matmul<mathcca::device_matrix<double>, mathcca::MM::Base, 16>(dX0, dY0, mathcca::MM::Base());
+      auto dB2= mathcca::matmul<mathcca::device_matrix<double>, mathcca::MM::Base, 32>(dX0, dY0, mathcca::MM::Base());
+      auto hB1= mathcca::matmul<mathcca::host_matrix<double>, mathcca::MM::Base>    (hX0, hY0, mathcca::MM::Base());
       
       EXPECT_TRUE(dB0 == dB1);
       EXPECT_TRUE(dB1 == dB2);
       
       EXPECT_TRUE(hB0 == hB1);
       
-      mathcca::matmul<value_type, mathcca::MM::Tiled, 8>(dX0, dY0, dT0, mathcca::MM::Tiled());
-      mathcca::matmul<value_type, mathcca::MM::Tiled>   (hX0, hY0, hT0, mathcca::MM::Tiled());
-      auto dT1= mathcca::matmul<value_type, mathcca::MM::Tiled, 16>(dX0, dY0, mathcca::MM::Tiled());
-      auto dT2= mathcca::matmul<value_type, mathcca::MM::Tiled, 32>(dX0, dY0, mathcca::MM::Tiled());
-      auto hT1= mathcca::matmul<value_type, mathcca::MM::Tiled>    (hX0, hY0, mathcca::MM::Tiled());
+      mathcca::matmul<mathcca::device_matrix<double>, mathcca::MM::Tiled, 8>(dX0, dY0, dT0, mathcca::MM::Tiled());
+      mathcca::matmul<mathcca::host_matrix<double>, mathcca::MM::Tiled>   (hX0, hY0, hT0, mathcca::MM::Tiled());
+      auto dT1= mathcca::matmul<mathcca::device_matrix<double>, mathcca::MM::Tiled, 16>(dX0, dY0, mathcca::MM::Tiled());
+      auto dT2= mathcca::matmul<mathcca::device_matrix<double>, mathcca::MM::Tiled, 32>(dX0, dY0, mathcca::MM::Tiled());
+      auto hT1= mathcca::matmul<mathcca::host_matrix<double>, mathcca::MM::Tiled>    (hX0, hY0, mathcca::MM::Tiled());
       
       EXPECT_TRUE(dT0 == dT1);
       EXPECT_TRUE(dT1 == dT2);
@@ -77,9 +77,9 @@ TEST(MatmulDp, BasicAssertions)
 
 #ifdef _CUBLAS
 
-      mathcca::matmul<value_type, mathcca::MM::Cublas, 8>(dX0, dY0, dC0, mathcca::MM::Cublas());
-      auto dC1 = mathcca::matmul<value_type, mathcca::MM::Cublas, 16>(dX0, dY0, mathcca::MM::Cublas());
-      auto dC2 = mathcca::matmul<value_type, mathcca::MM::Cublas, 32>(dX0, dY0, mathcca::MM::Cublas());
+      mathcca::matmul<mathcca::device_matrix<double>, mathcca::MM::Cublas, 8>(dX0, dY0, dC0, mathcca::MM::Cublas());
+      auto dC1 = mathcca::matmul<mathcca::device_matrix<double>, mathcca::MM::Cublas, 16>(dX0, dY0, mathcca::MM::Cublas());
+      auto dC2 = mathcca::matmul<mathcca::device_matrix<double>, mathcca::MM::Cublas, 32>(dX0, dY0, mathcca::MM::Cublas());
       
       EXPECT_TRUE(dC0 == dC1);
       EXPECT_TRUE(dC1 == dC2);

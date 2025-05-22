@@ -276,7 +276,7 @@ int main(int argc, char **argv)  {
       std::cout << "l = " << l << " m = " << m << " n = " << n << "\n";
       using value_type= typename decltype(A0)::value_type;
       try {
-        mathcca::matmul<value_type, mathcca::MM::Base, 32>(A0,ERR, mathcca::MM::Base());
+        mathcca::matmul<mathcca::device_matrix<value_type>, mathcca::MM::Base, 32>(A0,ERR, mathcca::MM::Base());
       }
       catch(std::exception &e) {
         std::cout << "Caught exception: " << e.what() << std::endl;
@@ -287,10 +287,10 @@ int main(int argc, char **argv)  {
       std::cout << "--------------------------------------------------------\n";
       std::cout << std::boolalpha << (A0 != B0) << std::noboolalpha << "\n";
       std::cout << "--------------------------------------------------------\n";
-      mathcca::matmul<value_type, mathcca::MM::Base, 32>(A0, B0, C0, mathcca::MM::Base());
-      auto C1 = mathcca::matmul<value_type, mathcca::MM::Tiled, 32>(A0, B0, mathcca::MM::Tiled());
+      mathcca::matmul<mathcca::device_matrix<value_type>, mathcca::MM::Base, 32>(A0, B0, C0, mathcca::MM::Base());
+      auto C1 = mathcca::matmul<mathcca::device_matrix<value_type>, mathcca::MM::Tiled, 32>(A0, B0, mathcca::MM::Tiled());
 #ifdef _CUBLAS
-      auto C2 = mathcca::matmul<value_type, mathcca::MM::Cublas>(A0, B0, mathcca::MM::Cublas());
+      auto C2 = mathcca::matmul<mathcca::device_matrix<value_type>, mathcca::MM::Cublas>(A0, B0, mathcca::MM::Cublas());
 #endif
       std::cout << "--------------------------------------------------------\n";
       std::cout << std::boolalpha << (C0 == C1) << std::noboolalpha << "\n";

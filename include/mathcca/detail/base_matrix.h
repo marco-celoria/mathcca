@@ -167,7 +167,9 @@ namespace mathcca {
             return static_cast<double>(1e-5);
           }
         }
-        
+
+        auto get_allocator() const {return allocator;}
+
       private:
         
         size_type num_rows_{0};

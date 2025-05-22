@@ -18,27 +18,27 @@ namespace mathcca {
   namespace detail {
     
     template<std::floating_point T>
-    constexpr void matmul(MM::Base, const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) ;
+    constexpr void matmul(Omp, const std::size_t A_num_rows, const std::size_t B_num_cols, const std::size_t A_num_cols, const T* A, const T* B, T* C, MM::Base) ;
     
     template<std::floating_point T, unsigned int LINEAR_TILE_DIM>
-    constexpr void matmul(MM::Tiled, const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) ;
+    constexpr void matmul(Omp, const std::size_t A_num_rows, const std::size_t B_num_cols, const std::size_t A_num_cols, const T* A, const T* B, T* C, MM::Tiled) ;
     
 #ifdef _MKL
     template<std::floating_point T>
-    constexpr void matmul(MM::Mkl, const host_matrix<T>& A, const host_matrix<T>& B, host_matrix<T>& C) ;
+    constexpr void matmul(Omp, const std::size_t A_num_rows, const std::size_t B_num_cols, const std::size_t A_num_cols, const T* A, const T* B, T* C, MM::Mkl) ;
 #endif 
      
 #ifdef __CUDACC__ 
       
     template <std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM>
-    void matmul(MM::Base, const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C, cudaStream_t stream) ;     
+    void matmul(Cuda, const std::size_t A_num_rows, const std::size_t B_num_cols, const std::size_t A_num_cols, const T* A, const T* B, T* C, MM::Base, cudaStream_t stream) ;     
     
     template <std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM>
-    void matmul(MM::Tiled, const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C, cudaStream_t stream);     
+    void matmul(Cuda, const std::size_t A_num_rows, const std::size_t B_num_cols, const std::size_t A_num_cols, const T* A, const T* B, T* C, MM::Tiled, cudaStream_t stream);     
     
 #ifdef _CUBLAS
     template <std::floating_point T>
-    void  matmul(MM::Cublas, const device_matrix<T>& A, const device_matrix<T>& B, device_matrix<T>& C) ; 
+    void  matmul(Cuda, const std::size_t A_num_rows, const std::size_t B_num_cols, const std::size_t A_num_cols, const T* A, const T* B, T* C, MM::Cublas) ; 
 #endif
     
 #endif
