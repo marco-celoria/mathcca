@@ -35,7 +35,7 @@ namespace mathcca {
 #endif
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
-    T reduce_sum(Cuda, const T* first, const T* last, const T init, cudaStream_t stream); 
+    T reduce_sum(Cuda, const T* first, const T* last, const T init, cudaStream_t stream=0); 
     
 #endif
     

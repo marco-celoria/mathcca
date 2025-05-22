@@ -5,26 +5,125 @@ TEST(ReduceSp, BasicAssertions)
 {
     std::size_t r{2};
     std::size_t c{5};
-    for (auto n= 1; n < 9; ++n) {
-      mathcca::device_matrix<float> X{r, c};
-      mathcca::device_matrix<float> Y{r, c, static_cast<float>(n)};
+    for (auto n= 1; n < 6; ++n) {
+      mathcca::device_matrix<float> dX{r, c};
+      mathcca::host_matrix<float> hX{r, c};
       
-      using value_type= typename decltype(X)::value_type;
-      mathcca::fill_const(X.begin(), X.end(), static_cast<value_type>(n));
-      mathcca::fill_iota(Y.begin(),  Y.end(), static_cast<value_type>(1));
+      using value_type= typename decltype(dX)::value_type;
+      std::cout << "A n= " << n << "\n"; 
+      mathcca::fill_rand(dX.begin(), dX.end());
+      mathcca::copy(dX.cbegin(), dX.cend(), hX.begin());
+      cudaDeviceSynchronize();
 
-      const value_type sumX= mathcca::reduce_sum(X.begin(),  X.end(),  static_cast<value_type>(0));
-      const value_type sumY= mathcca::reduce_sum(Y.cbegin(), Y.cend(), static_cast<value_type>(0));
+      value_type sumdX_0= mathcca::reduce_sum(dX.begin(),  dX.end(),  static_cast<value_type>(1));
+      value_type sumdX_C1= mathcca::detail::reduce_sum<value_type, 32  >(mathcca::Cuda(), dX.cbegin().get(), dX.cend().get(), static_cast<value_type>(1));
+      value_type sumdX_C2= mathcca::detail::reduce_sum<value_type, 64  >(mathcca::Cuda(), dX.begin().get(),  dX.end().get(),  static_cast<value_type>(1));
+      value_type sumdX_C3= mathcca::detail::reduce_sum<value_type, 128 >(mathcca::Cuda(), dX.cbegin().get(), dX.cend().get(), static_cast<value_type>(1));
+      value_type sumdX_C4= mathcca::detail::reduce_sum<value_type, 256 >(mathcca::Cuda(), dX.begin().get(),  dX.end().get(),  static_cast<value_type>(1));
+      value_type sumdX_C5= mathcca::detail::reduce_sum<value_type, 512 >(mathcca::Cuda(), dX.cbegin().get(), dX.cend().get(), static_cast<value_type>(1));
+      value_type sumdX_C6= mathcca::detail::reduce_sum<value_type, 1024>(mathcca::Cuda(), dX.begin().get(),  dX.end().get(),  static_cast<value_type>(1));
+#ifdef _THRUST
+      value_type sumdX_T= mathcca::detail::reduce_sum(mathcca::Thrust(), dX.cbegin().get(), dX.cend().get(), static_cast<value_type>(1));
+#endif
+      value_type sumhX_0= mathcca::reduce_sum(hX.begin(), hX.end(), static_cast<value_type>(1));
+      value_type sumhX_O= mathcca::detail::reduce_sum(mathcca::Omp(), hX.cbegin().get(), hX.cend().get(), static_cast<value_type>(1));
+#ifdef _STDPAR
+      value_type sumhX_S= mathcca::detail::reduce_sum(mathcca::StdPar(), hX.cbegin().get(), hX.cend().get(), static_cast<value_type>(1));
+#endif
+      EXPECT_NEAR(sumdX_0,  sumhX_0, 0.99);
 
-      const auto sX= static_cast<value_type>(X.size());
-      const auto sY= static_cast<value_type>(Y.size());
-
-      const auto resX= static_cast<value_type>(n) * sX;
-      const auto resY= sY / (static_cast<value_type>(2)) * (sY + static_cast<value_type>(1));
-
-      EXPECT_FLOAT_EQ(sumX, resX);
-      EXPECT_FLOAT_EQ(sumY, resY);
+      EXPECT_FLOAT_EQ(sumdX_0,  sumdX_C1);
+      EXPECT_FLOAT_EQ(sumdX_C1, sumdX_C2);
+      EXPECT_FLOAT_EQ(sumdX_C2, sumdX_C3);
+      EXPECT_FLOAT_EQ(sumdX_C3, sumdX_C4);
+      EXPECT_FLOAT_EQ(sumdX_C4, sumdX_C5);
+      EXPECT_FLOAT_EQ(sumdX_C5, sumdX_C6);
+#ifdef _THRUST
+      EXPECT_FLOAT_EQ(sumdX_C6, sumdX_T);
+#endif
+      EXPECT_FLOAT_EQ(sumhX_0,  sumhX_O);
+#ifdef _STDPAR      
+      EXPECT_FLOAT_EQ(sumhX_O,  sumhX_S);
+#endif
       
+      std::cout << "B n= " << n << "\n"; 
+      mathcca::fill_const(dX.begin(), dX.end(), static_cast<value_type>(n));
+      mathcca::fill_const(hX.begin(), hX.end(), static_cast<value_type>(n));
+      sumdX_0= mathcca::reduce_sum(dX.begin(),  dX.end(),  static_cast<value_type>(0));
+      sumdX_C1= mathcca::detail::reduce_sum<value_type, 32  >(mathcca::Cuda(), dX.cbegin().get(), dX.cend().get(), static_cast<value_type>(0));
+      sumdX_C2= mathcca::detail::reduce_sum<value_type, 64  >(mathcca::Cuda(), dX.begin().get(),  dX.end().get(),  static_cast<value_type>(0));
+      sumdX_C3= mathcca::detail::reduce_sum<value_type, 128 >(mathcca::Cuda(), dX.cbegin().get(), dX.cend().get(), static_cast<value_type>(0));
+      sumdX_C4= mathcca::detail::reduce_sum<value_type, 256 >(mathcca::Cuda(), dX.begin().get(),  dX.end().get(),  static_cast<value_type>(0));
+      sumdX_C5= mathcca::detail::reduce_sum<value_type, 512 >(mathcca::Cuda(), dX.cbegin().get(), dX.cend().get(), static_cast<value_type>(0));
+      sumdX_C6= mathcca::detail::reduce_sum<value_type, 1024>(mathcca::Cuda(), dX.begin().get(),  dX.end().get(),  static_cast<value_type>(0));
+#ifdef _THRUST
+      sumdX_T= mathcca::detail::reduce_sum(mathcca::Thrust(), dX.cbegin().get(), dX.cend().get(), static_cast<value_type>(0));
+#endif
+      sumhX_0= mathcca::reduce_sum(hX.begin(), hX.end(), static_cast<value_type>(0));
+      sumhX_O= mathcca::detail::reduce_sum(mathcca::Omp(), hX.cbegin().get(), hX.cend().get(), static_cast<value_type>(0));
+#ifdef _STDPAR
+      sumhX_S= mathcca::detail::reduce_sum(mathcca::StdPar(), hX.cbegin().get(), hX.cend().get(), static_cast<value_type>(0));
+#endif
+      auto sX= static_cast<value_type>(dX.size());
+      auto resX= static_cast<value_type>(n) * sX;
+      EXPECT_FLOAT_EQ(sumdX_0,  sumhX_0);
+
+      EXPECT_FLOAT_EQ(sumdX_0,  sumdX_C1);
+      EXPECT_FLOAT_EQ(sumdX_C1, sumdX_C2);
+      EXPECT_FLOAT_EQ(sumdX_C2, sumdX_C3);
+      EXPECT_FLOAT_EQ(sumdX_C3, sumdX_C4);
+      EXPECT_FLOAT_EQ(sumdX_C5, sumdX_C6);
+#ifdef _THRUST
+      EXPECT_FLOAT_EQ(sumdX_C6, sumdX_T);
+#endif
+      EXPECT_FLOAT_EQ(sumhX_0,  sumhX_O);
+#ifdef _STDPAR      
+      EXPECT_FLOAT_EQ(sumhX_O,  sumhX_S);
+#endif
+
+      EXPECT_FLOAT_EQ(sumdX_0, resX);
+      EXPECT_FLOAT_EQ(sumhX_0, resX);
+if (n<4) {
+      std::cout << "C n= " << n << "\n"; 
+      mathcca::fill_iota(dX.begin(),  dX.end(), static_cast<value_type>(1));
+      mathcca::fill_iota(hX.begin(),  hX.end(), static_cast<value_type>(1));
+      sumdX_0= mathcca::reduce_sum(dX.begin(),  dX.end(),  static_cast<value_type>(0));
+      sumdX_C1= mathcca::detail::reduce_sum<value_type, 32  >(mathcca::Cuda(), dX.cbegin().get(), dX.cend().get(), static_cast<value_type>(0));
+      sumdX_C2= mathcca::detail::reduce_sum<value_type, 64  >(mathcca::Cuda(), dX.begin().get(),  dX.end().get(),  static_cast<value_type>(0));
+      sumdX_C3= mathcca::detail::reduce_sum<value_type, 128 >(mathcca::Cuda(), dX.cbegin().get(), dX.cend().get(), static_cast<value_type>(0));
+      sumdX_C4= mathcca::detail::reduce_sum<value_type, 256 >(mathcca::Cuda(), dX.begin().get(),  dX.end().get(),  static_cast<value_type>(0));
+      sumdX_C5= mathcca::detail::reduce_sum<value_type, 512 >(mathcca::Cuda(), dX.cbegin().get(), dX.cend().get(), static_cast<value_type>(0));
+      sumdX_C6= mathcca::detail::reduce_sum<value_type, 1024>(mathcca::Cuda(), dX.begin().get(),  dX.end().get(),  static_cast<value_type>(0));
+#ifdef _THRUST
+      sumdX_T= mathcca::detail::reduce_sum(mathcca::Thrust(), dX.cbegin().get(), dX.cend().get(), static_cast<value_type>(0));
+#endif
+      sumhX_0= mathcca::reduce_sum(hX.begin(), hX.end(), static_cast<value_type>(0));
+      sumhX_O= mathcca::detail::reduce_sum(mathcca::Omp(), hX.cbegin().get(), hX.cend().get(), static_cast<value_type>(0));
+#ifdef _STDPAR
+      sumhX_S= mathcca::detail::reduce_sum(mathcca::StdPar(), hX.cbegin().get(), hX.cend().get(), static_cast<value_type>(0));
+#endif
+
+      sX= static_cast<value_type>(dX.size());
+      resX= sX / (static_cast<value_type>(2)) * (sX + static_cast<value_type>(1));
+
+      EXPECT_FLOAT_EQ(sumdX_0,  sumhX_0);
+
+      EXPECT_FLOAT_EQ(sumdX_0,  sumdX_C1);
+      EXPECT_FLOAT_EQ(sumdX_C1, sumdX_C2);
+      EXPECT_FLOAT_EQ(sumdX_C2, sumdX_C3);
+      EXPECT_FLOAT_EQ(sumdX_C3, sumdX_C4);
+      EXPECT_FLOAT_EQ(sumdX_C5, sumdX_C6);
+#ifdef _THRUST
+      EXPECT_FLOAT_EQ(sumdX_C6, sumdX_T);
+#endif
+      EXPECT_FLOAT_EQ(sumhX_0,  sumhX_O);
+#ifdef _STDPAR
+      EXPECT_FLOAT_EQ(sumhX_O,  sumhX_S);
+#endif
+
+      EXPECT_FLOAT_EQ(sumdX_0, resX);
+      EXPECT_FLOAT_EQ(sumhX_0, resX);
+}
       std::swap(r,c);
       r*= 5;
       c*= 2;

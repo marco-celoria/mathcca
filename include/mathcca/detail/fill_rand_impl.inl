@@ -44,7 +44,7 @@ namespace mathcca {
     template<std::floating_point T>
     void fill_rand(StdPar, T* first, T* last) {
     const auto size {static_cast<std::size_t>(last - first)};
-      std::cout << "DEBUG STDPAR\n";
+      std::cout << "DEBUG FILL_RAND STDPAR\n";
       std::ranges::iota_view r(static_cast<unsigned int>(0),static_cast<unsigned int>(size));
       std::for_each(std::execution::par_unseq,r.begin(), r.end(), [&](auto i) {first[i] = Uniform(static_cast<T>(0), static_cast<T>(1));});
     }
@@ -53,7 +53,7 @@ namespace mathcca {
     
     template<std::floating_point T>
     void fill_rand(Omp, T* first, T* last) {
-      std::cout << "DEBUG OMP\n";
+      std::cout << "DEBUG FILL_RAND OMP\n";
       const auto size {static_cast<std::size_t>(last - first)};
       std::random_device rd;
       #pragma omp parallel default(shared)
@@ -95,7 +95,7 @@ namespace mathcca {
     
     template<std::floating_point T>
     void fill_rand(Thrust, T* first, T* last) {
-      std::cout << "DEBUG THRUST\n";
+      std::cout << "DEBUG FILL_RAND THRUST\n";
       const auto size {static_cast<int>(last - first)};
       thrust::transform(thrust::device, thrust::make_counting_iterator(0), thrust::make_counting_iterator(size), first, GenRand<T>(std::random_device{}()));
     }
@@ -119,7 +119,7 @@ namespace mathcca {
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
     void fill_rand(Cuda, T* first, T* last, cudaStream_t stream) {
-      std::cout << "DEBUG CUDA\n";    
+      std::cout << "DEBUG FILL_RAND CUDA\n";    
       static_assert(THREAD_BLOCK_DIM <= 1024);
       using value_type= T;
       const auto size {static_cast<std::size_t>(last - first)};

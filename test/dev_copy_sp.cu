@@ -53,15 +53,20 @@ TEST(CopySp, BasicAssertions)
       cudaStreamCreate(&s_E);
 
       mathcca::copy(dA.begin(),  dA.end() , hA.begin(), s_A);
-      mathcca::copy(dB.cbegin(), dB.cend(), hB.begin(), s_B);
-      mathcca::copy(dC.begin(),  dC.end(),  hC.begin(), s_C);
-      mathcca::copy(dD.cbegin(), dD.cend(), hD.begin(), s_D);
-      mathcca::copy(dE.begin(),  dE.end(),  hE.begin(), s_E);
       cudaStreamSynchronize(s_A);
+
+      mathcca::copy(dB.cbegin(), dB.cend(), hB.begin(), s_B);
       cudaStreamSynchronize(s_B);
+
+      mathcca::copy(dC.begin(),  dC.end(),  hC.begin(), s_C);
       cudaStreamSynchronize(s_C);
+
+      mathcca::copy(dD.cbegin(), dD.cend(), hD.begin(), s_D);
       cudaStreamSynchronize(s_D);
+
+      mathcca::copy(dE.begin(),  dE.end(),  hE.begin(), s_E);
       cudaStreamSynchronize(s_E);
+      
       cudaStreamDestroy(s_B);
       cudaStreamDestroy(s_C);
       cudaStreamDestroy(s_E);
@@ -81,11 +86,15 @@ TEST(CopySp, BasicAssertions)
       EXPECT_TRUE(hA == hD);
       EXPECT_TRUE(dA != dD);
       mathcca::copy(hD.begin(),  hD.end() , dD.begin(), s_D);
-      cudaStreamSynchronize(s_D);
       EXPECT_TRUE(dA == dD);
       cudaStreamDestroy(s_A);
       cudaStreamDestroy(s_D);
-      
+     
+      mathcca::copy(hA.begin(),  hA.end() , hE.begin());
+      mathcca::copy(hA.begin(),  hA.end() , hC.begin());
+      EXPECT_TRUE(hA == hE);
+      EXPECT_TRUE(hA == hC);
+
       std::swap(r,c);
       r*= 5;
       c*= 2;

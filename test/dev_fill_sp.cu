@@ -22,15 +22,19 @@ TEST(FillSp, BasicAssertions)
       mathcca::fill_const(dA.begin(), dA.end(), static_cast<value_type>(n));
       cudaStream_t s_A;
       cudaStreamCreate(&s_A);
+      
       mathcca::copy(dA.begin(),  dA.end() , hA.begin(), s_A);
       cudaStreamSynchronize(s_A);
+      
       for (std::size_t i=0; i < hA.size(); ++i) {
         EXPECT_FLOAT_EQ(hA[i], static_cast<value_type>(n));
       }
 
       mathcca::fill_iota(dA.begin(), dA.end(), static_cast<value_type>(10));
+      
       mathcca::copy(dA.begin(),  dA.end() , hA.begin(), s_A);
       cudaStreamSynchronize(s_A);
+      
       cudaStreamDestroy(s_A);
 
       for (std::size_t i=0; i < hA.size(); ++i) {

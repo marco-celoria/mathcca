@@ -1,7 +1,7 @@
 #include <mathcca.hpp>
 #include <gtest/gtest.h>
 
-TEST(CopySp, BasicAssertions)
+TEST(CopyDp, BasicAssertions)
 {
     std::size_t r{2};
     std::size_t c{5};

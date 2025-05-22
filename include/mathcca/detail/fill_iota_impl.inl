@@ -32,7 +32,7 @@ namespace mathcca {
      
     template<std::floating_point T>
     void fill_iota(StdPar, T* first, T* last, const T v) {
-      std::cout << "DEBUG STDPAR\n";
+      std::cout << "DEBUG FILL_IOTA STDPAR\n";
       using value_type= T;
       const auto size {static_cast<std::size_t>(last - first)};
       std::ranges::iota_view indices(static_cast<unsigned int>(0),static_cast<unsigned int>(size));
@@ -43,7 +43,7 @@ namespace mathcca {
     
     template<std::floating_point T>
     void fill_iota(Omp, T* first, T* last, const T v) {
-      std::cout << "DEBUG OMP\n";
+      std::cout << "DEBUG FILL_IOTA OMP\n";
       using value_type= T;
       const auto size {static_cast<std::size_t>(last - first)};
       #pragma omp parallel for default(shared)
@@ -58,7 +58,7 @@ namespace mathcca {
     
     template<std::floating_point T>
     void fill_iota(Thrust, T* first, T* last, const T v) {
-      std::cout << "DEBUG THRUST\n";
+      std::cout << "DEBUG FILL_IOTA THRUST\n";
       thrust::sequence(thrust::device, first, last, v);
     }
     
@@ -74,7 +74,7 @@ namespace mathcca {
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
     void fill_iota(Cuda, T* first, T* last, const T v, cudaStream_t stream) {
-       std::cout << "DEBUG CUDA\n";
+       std::cout << "DEBUG FILL_IOTA CUDA\n";
       static_assert(THREAD_BLOCK_DIM <= 1024);
       using value_type= T;
       const auto size {static_cast<std::size_t>(last - first)};

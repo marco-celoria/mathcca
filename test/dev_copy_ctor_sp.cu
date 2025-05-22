@@ -5,37 +5,70 @@ TEST(CopyCtorSp, BasicAssertions)
 {
   std::size_t row{2};
   std::size_t col{5};
-  for (auto n= 1; n < 8; ++n) {
-    mathcca::device_matrix<float> a1{row, col};
-    mathcca::device_matrix<float> a2{row, col, static_cast<float>(n)};
-    mathcca::device_matrix<float> d1{row, col, static_cast<float>(n+1)};
-    mathcca::device_matrix<float> d2{1, 2};
+  for (auto n= 1; n < 9; ++n) {
+    mathcca::device_matrix<float> dA1{row, col};
+    mathcca::host_matrix<float>   hA1{row, col};
     
-    EXPECT_TRUE(a1 != a2);
-    EXPECT_TRUE(a1 != d1);
-    EXPECT_TRUE(d1 != d2);
-    EXPECT_TRUE(a2 != d2);
+    mathcca::device_matrix<float> dA2{row, col, static_cast<float>(n)};
+    mathcca::host_matrix<float>   hA2{row, col, static_cast<float>(n)};
     
-    auto b1{a1};
-    auto b2{a2};
+    mathcca::device_matrix<float> dD1{row, col, static_cast<float>(n+1)};
+    mathcca::host_matrix<float>   hD1{row, col, static_cast<float>(n+1)};
     
-    EXPECT_TRUE(a1 == b1);
-    EXPECT_TRUE(a2 == b2);
-    EXPECT_TRUE(b1 != b2);
+    mathcca::device_matrix<float> dD2{1, 2};
+    mathcca::host_matrix<float> hD2{1, 2};
     
-    auto c1{b1};
-    auto c2{b2};
+    EXPECT_TRUE(dA1 != dA2);
+    EXPECT_TRUE(dA1 != dD1);
+    EXPECT_TRUE(dD1 != dD2);
+    EXPECT_TRUE(dA2 != dD2);
     
-    EXPECT_TRUE(c1 == a1);
-    EXPECT_TRUE(c2 == a2);
-    EXPECT_TRUE(c1 != c2);
+    EXPECT_TRUE(hA1 != hA2);
+    EXPECT_TRUE(hA1 != hD1);
+    EXPECT_TRUE(hD1 != hD2);
+    EXPECT_TRUE(hA2 != hD2);
     
-    d1= c1;
-    d2= c2;
+    auto dB1{dA1};
+    auto dB2{dA2};
     
-    EXPECT_TRUE(d1 == a1);
-    EXPECT_TRUE(d2 == a2);
-    EXPECT_TRUE(d1 != d2);
+    auto hB1{hA1};
+    auto hB2{hA2};
+    
+    EXPECT_TRUE(dA1 == dB1);
+    EXPECT_TRUE(dA2 == dB2);
+    EXPECT_TRUE(dB1 != dB2);
+    
+    EXPECT_TRUE(hA1 == hB1);
+    EXPECT_TRUE(hA2 == hB2);
+    EXPECT_TRUE(hB1 != hB2);
+    
+    auto dC1{dB1};
+    auto dC2{dB2};
+    
+    auto hC1{hB1};
+    auto hC2{hB2};
+    
+    EXPECT_TRUE(dC1 == dA1);
+    EXPECT_TRUE(dC2 == dA2);
+    EXPECT_TRUE(dC1 != dC2);
+    
+    EXPECT_TRUE(hC1 == hA1);
+    EXPECT_TRUE(hC2 == hA2);
+    EXPECT_TRUE(hC1 != hC2);
+    
+    dD1= dC1;
+    dD2= dC2;
+    
+    hD1= hC1;
+    hD2= hC2;
+    
+    EXPECT_TRUE(dD1 == dA1);
+    EXPECT_TRUE(dD2 == dA2);
+    EXPECT_TRUE(dD1 != dD2);
+    
+    EXPECT_TRUE(hD1 == hA1);
+    EXPECT_TRUE(hD2 == hA2);
+    EXPECT_TRUE(hD1 != hD2);
 
     std::swap(row,col);
     row*= 5;

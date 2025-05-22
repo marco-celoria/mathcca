@@ -38,7 +38,7 @@ namespace mathcca {
       
     template<std::floating_point T>
     T reduce_sum(StdPar, const T* first, const T* last, const T init) {
-      std::cout << "DEBUG STDPAR\n";
+      std::cout << "DEBUG REDUCE_SUM STDPAR\n";
       return std::reduce(std::execution::par_unseq, first, last, init, std::plus<T>());
     }
     
@@ -46,7 +46,7 @@ namespace mathcca {
     
     template<std::floating_point T>
     T reduce_sum(Omp, const T* first, const T* last, const T init) {
-      std::cout << "DEBUG OMP\n";
+      std::cout << "DEBUG REDUCE_SUM OMP\n";
       using value_type= T;
       const auto size {static_cast<std::size_t>(last - first)};
       auto res{static_cast<value_type>(init)};
@@ -63,14 +63,14 @@ namespace mathcca {
         
     template<std::floating_point T>
     T reduce_sum (Thrust, const T* first, const T* last, const T init) {
-      std::cout << "DEBUG THRUST\n";
+      std::cout << "DEBUG REDUCE_SUM THRUST\n";
       return thrust::reduce(thrust::device, first, last, init, thrust::plus<T>());
     }
     
 #endif
     
     template <Arithmetic T>
-    __global__ void cg_reduce_kernel(const T* idata, T* odata, const std::size_t size, const T init) {
+    __global__ void cg_reduce_kernel(const T* idata, T* odata, const std::size_t size) {
       // Shared memory for intermediate steps
       auto sdata = detail::shared_memory_proxy<T>();
       // Handle to thread block group
@@ -81,7 +81,7 @@ namespace mathcca {
       const auto numCtas = static_cast<std::size_t>(gridDim.x);
       const auto threadRank = static_cast<std::size_t>(cta.thread_rank());
       const auto threadIndex = static_cast<std::size_t>((blockIdx.x * ctaSize) + threadRank);
-      auto threadVal{static_cast<T>(init)};
+      auto threadVal{static_cast<T>(0)};
       {
         auto i{threadIndex};
         auto indexStride{numCtas * ctaSize};
@@ -118,7 +118,7 @@ namespace mathcca {
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
     T reduce_sum(Cuda, const T* first, const T* last, const T init, cudaStream_t stream) {
-      std::cout << "DEBUG CUDA\n";
+      std::cout << "DEBUG REDUCE_SUM  CUDA\n";
       static_assert(THREAD_BLOCK_DIM <= 1024);
       static_assert(THREAD_BLOCK_DIM % 32 == 0);
       std::size_t size{static_cast<std::size_t>(last - first)};
@@ -133,7 +133,7 @@ namespace mathcca {
       dim3 dimBlock(threads, 1, 1);
       dim3 dimGrid(blocks, 1, 1);
       unsigned int smemSize = (threads <= 32) ? 2 * threads * sizeof(T) : threads * sizeof(T);
-      cg_reduce_kernel<T><<<dimGrid, dimBlock, smemSize, stream>>>(first, d_odata, size, init);
+      cg_reduce_kernel<T><<<dimGrid, dimBlock, smemSize, stream>>>(first, d_odata, size);
       // sum partial block sums on GPU
       unsigned int s{blocks};
       while (s > 1) {
@@ -141,13 +141,15 @@ namespace mathcca {
         blocks  = (s + (threads * 2 - 1)) / (threads * 2);
         //std::cout << "s = " << s << "; threads = " << threads << "; blocks = " << blocks << "\n";
         checkCudaErrors(cudaMemcpy(d_intermediateSums, d_odata, s * sizeof(T), cudaMemcpyDeviceToDevice));
-        cg_reduce_kernel<T><<<blocks, threads, smemSize, stream>>>(d_intermediateSums, d_odata, s, static_cast<T>(0));
+        cg_reduce_kernel<T><<<blocks, threads, smemSize, stream>>>(d_intermediateSums, d_odata, s);
         s = (s + (threads * 2 - 1)) / (threads * 2);
       }
-      checkCudaErrors(cudaMemcpy(&gpu_result, d_odata, sizeof(T), cudaMemcpyDeviceToHost));
+      //checkCudaErrors(cudaMemcpy(&gpu_result, d_odata, sizeof(T), cudaMemcpyDeviceToHost));
+      checkCudaErrors(cudaMemcpyAsync(&gpu_result, d_odata, sizeof(T), cudaMemcpyDeviceToHost, stream));
+      checkCudaErrors(cudaStreamSynchronize(stream));
       checkCudaErrors(cudaFree(d_odata));
       checkCudaErrors(cudaFree(d_intermediateSums));
-      return gpu_result;
+      return gpu_result + init;
     }
      
 #endif

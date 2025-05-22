@@ -5,7 +5,7 @@ TEST(MoveCtorSp, BasicAssertions)
 {
   std::size_t row{2};
   std::size_t col{5};
-  for (auto n= 1; n < 8; ++n) {
+  for (auto n= 1; n < 9; ++n) {
     mathcca::host_matrix<float> a1{row,  col};
     mathcca::host_matrix<float> a2{row,  col, static_cast<float>(n)};
     mathcca::host_matrix<float> d1{row, col};

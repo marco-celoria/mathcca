@@ -103,10 +103,11 @@ namespace mathcca {
       blocks = (s + (threads * 2 - 1)) / (threads * 2);
       //std::cout << "s = " << s << "; threads = " << threads << "; blocks = " << blocks << "\n";
       checkCudaErrors(cudaMemcpy(d_intermediateSums, d_odata, s * sizeof(T), cudaMemcpyDeviceToDevice));
-      mathcca::detail::cg_reduce_kernel<T><<<blocks, threads, smemSize>>>(d_intermediateSums, d_odata, s, static_cast<T>(0));
+      mathcca::detail::cg_reduce_kernel<T><<<blocks, threads, smemSize>>>(d_intermediateSums, d_odata, s);
       s= (s + (threads * 2 - 1)) / (threads * 2);
     }
     checkCudaErrors(cudaMemcpy(&gpu_result, d_odata, sizeof(T), cudaMemcpyDeviceToHost));
+    cudaDeviceSynchronize();
     checkCudaErrors(cudaFree(d_odata));
     checkCudaErrors(cudaFree(d_intermediateSums));
     return gpu_result;

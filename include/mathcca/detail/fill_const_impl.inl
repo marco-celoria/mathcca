@@ -32,7 +32,7 @@ namespace mathcca {
       
     template<std::floating_point T>
     void fill_const(StdPar, T* first, T* last, const T v) {
-      std::cout << "DEBUG STDPAR\n";
+      std::cout << "DEBUG FILL_CONST STDPAR\n";
       std::fill(std::execution::par_unseq, first, last, v);
     }
     
@@ -40,7 +40,7 @@ namespace mathcca {
     
     template<std::floating_point T>
     void fill_const(Omp, T* first, T* last, const T v) {
-      std::cout << "DEBUG OMP\n";
+      std::cout << "DEBUG FILL_CONST OMP\n";
       const std::size_t size= static_cast<std::size_t>(last - first);
       #pragma omp parallel for default(shared)
       for (std::size_t i= 0; i < size; ++i) {
@@ -54,7 +54,7 @@ namespace mathcca {
     
     template<std::floating_point T>
     void fill_const(Thrust, T* first, T* last, const T v) {
-      std::cout << "DEBUG THRUST\n";
+      std::cout << "DEBUG FILL_CONST THRUST\n";
       thrust::fill(thrust::device, first, last, v);
     }
     
@@ -70,7 +70,7 @@ namespace mathcca {
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
     void fill_const(Cuda, T* first, T* last, const T v, cudaStream_t stream) {
-      std::cout << "DEBUG CUDA\n";
+      std::cout << "DEBUG FILL_CONST CUDA\n";
       static_assert(THREAD_BLOCK_DIM <= 1024);
       using value_type= T;
       const auto size {static_cast<std::size_t>(last - first)};

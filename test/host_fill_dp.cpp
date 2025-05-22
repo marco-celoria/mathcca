@@ -19,7 +19,6 @@ TEST(FillDp, BasicAssertions)
       mathcca::host_matrix<double> X9{r, c};
       using value_type= typename decltype(A)::value_type;
       mathcca::fill_const(A.begin(), A.end(), static_cast<value_type>(n));
-      mathcca::copy(A.begin(), A.end(), A.begin());
       for (std::size_t i= 0; i < A.size(); ++i) {
         EXPECT_FLOAT_EQ(A[i], static_cast<value_type>(n));
       }
