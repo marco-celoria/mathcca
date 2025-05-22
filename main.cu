@@ -371,9 +371,9 @@ int main(int argc, char **argv)  {
       std::cout << "r = " << r << " c = " << c << "\n";
       using value_type= typename decltype(A)::value_type;
       mathcca::fill_rand(A.begin(), A.end());
-      auto res_base= mathcca::frobenius_norm<value_type, mathcca::Norm::Base, 256>(A, mathcca::Norm::Base()); 
+      auto res_base= mathcca::frobenius_norm<mathcca::device_matrix<value_type>, mathcca::Norm::Base, 256>(A, mathcca::Norm::Base()); 
 #ifdef _CUBLAS
-      auto res_cublas= mathcca::frobenius_norm<value_type, mathcca::Norm::Cublas>(A, mathcca::Norm::Cublas()); 
+      auto res_cublas= mathcca::frobenius_norm<mathcca::device_matrix<value_type>, mathcca::Norm::Cublas>(A, mathcca::Norm::Cublas()); 
 #endif
       std::cout << "--------------------------------------------------------\n";
 #ifdef _CUBLAS      
@@ -383,9 +383,9 @@ int main(int argc, char **argv)  {
       
       mathcca::fill_const(A.begin(), A.end(), static_cast<value_type>(3));
 
-      res_base= mathcca::frobenius_norm<value_type, mathcca::Norm::Base, 128>(A, mathcca::Norm::Base());
+      res_base= mathcca::frobenius_norm<mathcca::device_matrix<value_type>, mathcca::Norm::Base, 128>(A, mathcca::Norm::Base());
 #ifdef _CUBLAS
-      res_cublas= mathcca::frobenius_norm<value_type, mathcca::Norm::Cublas>(A, mathcca::Norm::Cublas());
+      res_cublas= mathcca::frobenius_norm<mathcca::device_matrix<value_type>, mathcca::Norm::Cublas>(A, mathcca::Norm::Cublas());
 #endif        
       value_type res= std::sqrt(static_cast<value_type>(3. * 3. * r * c));
       std::cout << std::boolalpha << (fabs(res_base   - res) < decltype(A)::tol()) << std::noboolalpha << "\n";
@@ -400,9 +400,9 @@ int main(int argc, char **argv)  {
         value_type n3{static_cast<value_type>(r * r * r * c * c * c)};
         value_type res= std::sqrt(n3/static_cast<value_type>(3) + n2/static_cast<value_type>(2) + n1/static_cast<value_type>(6));
         mathcca::fill_iota(A.begin(), A.end(), static_cast<value_type>(1));
-        res_base= mathcca::frobenius_norm<value_type, mathcca::Norm::Base>(A, mathcca::Norm::Base());
+        res_base= mathcca::frobenius_norm<mathcca::device_matrix<value_type>, mathcca::Norm::Base>(A, mathcca::Norm::Base());
 #ifdef _CUBLAS
-        res_cublas= mathcca::frobenius_norm<value_type, mathcca::Norm::Cublas>(A, mathcca::Norm::Cublas());
+        res_cublas= mathcca::frobenius_norm<mathcca::device_matrix<value_type>, mathcca::Norm::Cublas>(A, mathcca::Norm::Cublas());
 #endif
         std::cout << std::boolalpha << (fabs(res_base   - res) < 0.2) << std::noboolalpha << "\n";
 #ifdef _CUBLAS

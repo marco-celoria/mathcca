@@ -2,8 +2,6 @@
 #define MATMUL_H_
 #pragma once
 
-#include <concepts> // std::floating_point
-
 #include <mathcca/host_matrix.h>
 
 #ifdef __CUDACC__

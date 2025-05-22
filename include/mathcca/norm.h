@@ -2,8 +2,6 @@
 #define NORM_H_
 #pragma once
 
-#include <concepts> // std::floating_point
-
 #include <mathcca/host_matrix.h>
 
 #ifdef __CUDACC__
@@ -14,44 +12,42 @@
 #include <mathcca/detail/norm_impl.h>
 
 namespace mathcca {
-      
-  template<std::floating_point T, typename Implementation>
-  T frobenius_norm (const host_matrix<T>& x, Implementation) {
-    static_assert(std::is_same_v<Implementation, Norm::Base> 
+    
+#ifdef __CUDACC__     
+  template<typename Matrix, typename Implementation, unsigned int THREAD_BLOCK_DIM= 128>
+  auto frobenius_norm (const Matrix& A, Implementation, cudaStream_t stream= 0) {
+#else
+  template<typename Matrix, typename Implementation>
+  auto frobenius_norm (const Matrix& A, Implementation) {	  
+#endif
+    static_assert(std::is_same_v<Implementation, Norm::Base>  
 #ifdef _MKL       
                   || std::is_same_v<Implementation, Norm::Mkl>
 #endif
-                 );
-    if constexpr(std::is_same_v< Implementation, Norm::Base>) {
-      return detail::frobenius_norm<T>(Norm::Base(), x);
-    }
-#ifdef _MKL
-    else if constexpr(std::is_same_v< Implementation, Norm::Mkl>) {
-      return detail::frobenius_norm(Norm::Mkl(), x);
-    }
-#endif
-  }
-    
-#ifdef __CUDACC__
-     
-  template<std::floating_point T, typename Implementation, unsigned int THREAD_BLOCK_DIM= 128>
-  T frobenius_norm (const device_matrix<T>& x, Implementation, cudaStream_t stream= 0) {
-    static_assert(std::is_same_v<Implementation, Norm::Base>  
 #ifdef _CUBLAS       
                   || std::is_same_v<Implementation, Norm::Cublas>
 #endif
                  );
-    if constexpr(std::is_same_v< Implementation, Norm::Base>) {
-      return detail::frobenius_norm<T, THREAD_BLOCK_DIM>(Norm::Base(), x, stream);
+    using value_type= Matrix::value_type;
+    if constexpr(std::is_same_v< typename decltype(A.get_allocator())::execution, Omp> && std::is_same_v< Implementation, Norm::Base>) {
+      return detail::frobenius_norm<value_type>(Omp(), A.cbegin().get(), A.cend().get(), Norm::Base());
+    }
+#ifdef _MKL
+    else if constexpr(std::is_same_v< typename decltype(A.get_allocator())::execution, Omp> && std::is_same_v< Implementation, Norm::Mkl>) {
+      return detail::frobenius_norm<value_type>(Omp(), A.cbegin().get(), A.cend().get(), Norm::Mkl());
+    }
+#endif
+#ifdef __CUDACC__    
+    else if constexpr(std::is_same_v< typename decltype(A.get_allocator())::execution, Cuda> && std::is_same_v< Implementation, Norm::Base>) {
+      return detail::frobenius_norm<value_type, THREAD_BLOCK_DIM>(Cuda(), A.cbegin().get(), A.cend().get(), Norm::Base(), stream);
     }
 #ifdef _CUBLAS
-    else if constexpr(std::is_same_v< Implementation, Norm::Cublas>) {
-      return detail::frobenius_norm<T>(Norm::Cublas(), x);
+    else if constexpr(std::is_same_v< typename decltype(A.get_allocator())::execution, Cuda> && std::is_same_v< Implementation, Norm::Cublas>) {
+      return detail::frobenius_norm<value_type>(Cuda(), A.cbegin().get(), A.cend().get(), Norm::Cublas());
     }
 #endif
-  }
-
 #endif
+  }
 
 }
 

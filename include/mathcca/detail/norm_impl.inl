@@ -45,26 +45,26 @@ namespace mathcca {
     };
      
     template<std::floating_point T>
-    constexpr decltype(auto) frobenius_norm(Norm::Base, const host_matrix<T>& x) {
-      std::cout << "Base frobenius norm\n";
-      return std::sqrt(transform_reduce_sum(x.cbegin(), x.cend(), Square<T>(), static_cast<T>(0)));
+    constexpr decltype(auto) frobenius_norm(Omp, const T* begin, const T* end, Norm::Base) {
+      std::cout << "OMP frobenius norm Base\n";
+      return std::sqrt(detail::transform_reduce_sum(Omp(), begin, end, Square<T>(), static_cast<T>(0)));
     }
 
 #ifdef _MKL
     
     template<std::floating_point T>
-    constexpr decltype(auto) frobenius_norm(Norm::Mkl, const host_matrix<T>& x) {
-      std::cout << "Mkl frobenius norm\n";
+    constexpr decltype(auto) frobenius_norm(Omp, const T* begin, const T* end, Norm::Mkl) {
+      std::cout << "OMP frobenius norm Mkl\n";
       T result;
-      const auto size{x.size()};
+      const auto size {static_cast<std::size_t>(end - begin)};
       const auto incx{1};
       if constexpr(std::is_same_v<T, double>) {
         //double cblas_dnrm2 (const MKL_INT n, const double *x, const MKL_INT incx);
-        result= cblas_dnrm2(size, x.data(), incx);
+        result= cblas_dnrm2(size, begin, incx);
       }
       else {
         //float cblas_snrm2 (const MKL_INT n, const float *x, const MKL_INT incx);
-        result= cblas_snrm2(size, x.data(), incx);
+        result= cblas_snrm2(size, begin, incx);
       }
       
       return result;
@@ -77,18 +77,18 @@ namespace mathcca {
 #ifdef _CUBLAS
     
     template<std::floating_point T>
-    constexpr decltype(auto) frobenius_norm(Norm::Cublas, const device_matrix<T>& x) {
+    constexpr decltype(auto) frobenius_norm(Cuda,  const T* begin, const T* end, Norm::Cublas) {
       std::cout << "Cublas frobenius norm\n";
       T result;
-      const auto size{x.size()};
+      const auto size {static_cast<std::size_t>(end - begin)};
       const auto incx{1};
       cublasHandle_t handle;
       checkCudaErrors(cublasCreate(&handle));
       if constexpr(std::is_same_v<T, double>) {
-        checkCudaErrors(cublasDnrm2(handle, size, x.data(), incx, &result));
+        checkCudaErrors(cublasDnrm2(handle, size, begin, incx, &result));
       }
       else {
-        checkCudaErrors(cublasSnrm2(handle, size, x.data(), incx, &result));
+        checkCudaErrors(cublasSnrm2(handle, size, begin, incx, &result));
       }
       checkCudaErrors(cublasDestroy(handle));
       return result;
@@ -97,11 +97,10 @@ namespace mathcca {
 #endif
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
-    constexpr decltype(auto) frobenius_norm(Norm::Base, const device_matrix<T>& x, cudaStream_t stream) {
+    constexpr decltype(auto) frobenius_norm(Cuda,  const T* begin, const T* end, Norm::Base, cudaStream_t stream) {
       std::cout << "Base frobenius norm\n";
       static_assert(THREAD_BLOCK_DIM <= 1024);
-      using Iter= device_matrix<T>::const_iterator;
-      return std::sqrt(transform_reduce_sum<Iter, T, Square<T>, THREAD_BLOCK_DIM>( x.cbegin(), x.cend(), Square<T>(), static_cast<T>(0), stream));
+      return std::sqrt(detail::transform_reduce_sum<T, Square<T>, THREAD_BLOCK_DIM>(Cuda(), begin, end, Square<T>(), static_cast<T>(0), stream));
     }
     
 #endif

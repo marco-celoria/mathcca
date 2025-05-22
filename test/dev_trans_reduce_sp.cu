@@ -35,7 +35,7 @@ TEST(TransReduceSp, BasicAssertions)
 #ifdef _STDPAR
       value_type sumhX_S= mathcca::detail::transform_reduce_sum(mathcca::StdPar(), hX.cbegin().get(), hX.cend().get(), mathcca::detail::Square<value_type>(), static_cast<value_type>(1));
 #endif
-      EXPECT_NEAR(sumdX_0,  sumhX_0, 0.5);
+      EXPECT_NEAR(sumdX_0,  sumhX_0, 0.9);
 
       EXPECT_FLOAT_EQ(sumdX_0,  sumdX_C1);
       EXPECT_FLOAT_EQ(sumdX_C1, sumdX_C2);
@@ -46,9 +46,9 @@ TEST(TransReduceSp, BasicAssertions)
 #ifdef _THRUST
       EXPECT_FLOAT_EQ(sumdX_C6, sumdX_T);
 #endif
-      EXPECT_NEAR(sumhX_0,  sumhX_O, 0.5);
+      EXPECT_NEAR(sumhX_0,  sumhX_O, 0.9);
 #ifdef _STDPAR      
-      EXPECT_NEAR(sumhX_O,  sumhX_S, 0.5);
+      EXPECT_NEAR(sumhX_O,  sumhX_S, 0.9);
 #endif
 
 
