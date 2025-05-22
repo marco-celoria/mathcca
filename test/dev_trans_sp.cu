@@ -47,27 +47,27 @@ TEST(TransSp, BasicAssertions)
       EXPECT_THROW({mathcca::transpose(hX, hERR, mathcca::Trans::Base());},  std::length_error);
       EXPECT_THROW({mathcca::transpose(hY, hERR, mathcca::Trans::Tiled());}, std::length_error);
 
-      mathcca::transpose<value_type, mathcca::Trans::Base, 8>(dX,  dB0, mathcca::Trans::Base());
-      mathcca::transpose<value_type, mathcca::Trans::Base, 8>(dB0, dX0, mathcca::Trans::Base());
+      mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Base, 8>(dX,  dB0, mathcca::Trans::Base());
+      mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Base, 8>(dB0, dX0, mathcca::Trans::Base());
       
-      mathcca::transpose<value_type, mathcca::Trans::Base>(hX,  hB0, mathcca::Trans::Base());
-      mathcca::transpose<value_type, mathcca::Trans::Base>(hB0, hX0, mathcca::Trans::Base());
+      mathcca::transpose<mathcca::host_matrix<value_type>, mathcca::Trans::Base>(hX,  hB0, mathcca::Trans::Base());
+      mathcca::transpose<mathcca::host_matrix<value_type>, mathcca::Trans::Base>(hB0, hX0, mathcca::Trans::Base());
 
-      auto dB1 = mathcca::transpose<value_type, mathcca::Trans::Base, 16>(dX,  mathcca::Trans::Base());
-      auto dX1 = mathcca::transpose<value_type, mathcca::Trans::Base, 16>(dB1, mathcca::Trans::Base());
-      auto dB2 = mathcca::transpose<value_type, mathcca::Trans::Base, 32>(dX,  mathcca::Trans::Base());
-      auto dX2 = mathcca::transpose<value_type, mathcca::Trans::Base, 32>(dB2, mathcca::Trans::Base());
+      auto dB1 = mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Base, 16>(dX,  mathcca::Trans::Base());
+      auto dX1 = mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Base, 16>(dB1, mathcca::Trans::Base());
+      auto dB2 = mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Base, 32>(dX,  mathcca::Trans::Base());
+      auto dX2 = mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Base, 32>(dB2, mathcca::Trans::Base());
 
-      mathcca::transpose<value_type, mathcca::Trans::Tiled, 8>(dY,  dT0, mathcca::Trans::Tiled());
-      mathcca::transpose<value_type, mathcca::Trans::Tiled, 8>(dT0, dY0, mathcca::Trans::Tiled());
+      mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Tiled, 8>(dY,  dT0, mathcca::Trans::Tiled());
+      mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Tiled, 8>(dT0, dY0, mathcca::Trans::Tiled());
       
-      mathcca::transpose<value_type, mathcca::Trans::Tiled>(hY,  hT0, mathcca::Trans::Tiled());
-      mathcca::transpose<value_type, mathcca::Trans::Tiled>(hT0, hY0, mathcca::Trans::Tiled());
+      mathcca::transpose<mathcca::host_matrix<value_type>, mathcca::Trans::Tiled>(hY,  hT0, mathcca::Trans::Tiled());
+      mathcca::transpose<mathcca::host_matrix<value_type>, mathcca::Trans::Tiled>(hT0, hY0, mathcca::Trans::Tiled());
       
-      auto dT1 = mathcca::transpose<value_type, mathcca::Trans::Tiled, 16>(dY,  mathcca::Trans::Tiled());
-      auto dY1 = mathcca::transpose<value_type, mathcca::Trans::Tiled, 16>(dT1, mathcca::Trans::Tiled());
-      auto dT2 = mathcca::transpose<value_type, mathcca::Trans::Tiled, 32>(dY,  mathcca::Trans::Tiled());
-      auto dY2 = mathcca::transpose<value_type, mathcca::Trans::Tiled, 32>(dT2, mathcca::Trans::Tiled());
+      auto dT1 = mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Tiled, 16>(dY,  mathcca::Trans::Tiled());
+      auto dY1 = mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Tiled, 16>(dT1, mathcca::Trans::Tiled());
+      auto dT2 = mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Tiled, 32>(dY,  mathcca::Trans::Tiled());
+      auto dY2 = mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Tiled, 32>(dT2, mathcca::Trans::Tiled());
 
       EXPECT_TRUE(hX  == hX0);
       EXPECT_TRUE(hY  == hY0);
@@ -101,12 +101,12 @@ TEST(TransSp, BasicAssertions)
       EXPECT_TRUE(dT0 == dRT);
 
 #ifdef _CUBLAS
-      mathcca::transpose<value_type, mathcca::Trans::Cublas, 8>(dZ,  dC0, mathcca::Trans::Cublas());
-      mathcca::transpose<value_type, mathcca::Trans::Cublas, 8>(dC0, dZ0, mathcca::Trans::Cublas());
-      auto dC1 = mathcca::transpose<value_type, mathcca::Trans::Cublas, 16>(dZ,  mathcca::Trans::Cublas());
-      auto dZ1 = mathcca::transpose<value_type, mathcca::Trans::Cublas, 16>(dC1, mathcca::Trans::Cublas());
-      auto dC2 = mathcca::transpose<value_type, mathcca::Trans::Cublas, 32>(dZ,  mathcca::Trans::Cublas());
-      auto dZ2 = mathcca::transpose<value_type, mathcca::Trans::Cublas, 32>(dC2, mathcca::Trans::Cublas());
+      mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Cublas, 8>(dZ,  dC0, mathcca::Trans::Cublas());
+      mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Cublas, 8>(dC0, dZ0, mathcca::Trans::Cublas());
+      auto dC1 = mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Cublas, 16>(dZ,  mathcca::Trans::Cublas());
+      auto dZ1 = mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Cublas, 16>(dC1, mathcca::Trans::Cublas());
+      auto dC2 = mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Cublas, 32>(dZ,  mathcca::Trans::Cublas());
+      auto dZ2 = mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Cublas, 32>(dC2, mathcca::Trans::Cublas());
 
       EXPECT_TRUE(dZ == dZ1);
       EXPECT_TRUE(dZ == dZ2);

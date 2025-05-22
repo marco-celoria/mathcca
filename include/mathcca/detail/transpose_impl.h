@@ -18,30 +18,30 @@ namespace mathcca {
   namespace detail {
       
     template<std::floating_point T>
-    constexpr void transpose(Trans::Base, const host_matrix<T>& A, host_matrix<T>& B);
+    constexpr void transpose(Omp, const std::size_t A_num_rows, const std::size_t A_num_cols, const T* A, T* B, Trans::Base);
       
     template<std::floating_point T, unsigned int LINEAR_TILE_DIM>
-    constexpr void transpose(Trans::Tiled, const host_matrix<T>& A, host_matrix<T>& B);
+    constexpr void transpose(Omp, const std::size_t A_num_rows, const std::size_t A_num_cols, const T* A, T* B, Trans::Tiled);
       
 #ifdef _MKL
       
     template<std::floating_point T>
-    constexpr void transpose(Trans::Mkl, const host_matrix<T>& A, host_matrix<T>& B); 
+    constexpr void transpose(Omp, const std::size_t A_num_rows, const std::size_t A_num_cols, const T* A, T* B, Trans::Mkl); 
       
 #endif
       
 #ifdef __CUDACC__
       
     template <std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM>
-    void transpose(Trans::Base, const device_matrix<T>& A, device_matrix<T>& B, cudaStream_t stream);
+    void transpose(Cuda, const std::size_t A_num_rows, const std::size_t A_num_cols, const T* A, T* B, Trans::Base, cudaStream_t stream);
       
     template <std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM>
-    void transpose(Trans::Tiled, const device_matrix<T>& A, device_matrix<T>& B, cudaStream_t stream);     
+    void transpose(Cuda, const std::size_t A_num_rows, const std::size_t A_num_cols, const T* A, T* B, Trans::Tiled, cudaStream_t stream);     
       
 #ifdef _CUBLAS
       
     template <std::floating_point T>
-    void  transpose(Trans::Cublas, const device_matrix<T>& A, device_matrix<T>& B);
+    void  transpose(Cuda, const std::size_t A_num_rows, const std::size_t A_num_cols, const T* A, T* B, Trans::Cublas);
       
 #endif
       

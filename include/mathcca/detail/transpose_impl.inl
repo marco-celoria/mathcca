@@ -26,48 +26,52 @@
 namespace mathcca {
      
   namespace detail {
-     
+    /* 
     template<std::floating_point T>
     constexpr inline auto check_transposition_compatible_size(const host_matrix<T>& lhs, const host_matrix<T>& rhs) {
       if ((lhs.num_cols() == rhs.num_rows()) && (lhs.num_rows() == rhs.num_cols()))
         return true;
       return false;
     }
-     
+     */
     template<std::floating_point T>
-    constexpr void transpose(Trans::Base, const host_matrix<T>& A, host_matrix<T>& B) {
+    constexpr void transpose(Omp, const std::size_t A_num_rows, const std::size_t A_num_cols, const T* A, T* B,Trans::Base) {
       std::cout << "Base transposition\n";
-      if (!check_transposition_compatible_size(A, B))
-        throw std::length_error{"Incompatible sizes for matrix transposition"};
-      using size_type= typename host_matrix<T>::size_type;
-      const auto i_end{A.num_rows()};
-      const auto j_end{A.num_cols()};
+      //if (!check_transposition_compatible_size(A, B))
+      //  throw std::length_error{"Incompatible sizes for matrix transposition"};
+      using size_type= std::size_t;//typename host_matrix<T>::size_type;
+      //const auto i_end{A.num_rows()};
+      //const auto j_end{A.num_cols()};
+      auto idx_Ac = [&A_num_cols](size_type i, size_type j){ return i * A_num_cols + j; };
+      auto idx_Bc = [&A_num_rows](size_type i, size_type j){ return i * A_num_rows + j; };
       #pragma omp parallel for collapse(2) default(shared)
-      for (size_type i= 0; i < i_end; ++i) {
-        for (size_type j= 0; j < j_end; ++j) {
-          B(j, i)+= A(i, j);
+      for (size_type i= 0; i < A_num_rows; ++i) {
+        for (size_type j= 0; j < A_num_cols; ++j) {
+          B[idx_Bc(j, i)]= A[idx_Ac(i, j)];
         }
       }
     }
      
     template<std::floating_point T, unsigned int LINEAR_TILE_DIM>
-    constexpr void transpose(Trans::Tiled, const host_matrix<T>& A, host_matrix<T>& B) {
+    constexpr void transpose(Omp, const std::size_t A_num_rows, const std::size_t A_num_cols, const T* A, T* B, Trans::Tiled) {
       std::cout << "Tiled transposition\n";
-      if (!check_transposition_compatible_size(A, B))
-        throw std::length_error{"Incompatible sizes for matrix transposition"};
-      using size_type= typename host_matrix<T>::size_type;
-      const auto ii_end{A.num_rows()};
-      const auto jj_end{A.num_cols()};
-      const auto Ar_blocksize = std::min(static_cast<unsigned int>(ii_end), LINEAR_TILE_DIM);
-      const auto Ac_blocksize = std::min(static_cast<unsigned int>(jj_end), LINEAR_TILE_DIM);
+      //if (!check_transposition_compatible_size(A, B))
+      //  throw std::length_error{"Incompatible sizes for matrix transposition"};
+      using size_type= std::size_t;//typename host_matrix<T>::size_type;
+      //const auto ii_end{A.num_rows()};
+      //const auto jj_end{A.num_cols()};
+      auto idx_Ac = [&A_num_cols](size_type i, size_type j){ return i * A_num_cols + j; };
+      auto idx_Bc = [&A_num_rows](size_type i, size_type j){ return i * A_num_rows + j; };
+      const auto Ar_blocksize = std::min(static_cast<unsigned int>(A_num_rows), LINEAR_TILE_DIM);
+      const auto Ac_blocksize = std::min(static_cast<unsigned int>(A_num_cols), LINEAR_TILE_DIM);
       #pragma omp parallel for collapse(2) default(shared)
-      for (size_type ii= 0; ii < ii_end; ii+= Ar_blocksize) {
-        for (size_type jj= 0; jj < jj_end; jj+= Ac_blocksize) {
-          size_type i_end= std::min(ii + Ar_blocksize, ii_end);
-          size_type j_end= std::min(jj + Ac_blocksize, jj_end);
+      for (size_type ii= 0; ii < A_num_rows; ii+= Ar_blocksize) {
+        for (size_type jj= 0; jj < A_num_cols; jj+= Ac_blocksize) {
+          size_type i_end= std::min(ii + Ar_blocksize, A_num_rows);
+          size_type j_end= std::min(jj + Ac_blocksize, A_num_cols);
           for (size_type i= ii; i < i_end; ++i) {
             for (size_type j= jj; j < j_end; ++j) {
-              B(j, i)= A(i, j);
+              B[idx_Bc(j, i)]= A[idx_Ac(i, j)];
             }
           }
         }
@@ -77,30 +81,30 @@ namespace mathcca {
 #ifdef _MKL
      
     template<std::floating_point T>
-    constexpr void transpose(Trans::Mkl, const host_matrix<T>& A, host_matrix<T>& B) {
+    constexpr void transpose(Omp, const std::size_t A_num_rows, const std::size_t A_num_cols, const T* A, T* B, Trans::Mkl) {
       std::cout << "Mkl transposition\n";
-      if (!check_transposition_compatible_size(A, B))
-        throw std::length_error{"Incompatible sizes for matrix transposition"};
+      //if (!check_transposition_compatible_size(A, B))
+      //  throw std::length_error{"Incompatible sizes for matrix transposition"};
       const T alpha{static_cast<T>(1)};
       if constexpr(std::is_same_v<T, double>) {
-        mkl_domatcopy ('R', 'T', A.num_rows(), A.num_cols(), alpha, A.data(), A.num_cols(), B.data(), B.num_cols());
+        mkl_domatcopy ('R', 'T', A_num_rows, A_num_cols, alpha, A, A_num_cols, B, B_num_cols);
       }
       else {
-        mkl_somatcopy ('R', 'T', A.num_rows(), A.num_cols(), alpha, A.data(), A.num_cols(), B.data(), B.num_cols());
+        mkl_somatcopy ('R', 'T', A_num_rows, A_num_cols, alpha, A, A_num_cols, B, B_num_cols);
        }
     }
      
 #endif
      
 #ifdef __CUDACC__
-     
+     /*
     template<std::floating_point T>
     constexpr inline auto check_transposition_compatible_size(const device_matrix<T>& lhs, const device_matrix<T>& rhs) {
       if ((lhs.num_cols() == rhs.num_rows()) && (lhs.num_rows() == rhs.num_cols()))
         return true;
       return false;
     }
-        
+       */ 
     template<std::floating_point T>
     __global__ void transpose_device_Base_kernel(const std::size_t A_num_rows, const std::size_t A_num_cols, const T* __restrict A, T* __restrict B) {
       const auto b_c {blockIdx.x};
@@ -118,19 +122,19 @@ namespace mathcca {
     }
         
     template <std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM>
-    void transpose(Trans::Base, const device_matrix<T>& A, device_matrix<T>& B, cudaStream_t stream) {
+    void transpose(Cuda, const std::size_t A_num_rows, const std::size_t A_num_cols, const T* A, T* B, Trans::Base, cudaStream_t stream) {
       std::cout << "Base transposition\n";
       static_assert(LINEAR_THREAD_BLOCK_DIM * LINEAR_THREAD_BLOCK_DIM <= 1024);
-      if (!check_transposition_compatible_size(A, B))
-        throw std::length_error{"Incompatible sizes for matrix transposition"};
-      using size_type = typename device_matrix<T>::size_type;
+      //if (!check_transposition_compatible_size(A, B))
+      //  throw std::length_error{"Incompatible sizes for matrix transposition"};
+      using size_type = std::size_t;//typename device_matrix<T>::size_type;
       using value_type = T;
       constexpr unsigned int tile{LINEAR_THREAD_BLOCK_DIM};
       constexpr dim3 dimBlock = {tile, tile, 1}; // square
-      dim3 dimGrid = {static_cast<unsigned int>((A.num_cols() + static_cast<size_type>(dimBlock.x) - 1) / static_cast<size_type>(dimBlock.x)),
-                      static_cast<unsigned int>((A.num_rows() + static_cast<size_type>(dimBlock.y) - 1) / static_cast<size_type>(dimBlock.y)),
+      dim3 dimGrid = {static_cast<unsigned int>((A_num_cols + static_cast<size_type>(dimBlock.x) - 1) / static_cast<size_type>(dimBlock.x)),
+                      static_cast<unsigned int>((A_num_rows + static_cast<size_type>(dimBlock.y) - 1) / static_cast<size_type>(dimBlock.y)),
                       1};
-      transpose_device_Base_kernel<value_type><<<dimGrid, dimBlock, 0, stream>>>(A.num_rows(), A.num_cols(), A.data(), B.data());
+      transpose_device_Base_kernel<value_type><<<dimGrid, dimBlock, 0, stream>>>(A_num_rows, A_num_cols, A, B);
     }
        
     template<std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM>
@@ -164,45 +168,41 @@ namespace mathcca {
     }
      
     template <std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM>
-    void transpose(Trans::Tiled, const device_matrix<T>& A, device_matrix<T>& B, cudaStream_t stream) {
+    void transpose(Cuda, const std::size_t A_num_rows, const std::size_t A_num_cols, const T* A, T* B, Trans::Tiled, cudaStream_t stream) {
       std::cout << "Tiled transposition\n";
       static_assert(LINEAR_THREAD_BLOCK_DIM * LINEAR_THREAD_BLOCK_DIM <= 1024);
-      if (!check_transposition_compatible_size(A, B))////////////////////////////////////////////
-        throw std::length_error{"Incompatible sizes for matrix transposition"};
-      using size_type = typename device_matrix<T>::size_type;
+      //if (!check_transposition_compatible_size(A, B))////////////////////////////////////////////
+      //  throw std::length_error{"Incompatible sizes for matrix transposition"};
+      using size_type = std::size_t;//typename device_matrix<T>::size_type;
       using value_type = T;
       constexpr unsigned int tile{LINEAR_THREAD_BLOCK_DIM};
       constexpr dim3 dimBlock = {tile, tile, 1}; // square
-      dim3 dimGrid = {static_cast<unsigned int>((A.num_cols() + static_cast<size_type>(dimBlock.x) - 1) / static_cast<size_type>(dimBlock.x)),
-                      static_cast<unsigned int>((A.num_rows() + static_cast<size_type>(dimBlock.y) - 1) / static_cast<size_type>(dimBlock.y)),
+      dim3 dimGrid = {static_cast<unsigned int>((A_num_cols + static_cast<size_type>(dimBlock.x) - 1) / static_cast<size_type>(dimBlock.x)),
+                      static_cast<unsigned int>((A_num_rows + static_cast<size_type>(dimBlock.y) - 1) / static_cast<size_type>(dimBlock.y)),
                       1};
-      transpose_parallel_Tiled_kernel<value_type, tile><<<dimGrid, dimBlock, 0, stream>>>(A.num_rows(), A.num_cols(), A.data(), B.data());
+      transpose_parallel_Tiled_kernel<value_type, tile><<<dimGrid, dimBlock, 0, stream>>>(A_num_rows, A_num_cols, A, B);
     }
       
 #ifdef _CUBLAS
      
     template <std::floating_point T>
-    void  transpose(Trans::Cublas, const device_matrix<T>& A, device_matrix<T>& B) {
+    void  transpose(Cuda, const std::size_t A_num_rows, const std::size_t A_num_cols, const T* A, T* B, Trans::Cublas) {
       std::cout << "Cublas transposition\n";
-      if (!check_transposition_compatible_size(A, B))
-        throw std::length_error{"Incompatible sizes for matrix transposition"};
+      //if (!check_transposition_compatible_size(A, B))
+      //  throw std::length_error{"Incompatible sizes for matrix transposition"};
       const T alpha{static_cast<T>(1)};
       const T  beta{static_cast<T>(0)};
       cublasHandle_t handle;
       checkCudaErrors(cublasCreate(&handle));
       if constexpr(std::is_same_v<T, double>) {
         checkCudaErrors(cublasDgeam(handle, CUBLAS_OP_T, CUBLAS_OP_T,
-                    A.num_rows(), A.num_cols(), &alpha, A.data(),
-                    A.num_cols(), &beta, A.data(),
-                    A.num_cols(), B.data(), A.num_rows()));
+                    A_num_rows, A_num_cols, &alpha, A, A_num_cols, &beta, A, A_num_cols, B, A_num_rows));
       }
       else {
-        std::cout << "A.num_rows()=" << A.num_rows() << " A.num_cols()=" << A.num_cols() << "\n";
-        std::cout << "B.num_rows()=" << B.num_rows() << " B.num_cols()=" << B.num_cols() << "\n";
+        std::cout << "A.num_rows()=" << A_num_rows << " A.num_cols()=" << A_num_cols << "\n";
+        std::cout << "B.num_rows()=" << A_num_cols << " B.num_cols()=" << A_num_rows << "\n";
         checkCudaErrors(cublasSgeam(handle, CUBLAS_OP_T, CUBLAS_OP_T,
-                    A.num_rows(), A.num_cols(), &alpha, A.data(),
-                    A.num_cols(), &beta, A.data(),
-                    A.num_cols(), B.data(), A.num_rows()));
+                    A_num_rows, A_num_cols, &alpha, A, A_num_cols, &beta, A, A_num_cols, B, A_num_rows));
       }
       checkCudaErrors(cublasDestroy(handle));
     }

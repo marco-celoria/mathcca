@@ -325,7 +325,7 @@ int main(int argc, char **argv)  {
       std::cout << "r = " << r << " c = " << c << "\n";
       using value_type= typename decltype(A)::value_type;
       try {
-        mathcca::transpose<value_type, mathcca::Trans::Base, 32>(A,ERR, mathcca::Trans::Base());
+        mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Base, 32>(A,ERR, mathcca::Trans::Base());
       }
       catch(std::exception &e) {
         std::cout << "Caught exception: " << e.what() << std::endl;
@@ -333,14 +333,14 @@ int main(int argc, char **argv)  {
 
       mathcca::fill_rand(A.begin(), A.end());
       std::cout << "--------------------------------------------------------\n";
-      mathcca::transpose<value_type, mathcca::Trans::Base, 32>(A,  B0, mathcca::Trans::Base());
-      mathcca::transpose<value_type, mathcca::Trans::Base, 32>(B0, C0, mathcca::Trans::Base());
+      mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Base, 32>(A,  B0, mathcca::Trans::Base());
+      mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Base, 32>(B0, C0, mathcca::Trans::Base());
 
-      auto B1 = mathcca::transpose<value_type, mathcca::Trans::Tiled, 32>(A,  mathcca::Trans::Tiled());
-      auto C1 = mathcca::transpose<value_type, mathcca::Trans::Tiled, 32>(B1, mathcca::Trans::Tiled());
+      auto B1 = mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Tiled, 32>(A,  mathcca::Trans::Tiled());
+      auto C1 = mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Tiled, 32>(B1, mathcca::Trans::Tiled());
 #ifdef _CUBLAS
-      auto B2 = mathcca::transpose<value_type, mathcca::Trans::Cublas, 32>(A,  mathcca::Trans::Cublas());
-      auto C2 = mathcca::transpose<value_type, mathcca::Trans::Cublas, 32>(B2, mathcca::Trans::Cublas());
+      auto B2 = mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Cublas, 32>(A,  mathcca::Trans::Cublas());
+      auto C2 = mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Cublas, 32>(B2, mathcca::Trans::Cublas());
 #endif
       std::cout << "--------------------------------------------------------\n";
       std::cout << std::boolalpha << (A  == C0) << std::noboolalpha << "\n";

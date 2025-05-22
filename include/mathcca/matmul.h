@@ -88,10 +88,18 @@ detail::matmul<value_type> (Omp(), A.num_rows(), B.num_cols(), A.num_cols(), A.d
   }
       
   template<typename Matrix, typename Implementation, unsigned int LINEAR_THREAD_BLOCK_DIM= 16 >
+#ifdef __CUDACC__
   constexpr decltype(auto) matmul(const Matrix& A, const Matrix& B, Implementation, cudaStream_t stream= 0) {
+#else
+  constexpr decltype(auto) matmul(const Matrix& A, const Matrix& B, Implementation) {
+#endif
     using value_type= Matrix::value_type;
     Matrix C{A.num_rows(), B.num_cols(), static_cast<value_type>(0)};
+#ifdef __CUDACC__
     matmul<Matrix, Implementation, LINEAR_THREAD_BLOCK_DIM>(A, B, C, Implementation(), stream);
+#else
+    matmul<Matrix, Implementation, LINEAR_THREAD_BLOCK_DIM>(A, B, C, Implementation());
+#endif
     return C;
   }
 
