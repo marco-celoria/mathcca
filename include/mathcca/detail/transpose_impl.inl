@@ -87,10 +87,10 @@ namespace mathcca {
       //  throw std::length_error{"Incompatible sizes for matrix transposition"};
       const T alpha{static_cast<T>(1)};
       if constexpr(std::is_same_v<T, double>) {
-        mkl_domatcopy ('R', 'T', A_num_rows, A_num_cols, alpha, A, A_num_cols, B, B_num_cols);
+        mkl_domatcopy ('R', 'T', A_num_rows, A_num_cols, alpha, A, A_num_cols, B, A_num_rows);
       }
       else {
-        mkl_somatcopy ('R', 'T', A_num_rows, A_num_cols, alpha, A, A_num_cols, B, B_num_cols);
+        mkl_somatcopy ('R', 'T', A_num_rows, A_num_cols, alpha, A, A_num_cols, B, A_num_rows);
        }
     }
      

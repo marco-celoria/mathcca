@@ -36,7 +36,7 @@ TEST(TransReduceSp, BasicAssertions)
 	res= n3/static_cast<value_type>(3) + n2/static_cast<value_type>(2) + n1/static_cast<value_type>(6);
         
 	int true_res=0;
-        for (auto i=1; i <= r * c; ++i) {
+        for (std::size_t i=1; i <= r * c; ++i) {
 	   true_res+=(i*i);
 	}
 	

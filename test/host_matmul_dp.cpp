@@ -18,21 +18,19 @@ TEST(MatmulDp, BasicAssertions)
       mathcca::fill_rand(Y0.begin(), Y0.end());
       EXPECT_TRUE(X0 != Y0);
       
-      using value_type= typename decltype(X0)::value_type;
-      
       EXPECT_THROW({mathcca::matmul(X0, ERR, mathcca::MM::Base());},  std::length_error);
       EXPECT_THROW({mathcca::matmul(X0, ERR, mathcca::MM::Tiled());}, std::length_error);
       
-      mathcca::matmul<value_type, mathcca::MM::Base, 8>(X0, Y0, B0, mathcca::MM::Base());
-      auto B1= mathcca::matmul<value_type, mathcca::MM::Base, 16>(X0, Y0, mathcca::MM::Base());
-      auto B2= mathcca::matmul<value_type, mathcca::MM::Base, 32 >(X0, Y0, mathcca::MM::Base());
+      mathcca::matmul<decltype(X0), mathcca::MM::Base, 8>(X0, Y0, B0, mathcca::MM::Base());
+      auto B1= mathcca::matmul<decltype(X0), mathcca::MM::Base, 16>(X0, Y0, mathcca::MM::Base());
+      auto B2= mathcca::matmul<decltype(X0), mathcca::MM::Base, 32 >(X0, Y0, mathcca::MM::Base());
       
       EXPECT_TRUE(B0 == B1);
       EXPECT_TRUE(B1 == B2);
       
-      mathcca::matmul<value_type, mathcca::MM::Tiled, 8>(X0, Y0, T0, mathcca::MM::Tiled());
-      auto T1 = mathcca::matmul<value_type, mathcca::MM::Tiled, 16>(X0, Y0, mathcca::MM::Tiled());
-      auto T2 = mathcca::matmul<value_type, mathcca::MM::Tiled, 32>(X0, Y0, mathcca::MM::Tiled());
+      mathcca::matmul<decltype(X0), mathcca::MM::Tiled, 8>(X0, Y0, T0, mathcca::MM::Tiled());
+      auto T1 = mathcca::matmul<decltype(X0), mathcca::MM::Tiled, 16>(X0, Y0, mathcca::MM::Tiled());
+      auto T2 = mathcca::matmul<decltype(X0), mathcca::MM::Tiled, 32>(X0, Y0, mathcca::MM::Tiled());
       
       EXPECT_TRUE(T0 == T1);
       EXPECT_TRUE(T1 == T2);
@@ -43,9 +41,9 @@ TEST(MatmulDp, BasicAssertions)
 
 #ifdef _MKL
 
-      mathcca::matmul<value_type, mathcca::MM::Mkl, 8>(X0, Y0, C0, mathcca::MM::Mkl());
-      auto C1 = mathcca::matmul<value_type, mathcca::MM::Mkl, 16>(X0, Y0, mathcca::MM::Mkl());
-      auto C2 = mathcca::matmul<value_type, mathcca::MM::Mkl, 32>(X0, Y0, mathcca::MM::Mkl());
+      mathcca::matmul<decltype(X0), mathcca::MM::Mkl, 8>(X0, Y0, C0, mathcca::MM::Mkl());
+      auto C1 = mathcca::matmul<decltype(X0), mathcca::MM::Mkl, 16>(X0, Y0, mathcca::MM::Mkl());
+      auto C2 = mathcca::matmul<decltype(X0), mathcca::MM::Mkl, 32>(X0, Y0, mathcca::MM::Mkl());
       
       EXPECT_TRUE(C0 == C1);
       EXPECT_TRUE(C1 == C2);

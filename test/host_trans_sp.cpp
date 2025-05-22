@@ -22,27 +22,25 @@ TEST(TransSp, BasicAssertions)
       mathcca::copy(X.begin(), X.end(), Y.begin());
       mathcca::copy(X.begin(), X.end(), Z.begin());
 
-      using value_type= typename decltype(X)::value_type;
-
       EXPECT_TRUE(X == Y);
       EXPECT_TRUE(X == Z);
 
       EXPECT_THROW({mathcca::transpose(X, ERR, mathcca::Trans::Base());},  std::length_error);
       EXPECT_THROW({mathcca::transpose(Y, ERR, mathcca::Trans::Tiled());}, std::length_error);
 
-      mathcca::transpose<value_type, mathcca::Trans::Base, 8>(X,  B0, mathcca::Trans::Base());
-      mathcca::transpose<value_type, mathcca::Trans::Base, 8>(B0, X0, mathcca::Trans::Base());
-      auto B1 = mathcca::transpose<value_type, mathcca::Trans::Base, 16>(X,  mathcca::Trans::Base());
-      auto X1 = mathcca::transpose<value_type, mathcca::Trans::Base, 16>(B1, mathcca::Trans::Base());
-      auto B2 = mathcca::transpose<value_type, mathcca::Trans::Base, 32>(X,  mathcca::Trans::Base());
-      auto X2 = mathcca::transpose<value_type, mathcca::Trans::Base, 32>(B2, mathcca::Trans::Base());
+      mathcca::transpose<decltype(X), mathcca::Trans::Base, 8>(X,  B0, mathcca::Trans::Base());
+      mathcca::transpose<decltype(B0), mathcca::Trans::Base, 8>(B0, X0, mathcca::Trans::Base());
+      auto B1 = mathcca::transpose<decltype(X), mathcca::Trans::Base, 16>(X,  mathcca::Trans::Base());
+      auto X1 = mathcca::transpose<decltype(B1), mathcca::Trans::Base, 16>(B1, mathcca::Trans::Base());
+      auto B2 = mathcca::transpose<decltype(X), mathcca::Trans::Base, 32>(X,  mathcca::Trans::Base());
+      auto X2 = mathcca::transpose<decltype(B2), mathcca::Trans::Base, 32>(B2, mathcca::Trans::Base());
 
-      mathcca::transpose<value_type, mathcca::Trans::Tiled, 8>(Y,  T0, mathcca::Trans::Tiled());
-      mathcca::transpose<value_type, mathcca::Trans::Tiled, 8>(T0, Y0, mathcca::Trans::Tiled());
-      auto T1 = mathcca::transpose<value_type, mathcca::Trans::Tiled, 16>(Y,  mathcca::Trans::Tiled());
-      auto Y1 = mathcca::transpose<value_type, mathcca::Trans::Tiled, 16>(T1, mathcca::Trans::Tiled());
-      auto T2 = mathcca::transpose<value_type, mathcca::Trans::Tiled, 32>(Y,  mathcca::Trans::Tiled());
-      auto Y2 = mathcca::transpose<value_type, mathcca::Trans::Tiled, 32>(T2, mathcca::Trans::Tiled());
+      mathcca::transpose<decltype(Y), mathcca::Trans::Tiled, 8>(Y,  T0, mathcca::Trans::Tiled());
+      mathcca::transpose<decltype(T0), mathcca::Trans::Tiled, 8>(T0, Y0, mathcca::Trans::Tiled());
+      auto T1 = mathcca::transpose<decltype(Y), mathcca::Trans::Tiled, 16>(Y,  mathcca::Trans::Tiled());
+      auto Y1 = mathcca::transpose<decltype(T1), mathcca::Trans::Tiled, 16>(T1, mathcca::Trans::Tiled());
+      auto T2 = mathcca::transpose<decltype(Y), mathcca::Trans::Tiled, 32>(Y,  mathcca::Trans::Tiled());
+      auto Y2 = mathcca::transpose<decltype(T2), mathcca::Trans::Tiled, 32>(T2, mathcca::Trans::Tiled());
 
       EXPECT_TRUE(X == X1);
       EXPECT_TRUE(X == X2);
@@ -60,12 +58,12 @@ TEST(TransSp, BasicAssertions)
       EXPECT_TRUE(T1 == T2);
 
 #ifdef _MKL
-      mathcca::transpose<value_type, mathcca::Trans::Mkl, 8>(Z,  C0, mathcca::Trans::Mkl());
-      mathcca::transpose<value_type, mathcca::Trans::Mkl, 8>(C0, Z0, mathcca::Trans::Mkl());
-      auto C1 = mathcca::transpose<value_type, mathcca::Trans::Mkl, 16>(Z,  mathcca::Trans::Mkl());
-      auto Z1 = mathcca::transpose<value_type, mathcca::Trans::Mkl, 16>(C1, mathcca::Trans::Mkl());
-      auto C2 = mathcca::transpose<value_type, mathcca::Trans::Mkl, 32>(Z,  mathcca::Trans::Mkl());
-      auto Z2 = mathcca::transpose<value_type, mathcca::Trans::Mkl, 32>(C2, mathcca::Trans::Mkl());
+      mathcca::transpose<decltype(Z), mathcca::Trans::Mkl, 8>(Z,  C0, mathcca::Trans::Mkl());
+      mathcca::transpose<decltype(C0), mathcca::Trans::Mkl, 8>(C0, Z0, mathcca::Trans::Mkl());
+      auto C1 = mathcca::transpose<decltype(Z), mathcca::Trans::Mkl, 16>(Z,  mathcca::Trans::Mkl());
+      auto Z1 = mathcca::transpose<decltype(C1), mathcca::Trans::Mkl, 16>(C1, mathcca::Trans::Mkl());
+      auto C2 = mathcca::transpose<decltype(Z), mathcca::Trans::Mkl, 32>(Z,  mathcca::Trans::Mkl());
+      auto Z2 = mathcca::transpose<decltype(C2), mathcca::Trans::Mkl, 32>(C2, mathcca::Trans::Mkl());
 
       EXPECT_TRUE(Z == Z1);
       EXPECT_TRUE(Z == Z2);

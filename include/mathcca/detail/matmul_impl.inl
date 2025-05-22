@@ -62,7 +62,6 @@ namespace mathcca {
       //if (!check_matmul_compatible_size(A, B))
       //  throw std::length_error{"Incompatible length matrix-matrix product"};
       using size_type= std::size_t;
-      using value_type= T;
       auto idx_Ac = [&A_num_cols](size_type i, size_type j){ return i * A_num_cols + j; };
       auto idx_Bc = [&B_num_cols](size_type i, size_type j){ return i * B_num_cols + j; };
       const auto Ar_blocksize = std::min(static_cast<unsigned int>(A_num_rows), LINEAR_TILE_DIM);
@@ -100,10 +99,10 @@ namespace mathcca {
       value_type beta{0};
       if constexpr(std::is_same_v<T,double>) {
         cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_num_rows, B_num_cols, A_num_cols,
-                 alpha, A, A_num_cols, B, B_num_cols, beta, C, C_num_cols);
+                 alpha, A, A_num_cols, B, B_num_cols, beta, C, B_num_cols);
       } else {
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_num_rows, B_num_cols, A_num_cols,
-                 alpha, A, A_num_cols, B, B_num_cols, beta, C, C_num_cols);
+                 alpha, A, A_num_cols, B, B_num_cols, beta, C, B_num_cols);
       }
     }
        

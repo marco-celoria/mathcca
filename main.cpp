@@ -268,9 +268,8 @@ int main(int argc, char **argv)  {
       mathcca::host_matrix<float> ERR{99, 99};
 #endif
       std::cout << "l = " << l << " m = " << m << " n = " << n << "\n";
-      using value_type= typename decltype(A0)::value_type;
       try {
-        mathcca::matmul<value_type, mathcca::MM::Base, 32>(A0,ERR, mathcca::MM::Base());
+        mathcca::matmul<decltype(A0), mathcca::MM::Base, 32>(A0,ERR, mathcca::MM::Base());
       }
       catch(std::exception &e) {
         std::cout << "Caught exception: " << e.what() << std::endl;
@@ -281,10 +280,10 @@ int main(int argc, char **argv)  {
       std::cout << "--------------------------------------------------------\n";
       std::cout << std::boolalpha << (A0 != B0) << std::noboolalpha << "\n";
       std::cout << "--------------------------------------------------------\n";
-      mathcca::matmul<value_type, mathcca::MM::Base, 32>(A0, B0, C0, mathcca::MM::Base());
-      auto C1 = mathcca::matmul<value_type, mathcca::MM::Tiled, 32>(A0, B0, mathcca::MM::Tiled());
+      mathcca::matmul<decltype(A0), mathcca::MM::Base, 32>(A0, B0, C0, mathcca::MM::Base());
+      auto C1 = mathcca::matmul<decltype(A0), mathcca::MM::Tiled, 32>(A0, B0, mathcca::MM::Tiled());
 #ifdef _MKL
-      auto C2 = mathcca::matmul<value_type, mathcca::MM::Mkl>(A0, B0, mathcca::MM::Mkl());
+      auto C2 = mathcca::matmul<decltype(A0), mathcca::MM::Mkl>(A0, B0, mathcca::MM::Mkl());
 #endif
       std::cout << "--------------------------------------------------------\n";
       std::cout << std::boolalpha << (C0 == C1) << std::noboolalpha << "\n";
@@ -317,9 +316,8 @@ int main(int argc, char **argv)  {
       mathcca::host_matrix<float> ERR{99, 99};
 #endif
       std::cout << "r = " << r << " c = " << c << "\n";
-      using value_type= typename decltype(A)::value_type;
       try {
-        mathcca::transpose<value_type, mathcca::Trans::Base, 32>(A,ERR, mathcca::Trans::Base());
+        mathcca::transpose<decltype(A), mathcca::Trans::Base, 32>(A,ERR, mathcca::Trans::Base());
       }
       catch(std::exception &e) {
         std::cout << "Caught exception: " << e.what() << std::endl;
@@ -327,13 +325,13 @@ int main(int argc, char **argv)  {
 
       mathcca::fill_rand(A.begin(), A.end());
       std::cout << "--------------------------------------------------------\n";
-      mathcca::transpose<value_type, mathcca::Trans::Base, 32>(A,  B0, mathcca::Trans::Base());
-      mathcca::transpose<value_type, mathcca::Trans::Base, 32>(B0, C0, mathcca::Trans::Base());
-      auto B1 = mathcca::transpose<value_type, mathcca::Trans::Tiled, 32>(A,  mathcca::Trans::Tiled());
-      auto C1 = mathcca::transpose<value_type, mathcca::Trans::Tiled, 32>(B1, mathcca::Trans::Tiled());
+      mathcca::transpose<decltype(A), mathcca::Trans::Base, 32>(A,  B0, mathcca::Trans::Base());
+      mathcca::transpose<decltype(B0), mathcca::Trans::Base, 32>(B0, C0, mathcca::Trans::Base());
+      auto B1 = mathcca::transpose<decltype(A), mathcca::Trans::Tiled, 32>(A,  mathcca::Trans::Tiled());
+      auto C1 = mathcca::transpose<decltype(B1), mathcca::Trans::Tiled, 32>(B1, mathcca::Trans::Tiled());
 #ifdef _MKL
-      auto B2 = mathcca::transpose<value_type, mathcca::Trans::Mkl, 32>(A,  mathcca::Trans::Mkl());
-      auto C2 = mathcca::transpose<value_type, mathcca::Trans::Mkl, 32>(B2, mathcca::Trans::Mkl());
+      auto B2 = mathcca::transpose<decltype(A), mathcca::Trans::Mkl, 32>(A,  mathcca::Trans::Mkl());
+      auto C2 = mathcca::transpose<decltype(B2), mathcca::Trans::Mkl, 32>(B2, mathcca::Trans::Mkl());
 #endif
       std::cout << "--------------------------------------------------------\n";
       std::cout << std::boolalpha << (A  == C0) << std::noboolalpha << "\n";
@@ -364,9 +362,9 @@ int main(int argc, char **argv)  {
       std::cout << "r = " << r << " c = " << c << "\n";
       using value_type= typename decltype(A)::value_type;
       mathcca::fill_rand(A.begin(), A.end());
-      auto res_base= mathcca::frobenius_norm<value_type, mathcca::Norm::Base>(A, mathcca::Norm::Base()); 
+      auto res_base= mathcca::frobenius_norm<decltype(A), mathcca::Norm::Base>(A, mathcca::Norm::Base()); 
 #ifdef _MKL
-      auto res_mkl= mathcca::frobenius_norm<value_type, mathcca::Norm::Mkl>(A, mathcca::Norm::Mkl()); 
+      auto res_mkl= mathcca::frobenius_norm<decltype(A), mathcca::Norm::Mkl>(A, mathcca::Norm::Mkl()); 
 #endif
       std::cout << "--------------------------------------------------------\n";
 #ifdef _MKL      
@@ -376,9 +374,9 @@ int main(int argc, char **argv)  {
       
       mathcca::fill_const(A.begin(), A.end(), static_cast<value_type>(3));
       
-      res_base= mathcca::frobenius_norm<value_type, mathcca::Norm::Base>(A, mathcca::Norm::Base());
+      res_base= mathcca::frobenius_norm<decltype(A), mathcca::Norm::Base>(A, mathcca::Norm::Base());
 #ifdef _MKL
-      res_mkl= mathcca::frobenius_norm<value_type, mathcca::Norm::Mkl>(A, mathcca::Norm::Mkl());
+      res_mkl= mathcca::frobenius_norm<decltype(A), mathcca::Norm::Mkl>(A, mathcca::Norm::Mkl());
 #endif        
       value_type res= std::sqrt(static_cast<value_type>(3. * 3. * r * c));
       std::cout << std::boolalpha << (std::abs(res_base - res) < decltype(A)::tol()) << std::noboolalpha << "\n";
@@ -393,9 +391,9 @@ int main(int argc, char **argv)  {
         value_type n3{static_cast<value_type>(r * r * r * c * c * c)};
         value_type res= std::sqrt(n3/static_cast<value_type>(3) + n2/static_cast<value_type>(2) + n1/static_cast<value_type>(6));
 	mathcca::fill_iota(A.begin(), A.end(), static_cast<value_type>(1));
-        res_base= mathcca::frobenius_norm<value_type, mathcca::Norm::Base>(A, mathcca::Norm::Base());
+        res_base= mathcca::frobenius_norm<decltype(A), mathcca::Norm::Base>(A, mathcca::Norm::Base());
 #ifdef _MKL
-        res_mkl= mathcca::frobenius_norm<value_type, mathcca::Norm::Mkl>(A, mathcca::Norm::Mkl());
+        res_mkl= mathcca::frobenius_norm<decltype(A), mathcca::Norm::Mkl>(A, mathcca::Norm::Mkl());
 #endif       
         std::cout << std::boolalpha << (std::abs(res_base - res) < 0.2) << std::noboolalpha << "\n";
 #ifdef _MKL      
