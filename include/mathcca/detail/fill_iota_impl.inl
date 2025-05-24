@@ -36,7 +36,7 @@ namespace mathcca {
       using value_type= T;
       const auto size {static_cast<std::size_t>(last - first)};
       std::ranges::iota_view indices(static_cast<unsigned int>(0),static_cast<unsigned int>(size));
-      std::for_each(std::execution::par_unseq,indices.begin(),indices.end(),[&](auto i) { first[i]= v + static_cast<value_type>(i); });
+      std::for_each(std::execution::par_unseq,indices.begin(),indices.end(),[first, v](auto i) { first[i]= v + static_cast<value_type>(i); });
     }
          
 #endif

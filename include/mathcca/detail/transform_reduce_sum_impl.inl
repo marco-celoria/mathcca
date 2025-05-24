@@ -27,7 +27,7 @@
 #ifdef _OPENMP
  #include <omp.h>
 #endif
-
+#include <numeric>
 namespace mathcca {
     
   namespace detail {

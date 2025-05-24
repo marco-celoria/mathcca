@@ -20,6 +20,9 @@
  #include <omp.h>
 #endif
 
+#ifdef _MKL
+#include <mkl.h>
+#endif
 namespace mathcca {
     
   namespace detail {
@@ -45,7 +48,7 @@ namespace mathcca {
     };
      
     template<std::floating_point T>
-    constexpr decltype(auto) frobenius_norm(Omp, const T* begin, const T* end, Norm::Base) {
+    constexpr T frobenius_norm(Omp, const T* begin, const T* end, Norm::Base) {
       std::cout << "OMP frobenius norm Base\n";
       return std::sqrt(detail::transform_reduce_sum(Omp(), begin, end, Square<T>(), static_cast<T>(0)));
     }
@@ -53,7 +56,7 @@ namespace mathcca {
 #ifdef _MKL
     
     template<std::floating_point T>
-    constexpr decltype(auto) frobenius_norm(Omp, const T* begin, const T* end, Norm::Mkl) {
+    constexpr T frobenius_norm(Omp, const T* begin, const T* end, Norm::Mkl) {
       std::cout << "OMP frobenius norm Mkl\n";
       T result;
       const auto size {static_cast<std::size_t>(end - begin)};
@@ -77,7 +80,7 @@ namespace mathcca {
 #ifdef _CUBLAS
     
     template<std::floating_point T>
-    constexpr decltype(auto) frobenius_norm(Cuda,  const T* begin, const T* end, Norm::Cublas) {
+    constexpr T frobenius_norm(Cuda,  const T* begin, const T* end, Norm::Cublas) {
       std::cout << "Cublas frobenius norm\n";
       T result;
       const auto size {static_cast<std::size_t>(end - begin)};
@@ -97,7 +100,7 @@ namespace mathcca {
 #endif
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
-    constexpr decltype(auto) frobenius_norm(Cuda,  const T* begin, const T* end, Norm::Base, cudaStream_t stream) {
+    constexpr T frobenius_norm(Cuda,  const T* begin, const T* end, Norm::Base, cudaStream_t stream) {
       std::cout << "Base frobenius norm\n";
       static_assert(THREAD_BLOCK_DIM <= 1024);
       return std::sqrt(detail::transform_reduce_sum<T, Square<T>, THREAD_BLOCK_DIM>(Cuda(), begin, end, Square<T>(), static_cast<T>(0), stream));
