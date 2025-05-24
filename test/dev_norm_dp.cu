@@ -14,7 +14,9 @@ TEST(NormDp, BasicAssertions)
       mathcca::fill_rand(dA.begin(), dA.end());
       mathcca::copy(dA.cbegin(), dA.cend(), hA.begin());
       cudaDeviceSynchronize();
-      
+      // https://en.wikipedia.org/wiki/Continuous_uniform_distribution      
+      auto res= std::sqrt(static_cast<value_type>(r * c / 3.) );
+
       auto res_host= mathcca::frobenius_norm<mathcca::host_matrix<double>, mathcca::Norm::Base >(hA, mathcca::Norm::Base());
 
       auto res_base_1= mathcca::frobenius_norm<mathcca::device_matrix<double>, mathcca::Norm::Base, 32  >(dA, mathcca::Norm::Base());
@@ -29,6 +31,13 @@ TEST(NormDp, BasicAssertions)
       EXPECT_FLOAT_EQ(res_base_3, res_base_4);
       EXPECT_FLOAT_EQ(res_base_4, res_base_5);
       EXPECT_FLOAT_EQ(res_base_5, res_base_6);
+      EXPECT_NEAR(res_host,   res, 0.99);
+      EXPECT_NEAR(res_base_1, res, 0.99);
+      EXPECT_NEAR(res_base_2, res, 0.99);
+      EXPECT_NEAR(res_base_3, res, 0.99);
+      EXPECT_NEAR(res_base_4, res, 0.99);
+      EXPECT_NEAR(res_base_5, res, 0.99);
+      EXPECT_NEAR(res_base_6, res, 0.99);
 
 #ifdef _CUBLAS
       auto res_cublas_1= mathcca::frobenius_norm<mathcca::device_matrix<double>, mathcca::Norm::Cublas, 32  > (dA, mathcca::Norm::Cublas());
@@ -43,13 +52,19 @@ TEST(NormDp, BasicAssertions)
       EXPECT_FLOAT_EQ(res_base_4, res_cublas_4);
       EXPECT_FLOAT_EQ(res_base_5, res_cublas_5);
       EXPECT_FLOAT_EQ(res_base_6, res_cublas_6);
+      EXPECT_NEAR(res_cublas_1, res, 0.99);
+      EXPECT_NEAR(res_cublas_2, res, 0.99);
+      EXPECT_NEAR(res_cublas_3, res, 0.99);
+      EXPECT_NEAR(res_cublas_4, res, 0.99);
+      EXPECT_NEAR(res_cublas_5, res, 0.99);
+      EXPECT_NEAR(res_cublas_6, res, 0.99);
 #endif
 
       mathcca::fill_const(dA.begin(), dA.end(), static_cast<value_type>(3));
       mathcca::copy(dA.cbegin(), dA.cend(), hA.begin());
       cudaDeviceSynchronize();
       
-      value_type res= std::sqrt(static_cast<value_type>(3. * 3. * r * c));
+      res= std::sqrt(static_cast<value_type>(3. * 3. * r * c));
       
       res_host= mathcca::frobenius_norm<mathcca::host_matrix<double>, mathcca::Norm::Base >(hA, mathcca::Norm::Base());
 
