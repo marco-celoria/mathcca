@@ -53,6 +53,15 @@ namespace mathcca {
       return std::sqrt(detail::transform_reduce_sum(Omp(), begin, end, Square<T>(), static_cast<T>(0)));
     }
 
+#ifdef _STDPAR
+    template<std::floating_point T>
+    constexpr T frobenius_norm(StdPar, const T* begin, const T* end, Norm::Base) {
+      std::cout << "STDPAR frobenius norm Base\n";
+      return std::sqrt(detail::transform_reduce_sum(StdPar(), begin, end, Square<T>(), static_cast<T>(0)));
+    }
+
+#endif
+
 #ifdef _MKL
     
     template<std::floating_point T>
@@ -81,7 +90,7 @@ namespace mathcca {
     
     template<std::floating_point T>
     constexpr T frobenius_norm(Cuda,  const T* begin, const T* end, Norm::Cublas) {
-      std::cout << "Cublas frobenius norm\n";
+      std::cout << "CUDA frobenius norm Cublas\n";
       T result;
       const auto size {static_cast<std::size_t>(end - begin)};
       const auto incx{1};
@@ -101,11 +110,21 @@ namespace mathcca {
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
     constexpr T frobenius_norm(Cuda,  const T* begin, const T* end, Norm::Base, cudaStream_t stream) {
-      std::cout << "Base frobenius norm\n";
+      std::cout << "CUDA frobenius norm Base\n";
       static_assert(THREAD_BLOCK_DIM <= 1024);
       return std::sqrt(detail::transform_reduce_sum<T, Square<T>, THREAD_BLOCK_DIM>(Cuda(), begin, end, Square<T>(), static_cast<T>(0), stream));
     }
-    
+
+#ifdef _THRUST
+
+    template<std::floating_point T>
+    constexpr T frobenius_norm(Thrust, const T* begin, const T* end, Norm::Base) {
+      std::cout << "THRUST frobenius norm Base\n";
+      return std::sqrt(detail::transform_reduce_sum<T, Square<T>>(Thrust(), begin, end, Square<T>(), static_cast<T>(0)));
+    }
+
+#endif
+
 #endif
     
   } 

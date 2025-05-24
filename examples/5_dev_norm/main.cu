@@ -1,6 +1,7 @@
 #include <mathcca/host_matrix.h>
 #include <mathcca/device_matrix.h>
 #include <mathcca/norm.h>
+#include <mathcca/detail/norm_impl.h>
 #include <iostream>
 #include <mathcca/fill_rand.h>
 #include <mathcca/fill_const.h>
@@ -27,6 +28,10 @@ int main(int argc, char **argv)  {
   std::cout << resB << " " << resC << "\n";
 #endif
 
+#ifdef _THRUST
+  auto resT= mathcca::detail::frobenius_norm(mathcca::Thrust(), dA.cbegin().get(), dA.cend().get(), mathcca::Norm::Base());
+  std::cout << resB << " " << resT << "\n";
+#endif
 
 #ifdef _HOST_CHECK
   mathcca::host_matrix<value_type> hA{l,m};

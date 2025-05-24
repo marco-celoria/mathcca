@@ -6,6 +6,7 @@
 
 #include <mathcca/host_matrix.h>
 
+#include <mathcca/execution_policy.h>
 #include <mathcca/implementation_policy.h>
 
 #ifdef __CUDACC__
@@ -26,7 +27,12 @@ namespace mathcca {
     
     template<std::floating_point T>
     constexpr T frobenius_norm(Omp, const T* begin, const T* end, Norm::Base);
-    
+
+#ifdef _STDPAR
+    template<std::floating_point T>
+    constexpr T frobenius_norm(StdPar, const T* begin, const T* end, Norm::Base);
+#endif
+
 #ifdef __CUDACC__
     
 #ifdef _CUBLAS
@@ -34,6 +40,12 @@ namespace mathcca {
     template<std::floating_point T>
     constexpr T frobenius_norm(Cuda, const T* begin, const T* end, Norm::Cublas);
     
+#endif
+
+
+#ifdef _THRUST
+    template<std::floating_point T>
+    constexpr T frobenius_norm(Thrust, const T* begin, const T* end, Norm::Base);
 #endif
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
