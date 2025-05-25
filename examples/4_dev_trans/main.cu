@@ -7,32 +7,67 @@
 #include <mathcca/copy.h>
 
 int main(int argc, char **argv)  {
-  std::size_t l{3504};
-  std::size_t m{4333};
+  
+  constexpr std::size_t l{33504};
+  constexpr std::size_t m{34333};
+
 #ifdef _USE_DOUBLE_PRECISION
-  mathcca::device_matrix<double> dA{l, m};
+  using value_type= double;
 #else
-  mathcca::device_matrix<float> dA{l, m};
+  using value_type= float;
 #endif
-  using value_type= typename decltype(dA)::value_type;
+
+  mathcca::device_matrix<value_type> dA{l, m};
 
   mathcca::fill_rand(dA.begin(), dA.end());
+
+  cudaEvent_t start, stop;
+  cudaEventCreate(&start);
+  cudaEventCreate(&stop);
+
+  cudaEventRecord(start);
   auto dB0= mathcca::transpose(dA, mathcca::Trans::Base());
-  auto dT0= mathcca::transpose(dA, mathcca::Trans::Tiled());
- 
   auto dB1= mathcca::transpose(dB0, mathcca::Trans::Tiled());
+  cudaEventRecord(stop);
+  cudaEventSynchronize(stop);
+  float tB_milliseconds;
+  cudaEventElapsedTime(&tB_milliseconds, start, stop);
+
+  cudaEventRecord(start);
+  auto dT0= mathcca::transpose(dA, mathcca::Trans::Tiled());
   auto dT1= mathcca::transpose(dT0, mathcca::Trans::Tiled());
+  cudaEventRecord(stop);
+  cudaEventSynchronize(stop);
+  float tT_milliseconds;
+  cudaEventElapsedTime(&tT_milliseconds, start, stop);
+  
   std::cout << std::boolalpha << (dA  == dB1) << std::noboolalpha << "\n";
   std::cout << std::boolalpha << (dA  == dT1) << std::noboolalpha << "\n";
   std::cout << std::boolalpha << (dB0 == dT0) << std::noboolalpha << "\n";
 
+  std::cout << "tB == " << tB_milliseconds << " ms\n";
+  std::cout << "tT == " << tT_milliseconds << " ms\n";
+
 #ifdef _CUBLAS
+  cudaEventRecord(start);
   auto dC0= mathcca::transpose(dA,  mathcca::Trans::Cublas());
   auto dC1= mathcca::transpose(dC0, mathcca::Trans::Cublas());
+  cudaEventRecord(stop);
+  cudaEventSynchronize(stop);
+  float tC_milliseconds;
+  cudaEventElapsedTime(&tC_milliseconds, start, stop);
+  
   std::cout << std::boolalpha << (dA  == dC1) << std::noboolalpha << "\n";
   std::cout << std::boolalpha << (dC0 == dB0) << std::noboolalpha << "\n";
   std::cout << std::boolalpha << (dC0 == dT0) << std::noboolalpha << "\n";
+  
+  std::cout << "tC == " << tC_milliseconds << " ms\n";
+
 #endif
+
+  // destroy events
+  cudaEventDestroy(start);
+  cudaEventDestroy(stop);
 
 #ifdef _HOST_CHECK
   mathcca::host_matrix<value_type> hA{l,m};

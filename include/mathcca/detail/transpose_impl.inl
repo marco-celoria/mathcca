@@ -199,8 +199,8 @@ namespace mathcca {
                     A_num_rows, A_num_cols, &alpha, A, A_num_cols, &beta, A, A_num_cols, B, A_num_rows));
       }
       else {
-        std::cout << "A.num_rows()=" << A_num_rows << " A.num_cols()=" << A_num_cols << "\n";
-        std::cout << "B.num_rows()=" << A_num_cols << " B.num_cols()=" << A_num_rows << "\n";
+        //std::cout << "A.num_rows()=" << A_num_rows << " A.num_cols()=" << A_num_cols << "\n";
+        //std::cout << "B.num_rows()=" << A_num_cols << " B.num_cols()=" << A_num_rows << "\n";
         checkCudaErrors(cublasSgeam(handle, CUBLAS_OP_T, CUBLAS_OP_T,
                     A_num_rows, A_num_cols, &alpha, A, A_num_cols, &beta, A, A_num_cols, B, A_num_rows));
       }
