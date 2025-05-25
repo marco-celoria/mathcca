@@ -8,5 +8,6 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/nvidia/hpc_sdk/Linux_x86_64/25.1/ma
 (-D_THRUST)
 
 /opt/nvidia/hpc_sdk/Linux_x86_64/25.1/compilers/bin/compute-sanitizer --leak-check full ./main.x
+/usr/local/cuda-12.2/compute-sanitizer/compute-sanitizer  --leak-check full ./main.x
 
 /usr/local/cuda-12.2/bin/nvcc -std=c++20 main.cu -I./../../include -L/usr/local/cuda-12.2/lib -lcublas -I/usr/local/cuda-12.2/lib/include -O3 -D_USE_DOUBLE_PRECISION -D_PINNED -o main.x

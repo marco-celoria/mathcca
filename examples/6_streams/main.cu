@@ -10,102 +10,171 @@
 #include <mathcca/reduce_sum.h>
 #include <mathcca/copy.h>
 #include <mathcca/host_iterator.h>
+#include <vector>
+
+
+  template<std::floating_point T>
+  __global__ void addTo_kernel_ntimes(T* __restrict accululator, const T* __restrict to_be_op, const std::size_t size, const int ntimes) {
+    const auto idx{static_cast<std::size_t>(blockIdx.x * blockDim.x + threadIdx.x)};
+    if(idx < size) {
+      for (auto n=0; n < ntimes; ++n) {
+        accululator[idx]+= to_be_op[idx];
+      }
+    }
+  }
+
+
+
 int main(int argc, char **argv)  {
-  std::size_t l{1'000};
-  std::size_t m{1'000'000};
-  std::size_t nElem{l * m};
-  constexpr int NSTREAM= 10;
-  std::size_t iElem{nElem/NSTREAM};
+  constexpr int NSTREAM= 4;
+  constexpr int NTIMES= 2000;
+  constexpr unsigned int threads{1024};
+  constexpr std::size_t l{1'000};
+  constexpr std::size_t m{1'000'000};
+  constexpr std::size_t nElem{l * m};
+  constexpr std::size_t iElem{nElem/NSTREAM};
 #ifdef _USE_DOUBLE_PRECISION
   using value_type= double;
 #else
   using value_type= float;
 #endif
+  constexpr std::size_t nBytes{sizeof(value_type) * nElem};
+
   mathcca::host_matrix<value_type>   hA{l, m};
   mathcca::host_matrix<value_type>   hB{l, m};
-  mathcca::host_matrix<value_type>   hX{l, m};
-  mathcca::host_matrix<value_type>   hY{l, m};
+  mathcca::host_matrix<value_type>   hA_S{l, m};
+  mathcca::host_matrix<value_type>   hA_O{l, m};
+  mathcca::fill_rand(hA.begin(), hA.end());
+  mathcca::fill_rand(hB.begin(), hB.end());
 
   mathcca::device_matrix<value_type> dA{l, m};
   mathcca::device_matrix<value_type> dB{l, m};
-  mathcca::device_matrix<value_type> dX{l, m};
 
-  mathcca::device_matrix<value_type> dA_1{l/10, m};
-  mathcca::device_matrix<value_type> dA_2{l/10, m};
-  mathcca::device_matrix<value_type> dB_1{l/10, m};
-  mathcca::device_matrix<value_type> dB_2{l/10, m};
-  mathcca::device_matrix<value_type> dY_1{l/10, m};
-  mathcca::device_matrix<value_type> dY_2{l/10, m};
-
-  mathcca::fill_rand(hA.begin(), hA.end());
- 
-  cudaEvent_t startX; cudaEventCreate(&startX);
-  cudaEvent_t stopX; cudaEventCreate(&stopX);
-  cudaEvent_t startY1; cudaEventCreate(&startY1);
-  cudaEvent_t startY2; cudaEventCreate(&startY2);
-  cudaEvent_t stopY1; cudaEventCreate(&stopY1);
-  cudaEvent_t stopY2; cudaEventCreate(&stopY2);
-
-  value_type res_X= static_cast<value_type>(0);
-  cudaStream_t stream0;
-  cudaStreamCreate(&stream0);
-  cudaEventRecord(startX,stream0);
-  mathcca::copy(hA.cbegin(), hA.cend(), dA.begin(), stream0);
-  mathcca::copy(hB.cbegin(), hB.cend(), dB.begin(), stream0);
-  res_X= mathcca::reduce_sum(dA.begin(), dA.end(), static_cast<value_type>(0), stream0);
-  dX= (dA + dB)*static_cast<value_type>(2);
-  mathcca::copy(dX.cbegin(), dX.cend(), hX.begin(), stream0);
-  cudaDeviceSynchronize();
-  cudaEventRecord(stopX,stream0);
-  std::cout << "res_X= " << res_X << "\n";
-  cudaStreamDestroy(stream0);
- 
-  cudaStream_t stream1, stream2;
+  cudaEvent_t start;
+  cudaEvent_t stop;
+  cudaEventCreate(&start);
+  cudaEventCreate(&stop);
   
-  cudaStreamCreate( &stream1 );
-  cudaStreamCreate( &stream2 );
-
-  value_type res_1= static_cast<value_type>(0);
-  value_type res_2= static_cast<value_type>(0);
-  value_type res_Y= static_cast<value_type>(0);
-  cudaEventRecord(startY1,stream1);
-  cudaEventRecord(startY2,stream2);
-  for (auto i= 0; i< nElem; i+= 2*iElem) {
-    mathcca::detail::copy(mathcca::CudaHtoDcpy(), hA.cbegin().get() + static_cast<std::ptrdiff_t>(i),      hA.cbegin().get() + static_cast<std::ptrdiff_t>(i+iElem), dA_1.begin().get(), stream1);
-    mathcca::detail::copy(mathcca::CudaHtoDcpy(), hA.cbegin().get() + static_cast<std::ptrdiff_t>(i+iElem) , hA.cbegin().get() + static_cast<std::ptrdiff_t>(i+2*iElem), dA_2.begin().get(), stream2);
-    mathcca::detail::copy(mathcca::CudaHtoDcpy(), hB.cbegin().get() + static_cast<std::ptrdiff_t>(i),      hB.cbegin().get() + static_cast<std::ptrdiff_t>(i+iElem), dB_1.begin().get(), stream1);
-    mathcca::detail::copy(mathcca::CudaHtoDcpy(), hB.cbegin().get() + static_cast<std::ptrdiff_t>(i+iElem) , hB.cbegin().get() + static_cast<std::ptrdiff_t>(i+2*iElem), dB_2.begin().get(), stream2);
-    res_1= mathcca::detail::reduce_sum(mathcca::Cuda(), dA_1.cbegin().get(), dA_1.cbegin().get() + static_cast<std::ptrdiff_t>(iElem), static_cast<value_type>(0), stream1);
-    res_2= mathcca::detail::reduce_sum(mathcca::Cuda(), dA_2.cbegin().get(), dA_2.cbegin().get() + static_cast<std::ptrdiff_t>(iElem), static_cast<value_type>(0), stream2);
-    res_Y+= res_1 + res_2;
-    dY_1= (dA_1 + dB_1)*static_cast<value_type>(2);
-    dY_2= (dA_2 + dB_2)*static_cast<value_type>(2);
-    mathcca::host_iterator<value_type, false> h_it_1{hY.begin().get() + static_cast<std::ptrdiff_t>(i)};
-    mathcca::host_iterator<value_type, false> h_it_2{hY.begin().get() + static_cast<std::ptrdiff_t>(i+iElem)};
-    mathcca::copy(dY_1.cbegin(), dY_1.cend(), h_it_1, stream1);
-    mathcca::copy(dY_2.cbegin(), dY_2.cend(), h_it_2, stream2);
+  std::vector<cudaStream_t> streams(NSTREAM);
+  std::vector<value_type> sumsA_O(NSTREAM);
+  std::vector<value_type> sumsB_O(NSTREAM);
+  for (int i = 0; i < NSTREAM; ++i) {
+    cudaStreamCreate(&streams[i]);
   }
-  cudaDeviceSynchronize();
-  cudaEventRecord(stopY1,stream1);
-  cudaEventRecord(stopY2,stream2);
-  std::cout << "res_Y= " << res_Y << "\n";
-  std::cout << "res_Y - res_X= " << res_Y - res_X << "\n";
-  std::cout << "hX == hY? " << std::boolalpha << (hX == hY) << std::noboolalpha << "\n";
-  cudaStreamDestroy(stream1);
-  cudaStreamDestroy(stream2);
-  float time_X = 0.0f;
-  float time_Y1 = 0.0f;
-  float time_Y2 = 0.0f;
-  cudaEventElapsedTime(&time_X,  startX,  stopX);
-  cudaEventElapsedTime(&time_Y1, startY1, stopY1);
-  cudaEventElapsedTime(&time_Y2, startY2, stopY2);
-  cudaEventDestroy(startX);
-  cudaEventDestroy(startY1);
-  cudaEventDestroy(startY2);
-  cudaEventDestroy(stopX);
-  cudaEventDestroy(stopY1);
-  cudaEventDestroy(stopY2);
-  std::cout << time_X << " " << time_Y1 << " " << time_Y2 << "\n";
+  
+  auto check=hA[0];
+  for (auto n=0; n < NTIMES; ++n) {
+    check+= hB[0];
+  }
+
+  for (auto iter=0; iter < 25; ++iter) {
+    auto sumA_S= static_cast<value_type>(0);
+    auto sumB_S= static_cast<value_type>(0);
+    auto sumA_O= static_cast<value_type>(0);
+    auto sumB_O= static_cast<value_type>(0);
+
+    cudaEventRecord(start, 0);
+    mathcca::copy(hA.cbegin(), hA.cend(), dA.begin());
+    mathcca::copy(hB.cbegin(), hB.cend(), dB.begin());
+    cudaEventRecord(stop, 0);
+    cudaEventSynchronize(stop);
+    float memcpy_h2d_time;
+    cudaEventElapsedTime(&memcpy_h2d_time, start, stop);
+  
+    cudaEventRecord(start, 0);
+    sumA_S= mathcca::reduce_sum<decltype(dA.begin()), value_type, threads>(dA.begin(), dA.end(), static_cast<value_type>(0));
+    sumB_S= mathcca::reduce_sum<decltype(dB.begin()), value_type, threads>(dB.begin(), dB.end(), static_cast<value_type>(0));
+    constexpr auto nblocks{static_cast<unsigned int>((nElem + static_cast<std::size_t>(threads) - 1)/(static_cast<std::size_t>(threads)))};
+    addTo_kernel_ntimes<<<nblocks, threads>>>(dA.data(), dB.data(), nElem, NTIMES); 
+    cudaEventRecord(stop, 0);
+    cudaEventSynchronize(stop);
+    float kernel_time;
+    cudaEventElapsedTime(&kernel_time, start, stop);
+
+    cudaEventRecord(start, 0);
+    mathcca::copy(dA.cbegin(), dA.cend(), hA_S.begin());
+    cudaEventRecord(stop, 0);
+    cudaEventSynchronize(stop);
+    float memcpy_d2h_time;
+    cudaEventElapsedTime(&memcpy_d2h_time, start, stop);
+    float itotal = kernel_time + memcpy_h2d_time + memcpy_d2h_time;
+    std::cout << "\nMeasured timings (throughput):\n";
+    std::cout << " Memcpy host to device\t: " << memcpy_h2d_time << " ms ( " << (nBytes * 1e-6) / memcpy_h2d_time << " GB/s)\n";
+    std::cout << " Memcpy device to host\t: " << memcpy_d2h_time << " ms ( " << (nBytes * 1e-6) / memcpy_d2h_time << " GB/s)\n";
+    std::cout << " Kernel\t\t\t: " << kernel_time << " ms ( " << (nBytes * 2e-6) / kernel_time << " GB/s)\n";
+    std::cout << " Total\t\t\t: " <<  itotal << "ms ( " << (nBytes * 2e-6) / itotal << " GB/s)\n";
+    std::cout << "sumA_S= " << sumA_S << "\n";
+    std::cout << "sumB_S= " << sumB_S << "\n";
+ 
+    cudaEventRecord(start, 0);
+
+    // initiate all asynchronous transfers to the device
+    for (int i = 0; i < NSTREAM; ++i) {
+      int ioffset = i * iElem;
+      mathcca::detail::copy(mathcca::CudaHtoDcpy(),
+                           hA.cbegin().get() + static_cast<std::ptrdiff_t>(ioffset),
+                           hA.cbegin().get() + static_cast<std::ptrdiff_t>(ioffset + iElem), 
+                           dA.begin().get()  + static_cast<std::ptrdiff_t>(ioffset), 
+                           streams[i]);
+      
+      mathcca::detail::copy(mathcca::CudaHtoDcpy(),
+                            hB.cbegin().get() + static_cast<std::ptrdiff_t>(ioffset), 
+                            hB.cbegin().get() + static_cast<std::ptrdiff_t>(ioffset + iElem), 
+                            dB.begin().get()  + static_cast<std::ptrdiff_t>(ioffset), 
+                            streams[i]);
+    }
+    // launch a kernel in each stream
+    for (int i = 0; i < NSTREAM; ++i) {
+      int ioffset = i * iElem;
+      sumsA_O[i]= mathcca::detail::reduce_sum(mathcca::Cuda(), 
+                    dA.cbegin().get() + static_cast<std::ptrdiff_t>(ioffset),
+                    dA.cbegin().get() + static_cast<std::ptrdiff_t>(ioffset + iElem), 
+                    static_cast<value_type>(0), 
+                    streams[i]);
+      
+      sumsB_O[i]= mathcca::detail::reduce_sum(mathcca::Cuda(), 
+                    dB.cbegin().get() + static_cast<std::ptrdiff_t>(ioffset),
+                    dB.cbegin().get() + static_cast<std::ptrdiff_t>(ioffset + iElem), 
+                    static_cast<value_type>(0), 
+                    streams[i]);
+      
+      constexpr auto iblocks{static_cast<unsigned int>((iElem + static_cast<std::size_t>(threads) - 1)/(static_cast<std::size_t>(threads)))};
+      addTo_kernel_ntimes<<<iblocks, threads, 0, streams[i]>>>(dA.begin().get()  + static_cast<std::ptrdiff_t>(ioffset), 
+       		                                               dB.begin().get()  + static_cast<std::ptrdiff_t>(ioffset), iElem, NTIMES);  
+    }
+
+    // enqueue asynchronous transfers from the device
+    for (int i = 0; i < NSTREAM; ++i) {
+      sumA_O+= sumsA_O[i];
+      sumB_O+= sumsB_O[i];
+      int ioffset = i * iElem;
+      mathcca::detail::copy(mathcca::CudaDtoHcpy(),
+                    dA.cbegin().get() + static_cast<std::ptrdiff_t>(ioffset),
+                    dA.cbegin().get() + static_cast<std::ptrdiff_t>(ioffset + iElem),
+                    hA_O.begin().get()  + static_cast<std::ptrdiff_t>(ioffset), streams[i]);
+    }
+    cudaEventRecord(stop, 0);
+    cudaEventSynchronize(stop);
+    float execution_time;
+    cudaEventElapsedTime(&execution_time, start, stop);
+    std::cout << "\nActual results from overlapped data transfers:\n";
+    std::cout << " overlap with " << NSTREAM << " streams : " << execution_time << " ms ( " << (nBytes * 2e-6) / execution_time << " GB/s)\n";
+    std::cout << " speedup: " << ((itotal - execution_time) * 100.0f) / itotal << " % \n";
+    std::cout << sumA_S << " " << sumA_O << "\n";
+    std::cout << sumB_S << " " << sumB_O << "\n";
+    std::cout << "hA_S == hA_O? " << std::boolalpha << (hA_S == hA_O) << std::noboolalpha << "\n";
+    std::cout << check << " " << hA_S[0] << " " << hA_O[0] << "\n";
+  }
+  
+  // destroy events
+  cudaEventDestroy(start);
+  cudaEventDestroy(stop);
+
+  // destroy streams
+  for (int i = 0; i < NSTREAM; ++i) {
+    cudaStreamDestroy(streams[i]);
+  }
+  
 }
 
 
