@@ -49,7 +49,7 @@ namespace mathcca {
 #endif
     
     template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
-    constexpr T frobenius_norm(Cuda, const T* begin, const T* end, cudaStream_t stream);
+    constexpr T frobenius_norm(Cuda, const T* begin, const T* end, Norm::Base, cudaStream_t stream);
     
 #endif
     
