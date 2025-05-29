@@ -11,7 +11,32 @@
 #include<iostream>
 #include<cmath>
 
+__global__ void hello( )
+{
+    printf("blockIdx.x=%d/%d blocks, threadIdx.x=%d/%d threads\n",
+                        blockIdx.x,  gridDim.x,
+                        threadIdx.x, blockDim.x);
+}
+
 int main(int argc, char **argv)  {
+#ifdef _THRUST
+  try {
+    checkCudaErrors(cudaSetDevice(-1));
+    //getLastCudaError("cudaSetDevice(-1)");
+    //checkCudaErrors(cudaDeviceSynchronize());
+  }
+  catch(thrust::system_error &e) {
+    std::cerr << "catch CUDA error after cudaSetDevice(-1): " << e.what() << "\n\n";
+    checkCudaErrors(cudaSetDevice(0));
+  }
+  try {
+  hello<<< 1, 1025 >>>( );
+  getLastCudaError("Hello");
+  }
+  catch(thrust::system_error &e) {
+    std::cerr << "catch CUDA error after Hello: " << e.what() << std::endl;
+  }
+#endif
   std::cout << "Test Matrix constructors" << std::endl;
   {
     std::size_t r{2};
