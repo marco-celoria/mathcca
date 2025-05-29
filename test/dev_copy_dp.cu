@@ -6,12 +6,14 @@ TEST(CopyDp, BasicAssertions)
     std::size_t r{2};
     std::size_t c{5};
     for (auto n= 1; n < 9; ++n) {
-      mathcca::device_matrix<double> dA{r, c, static_cast<double>(n)};
-      mathcca::device_matrix<double> dB{r, c, static_cast<double>(n+1)};
-      mathcca::device_matrix<double> dC{r, c};
-      mathcca::device_matrix<double> dD{r, c, static_cast<double>(n)};
-      mathcca::device_matrix<double> dE{r, c, static_cast<double>(n+1)};
-      using value_type= typename decltype(dA)::value_type;
+
+      using value_type= double;
+
+      mathcca::device_matrix<value_type> dA{r, c, static_cast<value_type>(n)};
+      mathcca::device_matrix<value_type> dB{r, c, static_cast<value_type>(n+1)};
+      mathcca::device_matrix<value_type> dC{r, c};
+      mathcca::device_matrix<value_type> dD{r, c, static_cast<value_type>(n)};
+      mathcca::device_matrix<value_type> dE{r, c, static_cast<value_type>(n+1)};
       
       EXPECT_TRUE(dA != dB);
       EXPECT_TRUE(dA != dC);
@@ -36,11 +38,11 @@ TEST(CopyDp, BasicAssertions)
       EXPECT_TRUE(dA != dE);
       EXPECT_TRUE(dC == dE);
       
-      mathcca::host_matrix<double> hA{r, c};
-      mathcca::host_matrix<double> hB{r, c};
-      mathcca::host_matrix<double> hC{r, c};
-      mathcca::host_matrix<double> hD{r, c};
-      mathcca::host_matrix<double> hE{r, c};
+      mathcca::host_matrix<value_type> hA{r, c};
+      mathcca::host_matrix<value_type> hB{r, c};
+      mathcca::host_matrix<value_type> hC{r, c};
+      mathcca::host_matrix<value_type> hD{r, c};
+      mathcca::host_matrix<value_type> hE{r, c};
       cudaStream_t s_A;
       cudaStream_t s_B;
       cudaStream_t s_C;
@@ -97,6 +99,27 @@ TEST(CopyDp, BasicAssertions)
       mathcca::copy(hA.begin(),  hA.end() , hC.begin());
       EXPECT_TRUE(hA == hE);
       EXPECT_TRUE(hA == hC);
+
+
+      mathcca::device_matrix<value_type> dCUDA{dA.num_rows(), dA.num_cols()};
+      mathcca::detail::copy(mathcca::Cuda(), dA.cbegin().get(), dA.cend().get(), dCUDA.begin().get());
+      EXPECT_TRUE(dA == dCUDA);
+
+#ifdef _THRUST
+      mathcca::device_matrix<value_type> dTHRUST{dA.num_rows(), dA.num_cols()};
+      mathcca::detail::copy(mathcca::Thrust(), dA.cbegin().get(), dA.cend().get(), dTHRUST.begin().get());
+      EXPECT_TRUE(dA == dTHRUST);
+#endif
+
+      mathcca::host_matrix<value_type> hOMP{hA.num_rows(), hA.num_cols()};
+      mathcca::detail::copy(mathcca::Omp(), hA.begin().get(), hA.end().get(), hOMP.begin().get());
+      EXPECT_TRUE(hA == hOMP);
+
+#ifdef _STDPAR
+      mathcca::host_matrix<value_type> hSTDPAR{hA.num_rows(), hA.num_cols()};
+      mathcca::detail::copy(mathcca::StdPar(), hA.cbegin().get(), hA.cend().get(), hSTDPAR.begin().get());
+      EXPECT_TRUE(hA == hSTDPAR);      
+#endif      
 
       std::swap(r,c);
       r*= 5;

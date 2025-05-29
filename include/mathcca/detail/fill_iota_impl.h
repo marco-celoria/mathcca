@@ -29,10 +29,9 @@ namespace mathcca {
     template<std::floating_point T>
     void fill_iota(Thrust, T* first, T* last, const T v); 
 #endif
-    
-    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
-    void fill_iota(Cuda, T* first, T* last, const T v, cudaStream_t stream) ;
-    
+   
+    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM= 128>
+    void fill_iota( Cuda, T* first, T* last, const T v, cudaStream_t stream= 0);
 #endif
     
   }  

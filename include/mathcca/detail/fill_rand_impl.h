@@ -30,8 +30,8 @@ namespace mathcca {
     void fill_rand(Thrust, T* first, T* last); 
 #endif
     
-    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM>
-    void fill_rand(Cuda, T* first, T* last, cudaStream_t stream);     
+    template<std::floating_point T, unsigned int THREAD_BLOCK_DIM=128>
+    void fill_rand(Cuda, T* first, T* last, cudaStream_t stream= 0);     
     
 #endif
     

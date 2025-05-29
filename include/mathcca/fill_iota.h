@@ -15,7 +15,7 @@
  #include <cuda_runtime.h> // cudaStream_t
 #endif
 
-#include <mathcca/detail/fill_iota_impl.inl>
+#include <mathcca/detail/fill_iota_impl.h>
 
 namespace mathcca {
        

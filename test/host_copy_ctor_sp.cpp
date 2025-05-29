@@ -5,11 +5,14 @@ TEST(CopyCtorSp, BasicAssertions)
 {
   std::size_t row{2};
   std::size_t col{5};
-  for (auto n= 1; n < 8; ++n) {
-    mathcca::host_matrix<float> a1{row, col};
-    mathcca::host_matrix<float> a2{row, col, static_cast<float>(n)};
-    mathcca::host_matrix<float> d1{row, col, static_cast<float>(n+1)};
-    mathcca::host_matrix<float> d2{1, 2};
+  for (auto n= 1; n < 9; ++n) {
+
+    using value_type= float;
+    
+    mathcca::host_matrix<value_type> a1{row, col};
+    mathcca::host_matrix<value_type> a2{row, col, static_cast<value_type>(n)};
+    mathcca::host_matrix<value_type> d1{row, col, static_cast<value_type>(n+1)};
+    mathcca::host_matrix<value_type> d2{1, 2};
     
     EXPECT_TRUE(a1 != a2);
     EXPECT_TRUE(a1 != d1);

@@ -6,11 +6,12 @@ TEST(ReduceSp, BasicAssertions)
     std::size_t r{2};
     std::size_t c{5};
     for (auto n= 1; n < 5; ++n) {
-      std::cout << "n= " << n << "\n";
-      mathcca::host_matrix<float> X{r, c};
-      mathcca::host_matrix<float> Y{r, c, static_cast<float>(n)};
       
-      using value_type= typename decltype(X)::value_type;
+      using value_type= float;    
+	    
+      mathcca::host_matrix<value_type> X{r, c};
+      mathcca::host_matrix<value_type> Y{r, c, static_cast<value_type>(n)};
+      
       mathcca::fill_const(X.begin(), X.end(), static_cast<value_type>(n));
       mathcca::fill_iota(Y.begin(),  Y.end(), static_cast<value_type>(1));
 

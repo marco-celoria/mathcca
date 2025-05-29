@@ -6,12 +6,14 @@ TEST(CopySp, BasicAssertions)
     std::size_t r{2};
     std::size_t c{5};
     for (auto n= 1; n < 9; ++n) {
-      mathcca::device_matrix<float> dA{r, c, static_cast<float>(n)};
-      mathcca::device_matrix<float> dB{r, c, static_cast<float>(n+1)};
-      mathcca::device_matrix<float> dC{r, c};
-      mathcca::device_matrix<float> dD{r, c, static_cast<float>(n)};
-      mathcca::device_matrix<float> dE{r, c, static_cast<float>(n+1)};
-      using value_type= typename decltype(dA)::value_type;
+
+      using value_type= float;
+
+      mathcca::device_matrix<value_type> dA{r, c, static_cast<value_type>(n)};
+      mathcca::device_matrix<value_type> dB{r, c, static_cast<value_type>(n+1)};
+      mathcca::device_matrix<value_type> dC{r, c};
+      mathcca::device_matrix<value_type> dD{r, c, static_cast<value_type>(n)};
+      mathcca::device_matrix<value_type> dE{r, c, static_cast<value_type>(n+1)};
       
       EXPECT_TRUE(dA != dB);
       EXPECT_TRUE(dA != dC);
@@ -36,11 +38,11 @@ TEST(CopySp, BasicAssertions)
       EXPECT_TRUE(dA != dE);
       EXPECT_TRUE(dC == dE);
       
-      mathcca::host_matrix<float> hA{r, c};
-      mathcca::host_matrix<float> hB{r, c};
-      mathcca::host_matrix<float> hC{r, c};
-      mathcca::host_matrix<float> hD{r, c};
-      mathcca::host_matrix<float> hE{r, c};
+      mathcca::host_matrix<value_type> hA{r, c};
+      mathcca::host_matrix<value_type> hB{r, c};
+      mathcca::host_matrix<value_type> hC{r, c};
+      mathcca::host_matrix<value_type> hD{r, c};
+      mathcca::host_matrix<value_type> hE{r, c};
       cudaStream_t s_A;
       cudaStream_t s_B;
       cudaStream_t s_C;
@@ -54,22 +56,23 @@ TEST(CopySp, BasicAssertions)
 
       mathcca::copy(dA.begin(),  dA.end() , hA.begin(), s_A);
       cudaStreamSynchronize(s_A);
-
+      
       mathcca::copy(dB.cbegin(), dB.cend(), hB.begin(), s_B);
       cudaStreamSynchronize(s_B);
-
+      
       mathcca::copy(dC.begin(),  dC.end(),  hC.begin(), s_C);
       cudaStreamSynchronize(s_C);
-
+      
       mathcca::copy(dD.cbegin(), dD.cend(), hD.begin(), s_D);
       cudaStreamSynchronize(s_D);
-
+      
       mathcca::copy(dE.begin(),  dE.end(),  hE.begin(), s_E);
       cudaStreamSynchronize(s_E);
       
       cudaStreamDestroy(s_B);
       cudaStreamDestroy(s_C);
       cudaStreamDestroy(s_E);
+      
       EXPECT_TRUE(hA != hB);
       EXPECT_TRUE(hA != hC);
       EXPECT_TRUE(hA == hD);
@@ -79,8 +82,10 @@ TEST(CopySp, BasicAssertions)
       dA*= static_cast<value_type>(2);
       EXPECT_TRUE(dA != dD);
       EXPECT_TRUE(hA == hD);
+      
       mathcca::copy(dA.begin(),  dA.end() , hA.begin(), s_A);
       cudaStreamSynchronize(s_A);
+      
       EXPECT_TRUE(hA != hD);
       hD*= static_cast<value_type>(2);
       EXPECT_TRUE(hA == hD);
@@ -89,11 +94,32 @@ TEST(CopySp, BasicAssertions)
       EXPECT_TRUE(dA == dD);
       cudaStreamDestroy(s_A);
       cudaStreamDestroy(s_D);
-     
+   
       mathcca::copy(hA.begin(),  hA.end() , hE.begin());
       mathcca::copy(hA.begin(),  hA.end() , hC.begin());
       EXPECT_TRUE(hA == hE);
       EXPECT_TRUE(hA == hC);
+
+
+      mathcca::device_matrix<value_type> dCUDA{dA.num_rows(), dA.num_cols()};
+      mathcca::detail::copy(mathcca::Cuda(), dA.cbegin().get(), dA.cend().get(), dCUDA.begin().get());
+      EXPECT_TRUE(dA == dCUDA);
+
+#ifdef _THRUST
+      mathcca::device_matrix<value_type> dTHRUST{dA.num_rows(), dA.num_cols()};
+      mathcca::detail::copy(mathcca::Thrust(), dA.cbegin().get(), dA.cend().get(), dTHRUST.begin().get());
+      EXPECT_TRUE(dA == dTHRUST);
+#endif
+
+      mathcca::host_matrix<value_type> hOMP{hA.num_rows(), hA.num_cols()};
+      mathcca::detail::copy(mathcca::Omp(), hA.begin().get(), hA.end().get(), hOMP.begin().get());
+      EXPECT_TRUE(hA == hOMP);
+
+#ifdef _STDPAR
+      mathcca::host_matrix<value_type> hSTDPAR{hA.num_rows(), hA.num_cols()};
+      mathcca::detail::copy(mathcca::StdPar(), hA.cbegin().get(), hA.cend().get(), hSTDPAR.begin().get());
+      EXPECT_TRUE(hA == hSTDPAR);      
+#endif      
 
       std::swap(r,c);
       r*= 5;

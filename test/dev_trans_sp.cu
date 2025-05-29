@@ -6,23 +6,26 @@ TEST(TransSp, BasicAssertions)
     std::size_t r{5};
     std::size_t c{2};
     for (auto i= 1; i < 9; ++i) {
-      mathcca::device_matrix<float> dX{r, c};
-      mathcca::host_matrix<float>   hX{r, c};
-      mathcca::device_matrix<float> dY{r, c};
-      mathcca::host_matrix<float>   hY{r, c};
-      mathcca::device_matrix<float> dZ{r, c};
-      mathcca::device_matrix<float> dX0{r, c};
-      mathcca::host_matrix<float>   hX0{r, c};
-      mathcca::device_matrix<float> dY0{r, c};
-      mathcca::host_matrix<float>   hY0{r, c};
-      mathcca::device_matrix<float> dZ0{r, c};
-      mathcca::device_matrix<float> dB0{c, r};
-      mathcca::host_matrix<float>   hB0{c, r};
-      mathcca::device_matrix<float> dT0{c, r};
-      mathcca::host_matrix<float>   hT0{c, r};
-      mathcca::device_matrix<float> dC0{c, r};
-      mathcca::device_matrix<float> dERR{99, 99};
-      mathcca::host_matrix<float>   hERR{99, 99};
+       
+      using value_type= float;
+        
+      mathcca::device_matrix<value_type> dX{r, c};
+      mathcca::host_matrix<value_type>   hX{r, c};
+      mathcca::device_matrix<value_type> dY{r, c};
+      mathcca::host_matrix<value_type>   hY{r, c};
+      mathcca::device_matrix<value_type> dZ{r, c};
+      mathcca::device_matrix<value_type> dX0{r, c};
+      mathcca::host_matrix<value_type>   hX0{r, c};
+      mathcca::device_matrix<value_type> dY0{r, c};
+      mathcca::host_matrix<value_type>   hY0{r, c};
+      mathcca::device_matrix<value_type> dZ0{r, c};
+      mathcca::device_matrix<value_type> dB0{c, r};
+      mathcca::host_matrix<value_type>   hB0{c, r};
+      mathcca::device_matrix<value_type> dT0{c, r};
+      mathcca::host_matrix<value_type>   hT0{c, r};
+      mathcca::device_matrix<value_type> dC0{c, r};
+      mathcca::device_matrix<value_type> dERR{99, 99};
+      mathcca::host_matrix<value_type>   hERR{99, 99};
 
       mathcca::fill_rand(dX.begin(), dX.end());
 
@@ -33,8 +36,6 @@ TEST(TransSp, BasicAssertions)
       cudaDeviceSynchronize();
       
       mathcca::copy(hX.cbegin(), hX.cend(), hY.begin());
-
-      using value_type= typename decltype(dX)::value_type;
 
       EXPECT_TRUE(dX == dY);
       EXPECT_TRUE(dX == dZ);
@@ -101,6 +102,7 @@ TEST(TransSp, BasicAssertions)
       EXPECT_TRUE(dT0 == dRT);
 
 #ifdef _CUBLAS
+
       mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Cublas, 8>(dZ,  dC0, mathcca::Trans::Cublas());
       mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Cublas, 8>(dC0, dZ0, mathcca::Trans::Cublas());
       auto dC1 = mathcca::transpose<mathcca::device_matrix<value_type>, mathcca::Trans::Cublas, 16>(dZ,  mathcca::Trans::Cublas());
@@ -117,7 +119,9 @@ TEST(TransSp, BasicAssertions)
 
       EXPECT_TRUE(dC0 == dC1);
       EXPECT_TRUE(dC1 == dC2);
+
 #endif
+
       std::swap(r,c);
       r *= 5;
       c *= 2;

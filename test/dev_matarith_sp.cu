@@ -6,15 +6,18 @@ TEST(MatArithSp, BasicAssertions)
     std::size_t r{2};
     std::size_t c{5};
     for (auto n= 1; n < 9; ++n) {
-      mathcca::device_matrix<float> dA0{r, c, static_cast<float>(2)};
-      mathcca::host_matrix<float>   hA0{r, c, static_cast<float>(2)};
-      mathcca::device_matrix<float> dB0{r, c, static_cast<float>(3)};
-      mathcca::host_matrix<float>   hB0{r, c, static_cast<float>(3)};
-      mathcca::device_matrix<float> dCHECK{r, c};
-      mathcca::host_matrix<float>   hCHECK{r, c};
-      mathcca::device_matrix<float> dERR{r, r};
-      mathcca::host_matrix<float>   hERR{r, r};
-      using value_type= typename decltype(dCHECK)::value_type;
+
+      using value_type= float;
+
+      mathcca::device_matrix<value_type> dA0{r, c, static_cast<value_type>(2)};
+      mathcca::host_matrix<value_type>   hA0{r, c, static_cast<value_type>(2)};
+      mathcca::device_matrix<value_type> dB0{r, c, static_cast<value_type>(3)};
+      mathcca::host_matrix<value_type>   hB0{r, c, static_cast<value_type>(3)};
+      mathcca::device_matrix<value_type> dCHECK{r, c};
+      mathcca::host_matrix<value_type>   hCHECK{r, c};
+      mathcca::device_matrix<value_type> dERR{r, r};
+      mathcca::host_matrix<value_type>   hERR{r, r};
+      
       EXPECT_THROW({dA0 + dERR;},  std::length_error);
       EXPECT_THROW({dA0 - dERR;},  std::length_error);
       EXPECT_THROW({dA0 * dERR;},  std::length_error);

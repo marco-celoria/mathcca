@@ -6,11 +6,14 @@ TEST(MatArithDp, BasicAssertions)
     std::size_t r{2};
     std::size_t c{5};
     for (auto n= 1; n < 9; ++n) {
-      mathcca::host_matrix<double> A0{r, c, static_cast<double>(2)};
-      mathcca::host_matrix<double> B0{r, c, static_cast<double>(3)};
-      mathcca::host_matrix<double> CHECK{r, c};
-      mathcca::host_matrix<double> ERR{r, r};
-      using value_type= typename decltype(CHECK)::value_type;
+
+     using value_type= double;
+
+      mathcca::host_matrix<value_type> A0{r, c, static_cast<value_type>(2)};
+      mathcca::host_matrix<value_type> B0{r, c, static_cast<value_type>(3)};
+      mathcca::host_matrix<value_type> CHECK{r, c};
+      mathcca::host_matrix<value_type> ERR{r, r};
+      
       EXPECT_THROW({A0 + ERR;},  std::length_error);
       EXPECT_THROW({A0 - ERR;},  std::length_error);
       EXPECT_THROW({A0 * ERR;},  std::length_error);

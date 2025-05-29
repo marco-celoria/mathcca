@@ -6,40 +6,83 @@ TEST(FillSp, BasicAssertions)
     std::size_t r{2};
     std::size_t c{5};
     for (auto n= 1; n < 9; ++n) {
-      mathcca::device_matrix<float> dA{r, c};
-      mathcca::host_matrix<float> hA{r, c};
-      mathcca::device_matrix<float> dX0{r, c};
-      mathcca::device_matrix<float> dX1{r, c};
-      mathcca::device_matrix<float> dX2{r, c};
-      mathcca::device_matrix<float> dX3{r, c};
-      mathcca::device_matrix<float> dX4{r, c};
-      mathcca::device_matrix<float> dX5{r, c};
-      mathcca::device_matrix<float> dX6{r, c};
-      mathcca::device_matrix<float> dX7{r, c};
-      mathcca::device_matrix<float> dX8{r, c};
-      mathcca::device_matrix<float> dX9{r, c};
-      using value_type= typename decltype(dA)::value_type;
-      mathcca::fill_const(dA.begin(), dA.end(), static_cast<value_type>(n));
+
+      using value_type= float;
+      
+      mathcca::device_matrix<value_type> dA{r, c};
+      mathcca::host_matrix<value_type>   hA{r, c};
+      mathcca::device_matrix<value_type> dX0{r, c};
+      mathcca::device_matrix<value_type> dX1{r, c};
+      mathcca::device_matrix<value_type> dX2{r, c};
+      mathcca::device_matrix<value_type> dX3{r, c};
+      mathcca::device_matrix<value_type> dX4{r, c};
+      mathcca::device_matrix<value_type> dX5{r, c};
+      mathcca::device_matrix<value_type> dX6{r, c};
+      mathcca::device_matrix<value_type> dX7{r, c};
+      mathcca::device_matrix<value_type> dX8{r, c};
+      mathcca::device_matrix<value_type> dX9{r, c};
+
       cudaStream_t s_A;
       cudaStreamCreate(&s_A);
       
-      mathcca::copy(dA.begin(),  dA.end() , hA.begin(), s_A);
+      mathcca::fill_const(dA.begin(), dA.end(), static_cast<value_type>(n));
+      mathcca::copy(dA.begin(), dA.end(), hA.begin(), s_A);
       cudaStreamSynchronize(s_A);
       
-      for (std::size_t i=0; i < hA.size(); ++i) {
+      for (std::size_t i= 0; i < hA.size(); ++i) {
         EXPECT_FLOAT_EQ(hA[i], static_cast<value_type>(n));
       }
 
-      mathcca::fill_iota(dA.begin(), dA.end(), static_cast<value_type>(10));
-      
-      mathcca::copy(dA.begin(),  dA.end() , hA.begin(), s_A);
+
+      mathcca::detail::fill_const(mathcca::Cuda(), dA.begin().get(), dA.end().get(), static_cast<value_type>(n+1));
+      mathcca::copy(dA.begin(), dA.end(), hA.begin(), s_A);
       cudaStreamSynchronize(s_A);
       
-      cudaStreamDestroy(s_A);
+      for (std::size_t i= 0; i < hA.size(); ++i) {
+        EXPECT_FLOAT_EQ(hA[i], static_cast<value_type>(n+1));
+      }
 
-      for (std::size_t i=0; i < hA.size(); ++i) {
+#ifdef _THRUST
+
+      mathcca::detail::fill_const(mathcca::Thrust(), dA.begin().get(), dA.end().get(), static_cast<value_type>(n+2));
+      mathcca::copy(dA.begin(), dA.end(), hA.begin(), s_A);
+      cudaStreamSynchronize(s_A);
+      
+      for (std::size_t i= 0; i < hA.size(); ++i) {
+        EXPECT_FLOAT_EQ(hA[i], static_cast<value_type>(n+2));
+      }
+
+#endif
+
+      mathcca::fill_iota(dA.begin(), dA.end(), static_cast<value_type>(10));
+      mathcca::copy(dA.begin(), dA.end(), hA.begin(), s_A);
+      cudaStreamSynchronize(s_A);
+
+      for (std::size_t i= 0; i < hA.size(); ++i) {
         EXPECT_FLOAT_EQ(hA[i], static_cast<value_type>(10 + i));
       }
+      
+      mathcca::detail::fill_iota(mathcca::Cuda(), dA.begin().get(), dA.end().get(), static_cast<value_type>(11));
+      mathcca::copy(dA.begin(), dA.end(), hA.begin(), s_A);
+      cudaStreamSynchronize(s_A);
+
+      for (std::size_t i= 0; i < hA.size(); ++i) {
+        EXPECT_FLOAT_EQ(hA[i], static_cast<value_type>(11 + i));
+      }
+      
+#ifdef _THRUST
+
+      mathcca::detail::fill_iota(mathcca::Thrust(), dA.begin().get(), dA.end().get(), static_cast<value_type>(12));
+      mathcca::copy(dA.begin(), dA.end(), hA.begin(), s_A);
+      cudaStreamSynchronize(s_A);
+
+      for (std::size_t i= 0; i < hA.size(); ++i) {
+        EXPECT_FLOAT_EQ(hA[i], static_cast<value_type>(12 + i));
+      }
+
+#endif
+      
+      cudaStreamDestroy(s_A);
       
       mathcca::fill_rand(dX0.begin(), dX0.end()); 
       mathcca::fill_rand(dX1.begin(), dX1.end());
@@ -106,6 +149,136 @@ TEST(FillSp, BasicAssertions)
 
       EXPECT_TRUE(dX8 != dX9);
       
+      mathcca::detail::fill_rand(mathcca::Cuda(), dX0.begin().get(), dX0.end().get()); 
+      mathcca::detail::fill_rand(mathcca::Cuda(), dX1.begin().get(), dX1.end().get());
+      mathcca::detail::fill_rand(mathcca::Cuda(), dX2.begin().get(), dX2.end().get());
+      mathcca::detail::fill_rand(mathcca::Cuda(), dX3.begin().get(), dX3.end().get());
+      mathcca::detail::fill_rand(mathcca::Cuda(), dX4.begin().get(), dX4.end().get());
+      mathcca::detail::fill_rand(mathcca::Cuda(), dX5.begin().get(), dX5.end().get());
+      mathcca::detail::fill_rand(mathcca::Cuda(), dX6.begin().get(), dX6.end().get());
+      mathcca::detail::fill_rand(mathcca::Cuda(), dX7.begin().get(), dX7.end().get()); 
+      mathcca::detail::fill_rand(mathcca::Cuda(), dX8.begin().get(), dX8.end().get());
+      mathcca::detail::fill_rand(mathcca::Cuda(), dX9.begin().get(), dX9.end().get());
+
+      EXPECT_TRUE(dX0 != dX1);
+      EXPECT_TRUE(dX0 != dX2);
+      EXPECT_TRUE(dX0 != dX3);
+      EXPECT_TRUE(dX0 != dX4);
+      EXPECT_TRUE(dX0 != dX5);
+      EXPECT_TRUE(dX0 != dX6);
+      EXPECT_TRUE(dX0 != dX7);
+      EXPECT_TRUE(dX0 != dX8);
+      EXPECT_TRUE(dX0 != dX9);
+      
+      EXPECT_TRUE(dX1 != dX2);
+      EXPECT_TRUE(dX1 != dX3);
+      EXPECT_TRUE(dX1 != dX4);
+      EXPECT_TRUE(dX1 != dX5);
+      EXPECT_TRUE(dX1 != dX6);
+      EXPECT_TRUE(dX1 != dX7);
+      EXPECT_TRUE(dX1 != dX8);
+      EXPECT_TRUE(dX1 != dX9);
+      
+      EXPECT_TRUE(dX2 != dX3);
+      EXPECT_TRUE(dX2 != dX4);
+      EXPECT_TRUE(dX2 != dX5);
+      EXPECT_TRUE(dX2 != dX6);
+      EXPECT_TRUE(dX2 != dX7);
+      EXPECT_TRUE(dX2 != dX8);
+      EXPECT_TRUE(dX2 != dX9);
+     
+      EXPECT_TRUE(dX3 != dX4);
+      EXPECT_TRUE(dX3 != dX5);
+      EXPECT_TRUE(dX3 != dX6);
+      EXPECT_TRUE(dX3 != dX7);
+      EXPECT_TRUE(dX3 != dX8);
+      EXPECT_TRUE(dX3 != dX9);
+
+      EXPECT_TRUE(dX4 != dX5);
+      EXPECT_TRUE(dX4 != dX6);
+      EXPECT_TRUE(dX4 != dX7);
+      EXPECT_TRUE(dX4 != dX8);
+      EXPECT_TRUE(dX4 != dX9);
+
+      EXPECT_TRUE(dX5 != dX6);
+      EXPECT_TRUE(dX5 != dX7);
+      EXPECT_TRUE(dX5 != dX8);
+      EXPECT_TRUE(dX5 != dX9);
+
+      EXPECT_TRUE(dX6 != dX7);
+      EXPECT_TRUE(dX6 != dX8);
+      EXPECT_TRUE(dX6 != dX9);
+      
+      EXPECT_TRUE(dX7 != dX8);
+      EXPECT_TRUE(dX7 != dX9);
+
+      EXPECT_TRUE(dX8 != dX9);
+
+#ifdef _THRUST
+
+      mathcca::detail::fill_rand(mathcca::Thrust(), dX0.begin().get(), dX0.end().get());
+      mathcca::detail::fill_rand(mathcca::Thrust(), dX1.begin().get(), dX1.end().get());
+      mathcca::detail::fill_rand(mathcca::Thrust(), dX2.begin().get(), dX2.end().get());
+      mathcca::detail::fill_rand(mathcca::Thrust(), dX3.begin().get(), dX3.end().get());
+      mathcca::detail::fill_rand(mathcca::Thrust(), dX4.begin().get(), dX4.end().get());
+      mathcca::detail::fill_rand(mathcca::Thrust(), dX5.begin().get(), dX5.end().get());
+      mathcca::detail::fill_rand(mathcca::Thrust(), dX6.begin().get(), dX6.end().get());
+      mathcca::detail::fill_rand(mathcca::Thrust(), dX7.begin().get(), dX7.end().get());
+      mathcca::detail::fill_rand(mathcca::Thrust(), dX8.begin().get(), dX8.end().get());
+      mathcca::detail::fill_rand(mathcca::Thrust(), dX9.begin().get(), dX9.end().get());
+
+      EXPECT_TRUE(dX0 != dX1);
+      EXPECT_TRUE(dX0 != dX2);
+      EXPECT_TRUE(dX0 != dX3);
+      EXPECT_TRUE(dX0 != dX4);
+      EXPECT_TRUE(dX0 != dX5);
+      EXPECT_TRUE(dX0 != dX6);
+      EXPECT_TRUE(dX0 != dX7);
+      EXPECT_TRUE(dX0 != dX8);
+      EXPECT_TRUE(dX0 != dX9);
+
+      EXPECT_TRUE(dX2 != dX3);
+      EXPECT_TRUE(dX2 != dX4);
+      EXPECT_TRUE(dX2 != dX5);
+      EXPECT_TRUE(dX2 != dX6);
+      EXPECT_TRUE(dX2 != dX7);
+      EXPECT_TRUE(dX2 != dX8);
+      EXPECT_TRUE(dX2 != dX9);
+
+      EXPECT_TRUE(dX3 != dX4);
+      EXPECT_TRUE(dX3 != dX5);
+      EXPECT_TRUE(dX3 != dX6);
+      EXPECT_TRUE(dX3 != dX7);
+      EXPECT_TRUE(dX3 != dX8);
+      EXPECT_TRUE(dX3 != dX9);
+
+      EXPECT_TRUE(dX4 != dX5);
+      EXPECT_TRUE(dX4 != dX6);
+      EXPECT_TRUE(dX4 != dX7);
+      EXPECT_TRUE(dX4 != dX8);
+      EXPECT_TRUE(dX4 != dX9);
+
+      EXPECT_TRUE(dX5 != dX6);
+      EXPECT_TRUE(dX5 != dX7);
+      EXPECT_TRUE(dX5 != dX8);
+      EXPECT_TRUE(dX5 != dX9);
+
+      EXPECT_TRUE(dX5 != dX6);
+      EXPECT_TRUE(dX5 != dX7);
+      EXPECT_TRUE(dX5 != dX8);
+      EXPECT_TRUE(dX5 != dX9);
+
+      EXPECT_TRUE(dX6 != dX7);
+      EXPECT_TRUE(dX6 != dX8);
+      EXPECT_TRUE(dX6 != dX9);
+
+      EXPECT_TRUE(dX7 != dX8);
+      EXPECT_TRUE(dX7 != dX9);
+
+      EXPECT_TRUE(dX8 != dX9);
+
+#endif
+
       std::swap(r,c);
       r*= 5;
       c*= 2;

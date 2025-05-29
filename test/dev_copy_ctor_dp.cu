@@ -6,17 +6,20 @@ TEST(CopyCtorDp, BasicAssertions)
   std::size_t row{2};
   std::size_t col{5};
   for (auto n= 1; n < 9; ++n) {
-    mathcca::device_matrix<double> dA1{row, col};
-    mathcca::host_matrix<double>   hA1{row, col};
+
+    using value_type= double;
+ 
+    mathcca::device_matrix<value_type> dA1{row, col};
+    mathcca::host_matrix<value_type>   hA1{row, col};
     
-    mathcca::device_matrix<double> dA2{row, col, static_cast<double>(n)};
-    mathcca::host_matrix<double>   hA2{row, col, static_cast<double>(n)};
+    mathcca::device_matrix<value_type> dA2{row, col, static_cast<value_type>(n)};
+    mathcca::host_matrix<value_type>   hA2{row, col, static_cast<value_type>(n)};
     
-    mathcca::device_matrix<double> dD1{row, col, static_cast<double>(n+1)};
-    mathcca::host_matrix<double>   hD1{row, col, static_cast<double>(n+1)};
+    mathcca::device_matrix<value_type> dD1{row, col, static_cast<value_type>(n+1)};
+    mathcca::host_matrix<value_type>   hD1{row, col, static_cast<value_type>(n+1)};
     
-    mathcca::device_matrix<double> dD2{1, 2};
-    mathcca::host_matrix<double> hD2{1, 2};
+    mathcca::device_matrix<value_type> dD2{1, 2};
+    mathcca::host_matrix<value_type> hD2{1, 2};
     
     EXPECT_TRUE(dA1 != dA2);
     EXPECT_TRUE(dA1 != dD1);

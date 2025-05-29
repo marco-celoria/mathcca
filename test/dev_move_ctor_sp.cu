@@ -6,14 +6,17 @@ TEST(MoveCtorSp, BasicAssertions)
   std::size_t row{2};
   std::size_t col{5};
   for (auto n= 1; n < 9; ++n) {
-    mathcca::device_matrix<float> dA1{row,  col};
-    mathcca::host_matrix<float>   hA1{row,  col};
-    mathcca::device_matrix<float> dA2{row,  col, static_cast<float>(n)};
-    mathcca::host_matrix<float>   hA2{row,  col, static_cast<float>(n)};
-    mathcca::device_matrix<float> dD1{row, col};
-    mathcca::host_matrix<float>   hD1{row, col};
-    mathcca::device_matrix<float> dD2{1, 2};
-    mathcca::host_matrix<float>   hD2{1, 2};
+
+    using value_type= float;
+
+    mathcca::device_matrix<value_type> dA1{row,  col};
+    mathcca::host_matrix<value_type>   hA1{row,  col};
+    mathcca::device_matrix<value_type> dA2{row,  col, static_cast<value_type>(n)};
+    mathcca::host_matrix<value_type>   hA2{row,  col, static_cast<value_type>(n)};
+    mathcca::device_matrix<value_type> dD1{row, col};
+    mathcca::host_matrix<value_type>   hD1{row, col};
+    mathcca::device_matrix<value_type> dD2{1, 2};
+    mathcca::host_matrix<value_type>   hD2{1, 2};
     
     EXPECT_TRUE(dA1 != dA2);
     EXPECT_TRUE(dD1 != dD2);
@@ -76,6 +79,7 @@ TEST(MoveCtorSp, BasicAssertions)
     std::swap(row,col);
     row*= 5;
     col*= 2;
+
   }
 }
 

@@ -7,12 +7,15 @@ TEST(MatmulSp, BasicAssertions)
     std::size_t m{3};
     std::size_t n{2};
     for (auto i= 1; i < 7; ++i) {
-      mathcca::host_matrix<float> X0{l, m};
-      mathcca::host_matrix<float> Y0{m, n};
-      mathcca::host_matrix<float> B0{l, n};
-      mathcca::host_matrix<float> T0{l, n};
-      mathcca::host_matrix<float> C0{l, n};
-      mathcca::host_matrix<float> ERR{99, 99};
+
+      using value_type= float;      
+
+      mathcca::host_matrix<value_type> X0{l, m};
+      mathcca::host_matrix<value_type> Y0{m, n};
+      mathcca::host_matrix<value_type> B0{l, n};
+      mathcca::host_matrix<value_type> T0{l, n};
+      mathcca::host_matrix<value_type> C0{l, n};
+      mathcca::host_matrix<value_type> ERR{99, 99};
       mathcca::fill_rand(X0.begin(), X0.end());
       mathcca::fill_rand(Y0.begin(), Y0.end());
       EXPECT_TRUE(X0 != Y0);
