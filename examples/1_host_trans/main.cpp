@@ -2,6 +2,7 @@
 #include <mathcca/transpose.h>
 #include <iostream>
 #include <mathcca/fill_rand.h>
+#include <chrono>
 
 double wtime() {
 #ifdef _OPENMP
@@ -16,8 +17,8 @@ double wtime() {
 
 int main(int argc, char **argv)  {
 
-  constexpr std::size_t r{35003};
-  constexpr std::size_t c{30002};
+  constexpr std::size_t r{35013};
+  constexpr std::size_t c{30023};
 
 #ifdef _USE_DOUBLE_PRECISION
   using value_type= double;
@@ -39,13 +40,12 @@ int main(int argc, char **argv)  {
   auto C1= mathcca::transpose(B1, mathcca::Trans::Tiled());
   t1= wtime() - t1;
 
-  std::cout << std::boolalpha << (B0 == B1) << std::noboolalpha << "\n";
-  std::cout << std::boolalpha << (C0 == A) << std::noboolalpha << "\n";
-  std::cout << std::boolalpha << (C1 == A) << std::noboolalpha << "\n";
+  std::cout << "Does Base result agree with Tiled result? " << std::boolalpha << (B0 == B1) << std::noboolalpha << "\n";
+  std::cout << "Is Base   result consistent? " << std::boolalpha << (C0 == A) << std::noboolalpha << "\n";
+  std::cout << "Is Tiled  result consistent? " << std::boolalpha << (C1 == A) << std::noboolalpha << "\n";
 
-  std::cout << "t0 == " << t0 << "\n";
-  std::cout << "t1 == " << t1 << "\n";
-
+  std::cout << "Base  time: " << t0 << "\n";
+  std::cout << "Tiled time: " << t1 << "\n";
 
 #ifdef _MKL
 
@@ -54,10 +54,10 @@ int main(int argc, char **argv)  {
   auto C2= mathcca::transpose(B2, mathcca::Trans::Mkl());
   t2= wtime() - t2;
 
-  std::cout << std::boolalpha << (B0 == B2) << std::noboolalpha << "\n";
-  std::cout << std::boolalpha << (B1 == B2) << std::noboolalpha << "\n";
-  std::cout << std::boolalpha << (C2 == A) << std::noboolalpha << "\n";
-  std::cout << "t2 == " << t2 << "\n";
+  std::cout << "Does Mkl result agree with Base  result? " << std::boolalpha << (B0 == B2) << std::noboolalpha << "\n";
+  std::cout << "Does Mkl result agree with Tiled result? " << std::boolalpha << (B1 == B2) << std::noboolalpha << "\n";
+  std::cout << "Is Mkl   result consistent? " << std::boolalpha << (C2 == A) << std::noboolalpha << "\n";
+  std::cout << "Mkl time: " << t2 << "\n";
 
 #endif
 

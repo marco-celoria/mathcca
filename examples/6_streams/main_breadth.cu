@@ -24,7 +24,6 @@ __global__ void addTo_kernel_ntimes(T* __restrict accululator, const T* __restri
 }
 
 
-
 int main(int argc, char **argv)  {
 
   constexpr int NSTREAM= 4;
@@ -69,7 +68,6 @@ int main(int argc, char **argv)  {
     cudaStreamCreate(&streams[i]);
   }
  
-
   auto check{hA[0]};
   for (auto n= 0; n < NTIMES; ++n) {
     check+= hB[0];
@@ -117,17 +115,9 @@ int main(int argc, char **argv)  {
 
     for (int i = 0; i < NSTREAM; ++i) {
       int ioffset = i * iElem;
-      mathcca::detail::copy(mathcca::CudaHtoDcpy(),
-                           hA.cbegin().get() + static_cast<std::ptrdiff_t>(ioffset),
-                           hA.cbegin().get() + static_cast<std::ptrdiff_t>(ioffset + iElem), 
-                           dA.begin().get()  + static_cast<std::ptrdiff_t>(ioffset), 
-                           streams[i]);
+      mathcca::copy(hA.cbegin() + static_cast<std::ptrdiff_t>(ioffset), hA.cbegin() + static_cast<std::ptrdiff_t>(ioffset + iElem), dA.begin() + static_cast<std::ptrdiff_t>(ioffset), streams[i]);
       
-      mathcca::detail::copy(mathcca::CudaHtoDcpy(),
-                            hB.cbegin().get() + static_cast<std::ptrdiff_t>(ioffset), 
-                            hB.cbegin().get() + static_cast<std::ptrdiff_t>(ioffset + iElem), 
-                            dB.begin().get()  + static_cast<std::ptrdiff_t>(ioffset), 
-                            streams[i]);
+      mathcca::copy(hB.cbegin() + static_cast<std::ptrdiff_t>(ioffset), hB.cbegin() + static_cast<std::ptrdiff_t>(ioffset + iElem), dB.begin() + static_cast<std::ptrdiff_t>(ioffset), streams[i]);
     }
     // launch a kernel in each stream
     for (int i = 0; i < NSTREAM; ++i) {
@@ -154,12 +144,10 @@ int main(int argc, char **argv)  {
       sumA_O+= sumsA_O[i];
       sumB_O+= sumsB_O[i];
       int ioffset = i * iElem;
-      mathcca::detail::copy(mathcca::CudaDtoHcpy(),
-                    dA.cbegin().get() + static_cast<std::ptrdiff_t>(ioffset),
-                    dA.cbegin().get() + static_cast<std::ptrdiff_t>(ioffset + iElem),
-                    hA_O.begin().get()  + static_cast<std::ptrdiff_t>(ioffset), streams[i]);
+      mathcca::copy(dA.cbegin() + static_cast<std::ptrdiff_t>(ioffset), dA.cbegin() + static_cast<std::ptrdiff_t>(ioffset + iElem), hA_O.begin() + static_cast<std::ptrdiff_t>(ioffset), streams[i]);
     }
-        cudaEventRecord(stop, 0);
+
+    cudaEventRecord(stop, 0);
     cudaEventSynchronize(stop);
 
     float execution_time;

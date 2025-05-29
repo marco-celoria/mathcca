@@ -24,7 +24,7 @@ int main(int argc, char **argv)  {
   mathcca::device_matrix<value_type> dB{m, n};
 
   // For example, define random matrix on host and const matrix on device
-  mathcca::fill_rand(hA.begin(), hA.end());
+  mathcca::fill_rand( hA.begin(), hA.end());
   mathcca::fill_const(dB.begin(), dB.end(), static_cast<value_type>(0.1));
   
   // Copy HtoD and DtoH
@@ -41,20 +41,20 @@ int main(int argc, char **argv)  {
   auto dC0= mathcca::matmul(dA, dB, mathcca::MM::Base());
   cudaEventRecord(stop);
   cudaEventSynchronize(stop);
-  float t0_milliseconds;
-  cudaEventElapsedTime(&t0_milliseconds, start, stop);
+  float t0_ms;
+  cudaEventElapsedTime(&t0_ms, start, stop);
 
   cudaEventRecord(start);
   auto dC1= mathcca::matmul(dA, dB, mathcca::MM::Tiled());
   cudaEventRecord(stop);
   cudaEventSynchronize(stop);
-  float t1_milliseconds;
-  cudaEventElapsedTime(&t1_milliseconds, start, stop);
+  float t1_ms;
+  cudaEventElapsedTime(&t1_ms, start, stop);
 
   // Check device consistency
-  std::cout << std::boolalpha << (dC0 == dC1) << std::noboolalpha << "\n";
-  std::cout << "t0 == " << t0_milliseconds << " ms ; GFLOPSs == " << gops/t0_milliseconds * 1.e+3 << "\n";
-  std::cout << "t1 == " << t1_milliseconds << " ms ; GFLOPSs == " << gops/t1_milliseconds * 1.e+3 << "\n";
+  std::cout << "Does Base result agree with Tiled result? "   << std::boolalpha << (dC0 == dC1) << std::noboolalpha << "\n";
+  std::cout << "Base  time: " << t0_ms << " ms ; GFLOPSs == " << gops/t0_ms * 1.e+3 << "\n";
+  std::cout << "Tiled time: " << t1_ms << " ms ; GFLOPSs == " << gops/t1_ms * 1.e+3 << "\n";
 
 #ifdef _CUBLAS
   // Eventually, use cublas
@@ -62,32 +62,18 @@ int main(int argc, char **argv)  {
   auto dC2 = mathcca::matmul(dA, dB, mathcca::MM::Cublas());
   cudaEventRecord(stop);
   cudaEventSynchronize(stop);
-  float t2_milliseconds = 0;
-  cudaEventElapsedTime(&t2_milliseconds, start, stop);
+  float t2_ms = 0;
+  cudaEventElapsedTime(&t2_ms, start, stop);
 
   // Check device consistency
-  std::cout << std::boolalpha << (dC0 == dC2) << std::noboolalpha << "\n";
-  std::cout << std::boolalpha << (dC1 == dC2) << std::noboolalpha << "\n";
-  std::cout << "t2 == " << t2_milliseconds << " ms ; GFLOPSs == " << gops/t2_milliseconds * 1.e+3 << "\n";
+  std::cout << "Does Cublas result agree with Base  result? "  << std::boolalpha << (dC0 == dC2) << std::noboolalpha << "\n";
+  std::cout << "Does Cublas result agree with Tiled result? "  << std::boolalpha << (dC1 == dC2) << std::noboolalpha << "\n";
+  std::cout << "Cublas time: " << t2_ms << " ms ; GFLOPSs == " << gops/t2_ms * 1.e+3 << "\n";
 #endif
 
   // destroy events
   cudaEventDestroy(start);
   cudaEventDestroy(stop);
-
-#ifdef _HOST_CHECK  
-  mathcca::host_matrix<value_type> hC0{l,n};
-  mathcca::host_matrix<value_type> hC1{l,n};
-  mathcca::copy(dC0.cbegin(), dC0.cend(), hC0.begin());
-  mathcca::copy(dC1.cbegin(), dC1.cend(), hC1.begin());
-  cudaDeviceSynchronize();
-
-  auto hD0= mathcca::matmul(hA, hB, mathcca::MM::Tiled());
-  auto hD1= mathcca::matmul(hA, hB, mathcca::MM::Tiled());
-  std::cout << std::boolalpha << (hD0 == hC0) << std::noboolalpha << "\n";
-  std::cout << std::boolalpha << (hD1 == hC1) << std::noboolalpha << "\n";
-  std::cout << std::boolalpha << (hD0 == hD1) << std::noboolalpha << "\n";
-#endif
 
 }
 

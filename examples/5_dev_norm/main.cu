@@ -8,8 +8,8 @@
 #include <mathcca/copy.h>
 
 int main(int argc, char **argv)  {
-  constexpr std::size_t l{36504};
-  constexpr std::size_t m{28333};
+  constexpr std::size_t l{46504};
+  constexpr std::size_t m{38333};
   constexpr std::size_t n{l * m};
 #ifdef _USE_DOUBLE_PRECISION
   using value_type= double;
@@ -19,6 +19,8 @@ int main(int argc, char **argv)  {
   mathcca::device_matrix<value_type> dA{l, m};
 
   mathcca::fill_rand(dA.begin(), dA.end());
+  
+  auto res= std::sqrt(static_cast<value_type>(n/3.));
 
   cudaEvent_t start, stop;
   cudaEventCreate(&start);
@@ -28,25 +30,23 @@ int main(int argc, char **argv)  {
   auto resB= mathcca::frobenius_norm(dA, mathcca::Norm::Base());
   cudaEventRecord(stop);
   cudaEventSynchronize(stop);
-  float tB_milliseconds;
-  cudaEventElapsedTime(&tB_milliseconds, start, stop);
-  std::cout << "tB == " << tB_milliseconds << " ms\n";
+  float tB_ms;
+  cudaEventElapsedTime(&tB_ms, start, stop);
 
-  //https://en.wikipedia.org/wiki/Continuous_uniform_distribution
-  
-  auto res= std::sqrt(static_cast<value_type>(n/3.));
-  std::cout << resB << " " << res << "\n";
+  std::cout << "\n" << "Does Base result agree with real result? " << resB << " -:- " << res << "\tError: " << std::abs(resB - res) << "\n";
+  std::cout         << "Base  time: " << tB_ms << "\n";
 
 #ifdef _CUBLAS
   cudaEventRecord(start);
   auto resC= mathcca::frobenius_norm(dA, mathcca::Norm::Cublas());
   cudaEventRecord(stop);
   cudaEventSynchronize(stop);
-  float tC_milliseconds;
-  cudaEventElapsedTime(&tC_milliseconds, start, stop);
+  float tC_ms;
+  cudaEventElapsedTime(&tC_ms, start, stop);
 
-  std::cout << resB << " " << resC << "\n";
-  std::cout << "tC == " << tC_milliseconds << " ms\n";
+  std::cout << "\n" << "Does Cublas result agree with real result? " << resC << " -:- " << res  << " \tError: " << std::abs(resC - res ) << "\n";
+  std::cout         << "Does Cublas result agree with Base result? " << resC << " -:- " << resB << " \tError: " << std::abs(resC - resB) << "\n";
+  std::cout << "Cublas  time: " << tC_ms << "\n";
 
 #endif
 
@@ -55,23 +55,18 @@ int main(int argc, char **argv)  {
   auto resT= mathcca::detail::frobenius_norm(mathcca::Thrust(), dA.cbegin().get(), dA.cend().get(), mathcca::Norm::Base());
   cudaEventRecord(stop);
   cudaEventSynchronize(stop);
-  float tT_milliseconds;
-  cudaEventElapsedTime(&tT_milliseconds, start, stop);
-  std::cout << resB << " " << resT << "\n";
-  std::cout << "tT == " << tT_milliseconds << " ms\n";
+  float tT_ms;
+  cudaEventElapsedTime(&tT_ms, start, stop);
+
+  std::cout << "\n" << "Does Thrust result agree with real result? " << resT << " -:- " << res  << " \tError: " << std::abs(resT - res ) << "\n";
+  std::cout         << "Does Thrust result agree with Base result? " << resT << " -:- " << resB << " \tError: " << std::abs(resT - resB) << "\n";
+  std::cout << "Thrust  time: " << tT_ms << "\n";
+
 #endif
 
-    // destroy events
+  // destroy events
   cudaEventDestroy(start);
   cudaEventDestroy(stop);
-
-#ifdef _HOST_CHECK
-  mathcca::host_matrix<value_type> hA{l,m};
-  mathcca::copy(dA.cbegin(),  dA.cend(),  hA.begin());
-  cudaDeviceSynchronize();
-  auto resH= mathcca::frobenius_norm(hA,  mathcca::Norm::Base());
-  std::cout << std::boolalpha << resH << " " << resB << std::noboolalpha << "\n";
-#endif
 
 }
 
