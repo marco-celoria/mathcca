@@ -31,15 +31,8 @@
 #include <mathcca/device_iterator.h>
 #include <mathcca/device_allocator.h>
 
-/*
-#include <mathcca/host_matrix.h>
-#include <mathcca/copy.h>
-*/
 
 namespace mathcca {
-    
-//  template<std::floating_point T, typename Allocator>
-//  class host_matrix;
     
   template<std::floating_point T, typename Allocator>
   class device_matrix;
@@ -106,14 +99,6 @@ namespace mathcca {
       constexpr const_iterator cbegin() const noexcept { return const_iterator{const_cast<pointer>(Parent::data())}; }
       constexpr const_iterator cend()   const noexcept { return const_iterator{const_cast<pointer>(Parent::data() + Parent::size())}; }
         
-      /* 
-      auto toHost (cudaStream_t stream= 0) const {
-          host_matrix<T> hostA(Parent::num_rows(), Parent::num_cols());
-          copy(begin(), end(), hostA.begin(), stream);
-          return hostA;
-        }
-        */
-         
       // Standard kernel	
       template<unsigned int THREAD_BLOCK_DIM= 128>
       self& operator+=(const self& rhs) {
@@ -127,6 +112,7 @@ namespace mathcca {
         constexpr dim3 dimBlock(threads, 1, 1);
         dim3 dimGrid(blocks, 1, 1);
         addTo_kernel<value_type><<<dimGrid, dimBlock>>>(Parent::data(), rhs.data(), size);
+        getLastCudaError("addTo_kernel() execution failed.\n");
         return *this;
       }
             
@@ -143,6 +129,7 @@ namespace mathcca {
           constexpr dim3 dimBlock(threads, 1, 1);
           dim3 dimGrid(blocks, 1, 1);
           subTo_kernel<value_type, threads><<<dimGrid, dimBlock>>>(Parent::data(), rhs.data(), size);
+          getLastCudaError("subTo_kernel() execution failed.\n");
           return *this;
       }
       
@@ -157,6 +144,7 @@ namespace mathcca {
         constexpr dim3 dimBlock(threads, 1, 1);
         dim3 dimGrid(blocks, 1, 1);
         mulScalarTo_kernel<value_type, threads><<<dimGrid, dimBlock>>>(Parent::data(), rhs, size);
+        getLastCudaError("mulScalarTo_kernel() execution failed.\n");
         return *this;
       }
         
@@ -179,6 +167,7 @@ namespace mathcca {
         constexpr dim3 dimBlock(threads, 1, 1);
         dim3 dimGrid(blocks, 1, 1);
         mulTo_kernel<value_type, Allocator, threads><<<dimGrid, dimBlock>>>(*dp_this, *dp_rhs);
+        getLastCudaError("mulTo_kernel() execution failed.\n");
         checkCudaErrors(cudaFree(dp_this));
         checkCudaErrors(cudaFree(dp_rhs));
         return *this;

@@ -135,6 +135,7 @@ namespace mathcca {
                       static_cast<unsigned int>((A_num_rows + static_cast<size_type>(dimBlock.y) - 1) / static_cast<size_type>(dimBlock.y)),
                       1};
       transpose_device_Base_kernel<value_type><<<dimGrid, dimBlock, 0, stream>>>(A_num_rows, A_num_cols, A, B);
+      getLastCudaError("transpose_device_Base_kernel() execution failed.\n");
     }
        
     template<std::floating_point T, unsigned int LINEAR_THREAD_BLOCK_DIM>
@@ -181,6 +182,7 @@ namespace mathcca {
                       static_cast<unsigned int>((A_num_rows + static_cast<size_type>(dimBlock.y) - 1) / static_cast<size_type>(dimBlock.y)),
                       1};
       transpose_parallel_Tiled_kernel<value_type, tile><<<dimGrid, dimBlock, 0, stream>>>(A_num_rows, A_num_cols, A, B);
+      getLastCudaError("transpose_parallel_Tiled_kernel() execution failed.\n");
     }
       
 #ifdef _CUBLAS

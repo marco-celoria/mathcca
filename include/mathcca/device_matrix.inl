@@ -96,6 +96,7 @@ namespace mathcca {
     dim3 dimGrid(blocks, 1, 1);
     unsigned int smemSize= (threads <= 32) ? 2 * threads * sizeof(T) : threads * sizeof(T);
     cg_count_if_diffs_kernel<T><<<dimGrid, dimBlock, smemSize>>>(lhs, rhs, d_odata, size, tol);
+    getLastCudaError("cg_count_if_diffs_kernel() execution failed.\n");
     // sum partial block sums on GPU
     unsigned int s{blocks};
     while (s > 1) {
@@ -104,10 +105,11 @@ namespace mathcca {
       //std::cout << "s = " << s << "; threads = " << threads << "; blocks = " << blocks << "\n";
       checkCudaErrors(cudaMemcpy(d_intermediateSums, d_odata, s * sizeof(T), cudaMemcpyDeviceToDevice));
       mathcca::detail::cg_reduce_kernel<T><<<blocks, threads, smemSize>>>(d_intermediateSums, d_odata, s);
+      getLastCudaError("cg_reduce_kernel() execution failed.\n");
       s= (s + (threads * 2 - 1)) / (threads * 2);
     }
     checkCudaErrors(cudaMemcpy(&gpu_result, d_odata, sizeof(T), cudaMemcpyDeviceToHost));
-    cudaDeviceSynchronize();
+    checkCudaErrors(cudaDeviceSynchronize());
     checkCudaErrors(cudaFree(d_odata));
     checkCudaErrors(cudaFree(d_intermediateSums));
     return gpu_result;
@@ -253,7 +255,8 @@ namespace mathcca {
   template<std::floating_point T>
   void print_matrix(const device_matrix<T>& mat) {
     print_matrix_kernel<<<1,1>>> (mat.data(), mat.num_rows(), mat.num_cols());
-    cudaDeviceSynchronize();
+    getLastCudaError("print_matrix_kernel() execution failed.\n");
+    checkCudaErrors(cudaDeviceSynchronize());
   }
     
 }  

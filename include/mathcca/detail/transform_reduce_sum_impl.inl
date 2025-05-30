@@ -134,6 +134,7 @@ namespace mathcca {
       unsigned int smemSize = (threads <= 32) ? 2 * threads * sizeof(T) : threads * sizeof(T);
       //auto square = []__device__(auto val) { return val * val; };
       cg_transform_reduce_kernel<T, UnaryFunction><<<dimGrid, dimBlock, smemSize, stream>>>(first, d_odata, size, unary_op);
+      getLastCudaError("cg_transform_reduce_kernel() execution failed.\n");
       // sum partial block sums on GPU
       unsigned int s{blocks};
       while (s > 1) {
@@ -142,6 +143,7 @@ namespace mathcca {
         //std::cout << "s = " << s << "; threads = " << threads << "; blocks = " << blocks << "\n";
         checkCudaErrors(cudaMemcpy(d_intermediateSums, d_odata, s * sizeof(T), cudaMemcpyDeviceToDevice));
         cg_reduce_kernel<T><<<blocks, threads, smemSize, stream>>>(d_intermediateSums, d_odata, s);
+        getLastCudaError("cg_reduce_kernel() execution failed.\n");
         s = (s + (threads * 2 - 1)) / (threads * 2);
       }
       //checkCudaErrors(cudaMemcpy(&gpu_result, d_odata, sizeof(T), cudaMemcpyDeviceToHost));

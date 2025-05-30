@@ -132,7 +132,9 @@ namespace mathcca {
       curandState *d_state;
       checkCudaErrors(cudaMalloc(&d_state, (size * sizeof(curandState))));
       init_seed<<<dimGrid, dimBlock, 0, stream>>>(d_state, seed, size);
+      getLastCudaError("init_seed() execution failed.\n");
       fill_rand_kernel<value_type><<<dimGrid, dimBlock, 0, stream>>>(d_state, first, size);
+      getLastCudaError("fill_rand_kernel() execution failed.\n");
       checkCudaErrors(cudaFree(d_state));
     }
     

@@ -83,6 +83,7 @@ namespace mathcca {
       constexpr dim3 dimBlock(threads, 1, 1);
       dim3 dimGrid(blocks, 1, 1);
       fill_iota_kernel<value_type><<<dimGrid, dimBlock, 0, stream>>>(first, size, v);
+      getLastCudaError("fill_iota_kernel() execution failed.\n");
     }
     
 #endif

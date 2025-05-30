@@ -92,6 +92,7 @@ int main(int argc, char **argv)  {
     sumB_S= mathcca::reduce_sum<decltype(dB.begin()), value_type, threads>(dB.begin(), dB.end(), static_cast<value_type>(0));
     constexpr auto nblocks{static_cast<unsigned int>((nElem + static_cast<std::size_t>(threads) - 1)/(static_cast<std::size_t>(threads)))};
     addTo_kernel_ntimes<<<nblocks, threads>>>(dA.data(), dB.data(), nElem, NTIMES);
+    getLastCudaError("addTo_kernel_ntimes() execution failed.\n");
     cudaEventRecord(stop, 0);
     cudaEventSynchronize(stop);
     float kernel_time;
@@ -135,8 +136,9 @@ int main(int argc, char **argv)  {
                     streams[i]);
       
       constexpr auto iblocks{static_cast<unsigned int>((iElem + static_cast<std::size_t>(threads) - 1)/(static_cast<std::size_t>(threads)))};
-      addTo_kernel_ntimes<<<iblocks, threads, 0, streams[i]>>>(dA.begin().get()  + static_cast<std::ptrdiff_t>(ioffset), 
-       		                                               dB.begin().get()  + static_cast<std::ptrdiff_t>(ioffset), iElem, NTIMES);  
+      addTo_kernel_ntimes<<<iblocks, threads, 0, streams[i]>>>(dA.begin().get() + static_cast<std::ptrdiff_t>(ioffset), dB.begin().get() + static_cast<std::ptrdiff_t>(ioffset), iElem, NTIMES); 
+      getLastCudaError("addTo_kernel_ntimes() execution failed.\n");
+    
     }
 
     // enqueue asynchronous transfers from the device
