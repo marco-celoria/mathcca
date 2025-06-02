@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 #ifndef FILL_IOTA_H_
 #define FILL_IOTA_H_
 #pragma once

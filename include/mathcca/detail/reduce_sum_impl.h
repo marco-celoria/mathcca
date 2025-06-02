@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 #ifndef REDUCE_SUM_IMPL_H_
 #define REDUCE_SUM_IMPL_H_
 #pragma once

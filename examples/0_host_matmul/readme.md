@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com>
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/u/dssc/mceloria/intel/oneapi/mkl/2025.1/lib
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/u/dssc/mceloria/intel/oneapi/tbb/2022.1/lib
 

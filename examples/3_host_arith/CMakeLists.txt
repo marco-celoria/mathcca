@@ -1,5 +1,6 @@
-
-
+# SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)

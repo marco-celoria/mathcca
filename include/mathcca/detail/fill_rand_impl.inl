@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 
 #include <cstddef> // std::size_t
 #include <concepts> //std::floating_point

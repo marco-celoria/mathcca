@@ -1,0 +1,1035 @@
+SPDXVersion: SPDX-2.1
+DataLicense: CC0-1.0
+SPDXID: SPDXRef-DOCUMENT
+DocumentName: mathcca
+DocumentNamespace: http://spdx.org/spdxdocs/spdx-v2.1-619bcedb-e3be-4f1b-bdec-a0800b9c7902
+Creator: Person: Anonymous ()
+Creator: Organization: Anonymous ()
+Creator: Tool: reuse-5.0.2
+Created: 2025-06-02T16:53:14Z
+CreatorComment: <text>This document was created automatically using available reuse information consistent with REUSE.</text>
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-e62ad72aa53ff6fa6ef5be8d3242ddb5
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-0f24425b598422ead9adb31cae538ccc
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-940c4a82efcb9b87c88bb4da635d9282
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-116f1a18750d508863ec8392a46a8b9f
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-51f5d6f07fe7eba5da7ebda8698714b7
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-4eb3a1ef1546fa8598bb89bec64d5554
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-6b5fa444b87b5c2384af0311a5e5c9bd
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-5252406faa041f0be300126cf318817f
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-822324ab6b197d8c413003e5329cdc73
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-3e429abd1f5d13cb5c03ca80f2d1495b
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-5fbe5048be14ab1e9493dcc34c9cc0a2
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-aa5445d2bbfbdfa8bc250d66e7242269
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-f77b0d545a2a45de11209f1a022d5c94
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-8467d4e915a5f6dfd38fe377df0f949c
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-df0690528eb3c8e1432808676920caad
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-1427caa0b7ea27af32115c5ad429fe73
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-c7e3e68f8e3f122af9092daf1cd9d8ae
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-de881b5b7eb6456d7b684ae6ed7d27ae
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a328ab2ca38f5fa86f5ccc262fd18822
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-d5057b8f9489df1b369dd0eca129e8b9
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-fffc23873ed5006d148cc1083b6777ab
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-0bce101b6316e1097ae92ea6744d9b4c
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-2da7661ffa982b03389dbcd9712f0ba3
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-40ccc921b518447e9b8c729f53482d23
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-4640f885e206fa5e12431be12b92fd9b
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-fe23d35beb80beda0147a3bbe410e275
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-6101d636fc4196223f71e4d340426339
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-3c561884d816ecacc4d3f389d81e8049
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-5162d69b207a696f0a87ac0165e440de
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-092d54d37beee918c82b6e404cb40cbb
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-7e83c128631de9904a9eae6b34b84463
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-11dc142ef5afbb11fcc3abb9a5ff75bb
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-33918c6ce1c6e3d31fceaebce5428e8e
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-ba10b1d4b861572f699c481b9fc63a81
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-978a9d4387b2fb10730cea22aba1dd8e
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-2e41d0f2cb8bf447e1ec9d57c30c8f64
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-023c9af49a2f7b47a6afe3993d45e837
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-bd85d9f8ffad4442f34151f1bb180e20
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-0899daeb59bc094114f865daf736eba1
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-bc14b09560447164cecdb5a8c3c6d32a
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-3ad7998b4870a73ae5b12642c5c37607
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-2865fc8cefe2c331ab849bd09a47423b
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-7304289db0db7596860b0b421b3bfdca
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-f1d9a737fbe8cd8a17552d29a40a5c90
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-e5f2b86ff0bfdd7b1a5b4b97a4aacbba
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-9bc8aa73cd2138d9c1636dde9d5a03ff
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-62a362c22e6755d54dc81ab42351b8ed
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-5b0264036dbf0dd0897f5bfbfc3af33d
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-0e55d98e76b05bbb929f6634cca003b5
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-663526b9ab8090e572f6d684b04e9cba
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-563385ac1f10c9a00db7885b27dd32f4
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-0dfee4de0cfd597038a8117b867d91f7
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-3e8c1d2be684fec2c3e4b2331b08d301
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-6f042dfacb5d107a15d430f846f94828
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-7dc23ecbd11213d0edfeb51cc06bb56c
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-fcecfa9bce388a0779c38fde94d2a2d1
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-722d0285717497cf11801df44afe9860
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-27fdc060f4146144c3dc5218b7fa0822
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-d32418976fe05e8bd1349bd016896eef
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-3390fea0dbaabb095a1c5d7a149d85a7
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-33ffa185c4c1323b935a2dd7b09097f4
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-7b04d53b5eed90acf96d417e6269e013
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-7db2ff44a30fa7b735f96c1f91e855c6
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-bb45f16916f7da6cf0bf93a3fe54ea95
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-e26bf2b86ade63df9e27aa0d56561d64
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-04c23494de5b747b2dde43b36f5ce6f1
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-097e022e11dd9a0b11ba253be8031b71
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-79c2661d0a5eaeb769a0df1f23a58d53
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a04246e2a1a0a8a39e01723405ac3265
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-9daf45f89bd416e751e105dab1438bc4
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-2c86694126b205e2b3e48ff82adc978d
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-d136eb90844db179d1ba488e6159e8c4
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-7b7788d0cbcdcce5ab02aea08b16f88e
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-419c5db69f2a44bfc88778ab9f63073f
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-2e747b572e6093c22b5645836c3fd5fc
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-4b4569d96e47312d00a6e5bab2f0d6f4
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a2564806e9e150ec6b8034544dffdcea
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-b57a45bf128dec53842de586013ac616
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-5d6cd0bed36949aeab835c3b0de0c93b
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-f75ddc92b909ad845e88a665a935c531
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-223b35cd1217fde2e37c261cf9122378
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-96719c6e443036cc4099c0c01886ed37
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-9ef7ae5a0069b76177ed0c4754b5fd2a
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-3bd167e08c2a71be5848476e9a80d49d
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-c787e3afbe8669562ba8c21f6fa0417b
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-b81b2a920c0a1c70ffdd6c50770b3b95
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-ad8aeaab2c598c1a4e4abb15ada7dc10
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-4e52d53c82c2f2631d2d36cba4174b6e
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-9bb9fae3a78ea447588c13b0e491c98e
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a550326cb17c76ba5b1a11a6cd4a455b
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-5f676a53f6404de51be4c7b5f6638475
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-7f5a16577a0cc6cdc82f0f03fcf8468f
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-d94d4a3e179fe87ed8f52cce97294538
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-3bab6c911e859d909da19254d492a4e4
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-d06ba7a62220d3ba785ec13a278e522c
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-9c732eb7895ff019737b3cd35d054908
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-c6d258f74b34e138b2bed5090402b299
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-e8c40ca861cc2167842079e517971aa3
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-6a26e8d0a33f126ff7649db16b54a879
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a44df7267c2448eea96a0cc9a1ad6859
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-32015ef144c43917eb07f76aeab1cda6
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-8e66a0f28b95c67b84a869d892c3b20d
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-c2d14542ed96a0679434b82c7679d2aa
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-1d7677b61297848996753ad95d2744da
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-f2e842fb83a629a29f3fe9f82d011609
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-08196b73c3dea0d38c8f6d5469911fb4
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-b5a780a86c5e6cb5c381ff5298eb585d
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-dd18f6bc4a6ac0671f05457a752324a4
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-0b35a67c489e73a86dfc87e609d1acb8
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-f12d94b8b4b948770c0c4e86d7330539
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-099851dea4109a7555e2f46ee4fcdf95
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-775c18b67ff2c09112b3489782eeaa73
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-d778c8ea2b788c950fcbbfb3e8c16eda
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a72b5f419386707a38ad55f389c5783c
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-ef878d06935fa654caed1959141c700f
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-456e63a1f7603090f1df4f62d83ab036
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-36abe81480cfb6d76de7ca33ce0d76ea
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-17359f693e71f39d34a316a30aed8972
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-080f1d95663b637a02affb8485ae95e1
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-5f2a7619fcaee98ee603bbf3b09b1707
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-e2d77193ece682738df1d79916d2486c
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-b1e0e3bb5356c21cf28141474d2af6c2
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-be236bcc2ffdc8aa2336294cfd4e7d07
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-1877f5c80c264eb3cf9f425bc94e0619
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-9ae6e74166734215b06a2fa1e2dcfaf4
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-6c91be54ecafaf22f2190b903c9c167b
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-088bc5fefdc34b31c553ef150bc4b49d
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-94cf7df9b954c42c16c638a0b8d26a19
+
+FileName: ./.gitignore
+SPDXID: SPDXRef-e62ad72aa53ff6fa6ef5be8d3242ddb5
+FileChecksum: SHA1: 900a6fd6e54f48af23affba116bd0f8770d63a50
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./.gitmodules
+SPDXID: SPDXRef-0f24425b598422ead9adb31cae538ccc
+FileChecksum: SHA1: 1ff0bb879423bbb1b81792a7e991ca1a3b07a3fe
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./CMakeLists.txt
+SPDXID: SPDXRef-940c4a82efcb9b87c88bb4da635d9282
+FileChecksum: SHA1: d3ab81f5f608765d804eb775ffcafa3767607be5
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/0_host_matmul/CMakeLists.txt
+SPDXID: SPDXRef-116f1a18750d508863ec8392a46a8b9f
+FileChecksum: SHA1: 6d88161b88fecbd01fbeb252342242e706460b50
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/0_host_matmul/main.cpp
+SPDXID: SPDXRef-51f5d6f07fe7eba5da7ebda8698714b7
+FileChecksum: SHA1: 77aa75144c6111391792a2961066ccc6b410c54b
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/0_host_matmul/readme.md
+SPDXID: SPDXRef-4eb3a1ef1546fa8598bb89bec64d5554
+FileChecksum: SHA1: 6804cd08dddb83f9dda897589e2c248a2eb60e5c
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/1_host_trans/CMakeLists.txt
+SPDXID: SPDXRef-6b5fa444b87b5c2384af0311a5e5c9bd
+FileChecksum: SHA1: 327d5f040f96babe13c7c52a140febd642404ad0
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/1_host_trans/main.cpp
+SPDXID: SPDXRef-5252406faa041f0be300126cf318817f
+FileChecksum: SHA1: bdea459763a327e0b998bab41365a81b06f8f8a9
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/1_host_trans/readme.md
+SPDXID: SPDXRef-822324ab6b197d8c413003e5329cdc73
+FileChecksum: SHA1: 05da4dc7e4e39341ea01dd6549cf1653fbef7392
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/2_host_norm/CMakeLists.txt
+SPDXID: SPDXRef-3e429abd1f5d13cb5c03ca80f2d1495b
+FileChecksum: SHA1: 7205c5bfc0e45d8365101f918613426033638002
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/2_host_norm/main_const.cpp
+SPDXID: SPDXRef-5fbe5048be14ab1e9493dcc34c9cc0a2
+FileChecksum: SHA1: 6cb726ac08d9b0cb015a15f81c61cad44bee5f26
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/2_host_norm/main_rand.cpp
+SPDXID: SPDXRef-aa5445d2bbfbdfa8bc250d66e7242269
+FileChecksum: SHA1: 024b71a123d15b87ba5c63df8c4a7d46eaab0960
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/2_host_norm/readme_const.md
+SPDXID: SPDXRef-f77b0d545a2a45de11209f1a022d5c94
+FileChecksum: SHA1: 697f7b8bc9ee0401b826e239e84e7ec3c2ce7559
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/2_host_norm/readme_rand.md
+SPDXID: SPDXRef-8467d4e915a5f6dfd38fe377df0f949c
+FileChecksum: SHA1: ed1694f3fae528008e899cda9f83e0dea94738a0
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/3_host_arith/CMakeLists.txt
+SPDXID: SPDXRef-df0690528eb3c8e1432808676920caad
+FileChecksum: SHA1: bc6c195d86e410792bf6e4f5062140d395b0c484
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/3_host_arith/main.cpp
+SPDXID: SPDXRef-1427caa0b7ea27af32115c5ad429fe73
+FileChecksum: SHA1: 13ad0463c759ae35eacec937eecb121b78c40ce4
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/4_dev_matmul/CMakeLists.txt
+SPDXID: SPDXRef-c7e3e68f8e3f122af9092daf1cd9d8ae
+FileChecksum: SHA1: 61a2b911bddf2c130ed6103c5fb89c47bba78871
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/4_dev_matmul/main.cu
+SPDXID: SPDXRef-de881b5b7eb6456d7b684ae6ed7d27ae
+FileChecksum: SHA1: e26cc0854140682ae628e6e1823d18702888f30b
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/4_dev_matmul/readme.md
+SPDXID: SPDXRef-a328ab2ca38f5fa86f5ccc262fd18822
+FileChecksum: SHA1: cbed6bac4cc1f3afd939f8628027694cd1a87a11
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/5_dev_trans/CMakeLists.txt
+SPDXID: SPDXRef-d5057b8f9489df1b369dd0eca129e8b9
+FileChecksum: SHA1: cc9c1dec7afd5f6f7a1f71d4d26f4101d25d0ab3
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/5_dev_trans/main.cu
+SPDXID: SPDXRef-fffc23873ed5006d148cc1083b6777ab
+FileChecksum: SHA1: 37e1c0280910408907ff964304b23c1bf4f1514b
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/5_dev_trans/readme.md
+SPDXID: SPDXRef-0bce101b6316e1097ae92ea6744d9b4c
+FileChecksum: SHA1: 0a6530374961e2067cf03d3ca73713c1278f2f8e
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/6_dev_norm/CMakeLists.txt
+SPDXID: SPDXRef-2da7661ffa982b03389dbcd9712f0ba3
+FileChecksum: SHA1: dd2dc83eda9eaca64e4b7bdeebbb378567673728
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/6_dev_norm/main.cu
+SPDXID: SPDXRef-40ccc921b518447e9b8c729f53482d23
+FileChecksum: SHA1: b7e2bf2a1568329b3bfc581b7772e6c9a1715a95
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/6_dev_norm/readme.md
+SPDXID: SPDXRef-4640f885e206fa5e12431be12b92fd9b
+FileChecksum: SHA1: 92f6875775c8ddb884f894c7df06cd027a30e9d2
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/7_dev_arith/CMakeLists.txt
+SPDXID: SPDXRef-fe23d35beb80beda0147a3bbe410e275
+FileChecksum: SHA1: 8c53d66126ccc03adf50b8ad9dcf04ee9ab4a405
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/7_dev_arith/main.cu
+SPDXID: SPDXRef-6101d636fc4196223f71e4d340426339
+FileChecksum: SHA1: 67574ee5d2fbcdd1511169d907699b6374893a48
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/8_dev_streams/CMakeLists.txt
+SPDXID: SPDXRef-3c561884d816ecacc4d3f389d81e8049
+FileChecksum: SHA1: 2403f9db126e3e49c079fc67441ce5534c7fca65
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/8_dev_streams/main_breadth.cu
+SPDXID: SPDXRef-5162d69b207a696f0a87ac0165e440de
+FileChecksum: SHA1: 71251bd0eec568ea22ab7f403de32ad6baae5e03
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/8_dev_streams/main_depth.cu
+SPDXID: SPDXRef-092d54d37beee918c82b6e404cb40cbb
+FileChecksum: SHA1: 32619188660772e45412eb8251a91030a50738f0
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/8_dev_streams/main_old.cu
+SPDXID: SPDXRef-7e83c128631de9904a9eae6b34b84463
+FileChecksum: SHA1: d4183715648d06e401dafa90c110d04a5da828b3
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/8_dev_streams/readme.md
+SPDXID: SPDXRef-11dc142ef5afbb11fcc3abb9a5ff75bb
+FileChecksum: SHA1: 86c7aa5d50c8bcf925e8dd51ef77435a3da3fe7e
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./examples/CMakeLists.txt
+SPDXID: SPDXRef-33918c6ce1c6e3d31fceaebce5428e8e
+FileChecksum: SHA1: 9a3bc131eb4b3909cde1d1018463af9983517c3e
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/hello.hpp
+SPDXID: SPDXRef-ba10b1d4b861572f699c481b9fc63a81
+FileChecksum: SHA1: dc3a3fd431663b24a229b75e55611e8a89bcee88
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>(C) 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca.h
+SPDXID: SPDXRef-978a9d4387b2fb10730cea22aba1dd8e
+FileChecksum: SHA1: ab3ad58d35c2afcd2c5020e5af311a6434e9ee28
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/arithmetic_type.h
+SPDXID: SPDXRef-2e41d0f2cb8bf447e1ec9d57c30c8f64
+FileChecksum: SHA1: 13543ac32727a372c2f45876e4faa16369d784d0
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/copy.h
+SPDXID: SPDXRef-023c9af49a2f7b47a6afe3993d45e837
+FileChecksum: SHA1: d8a30a316f1e190ae161ec9a5a72d26c961a8290
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/base_iterator.h
+SPDXID: SPDXRef-bd85d9f8ffad4442f34151f1bb180e20
+FileChecksum: SHA1: 98a3a4fe5cbdb38b22219f83f9e27e07c57fa51e
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/base_matrix.h
+SPDXID: SPDXRef-0899daeb59bc094114f865daf736eba1
+FileChecksum: SHA1: 8bfa51b7f062d99b160738655c1b99e0cc00eaae
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/copy_impl.h
+SPDXID: SPDXRef-bc14b09560447164cecdb5a8c3c6d32a
+FileChecksum: SHA1: 15209eef1ee9f884a19b8fddb2b0b02bf80dcab5
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/copy_impl.inl
+SPDXID: SPDXRef-3ad7998b4870a73ae5b12642c5c37607
+FileChecksum: SHA1: dbe88333aa5e491cd70fb831da02af7710814086
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/fill_const_impl.h
+SPDXID: SPDXRef-2865fc8cefe2c331ab849bd09a47423b
+FileChecksum: SHA1: e5f379ea96d167f0e2e5c694725d31650c9cb98a
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/fill_const_impl.inl
+SPDXID: SPDXRef-7304289db0db7596860b0b421b3bfdca
+FileChecksum: SHA1: b03a6d37bdb32a39a58de67d5ae2da2859efcd4c
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/fill_iota_impl.h
+SPDXID: SPDXRef-f1d9a737fbe8cd8a17552d29a40a5c90
+FileChecksum: SHA1: d28e68df51f9a5db514bc109059359e478f33a31
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/fill_iota_impl.inl
+SPDXID: SPDXRef-e5f2b86ff0bfdd7b1a5b4b97a4aacbba
+FileChecksum: SHA1: 61d421fc1ded4e55032abd2d3d68beac492d9eb9
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/fill_rand_impl.h
+SPDXID: SPDXRef-9bc8aa73cd2138d9c1636dde9d5a03ff
+FileChecksum: SHA1: 9ffb22d87ff7b938663a6d5fbdfbc33fe86e061a
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/fill_rand_impl.inl
+SPDXID: SPDXRef-62a362c22e6755d54dc81ab42351b8ed
+FileChecksum: SHA1: c005f4a685701288fc64f1dab719f44161cd1157
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/matmul_impl.h
+SPDXID: SPDXRef-5b0264036dbf0dd0897f5bfbfc3af33d
+FileChecksum: SHA1: 32e204fd75f1a938aa9f356a2091e5fc6c3ef70a
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/matmul_impl.inl
+SPDXID: SPDXRef-0e55d98e76b05bbb929f6634cca003b5
+FileChecksum: SHA1: 38729da43461783ffacb70febb41e502b01490a9
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/nextPow2.h
+SPDXID: SPDXRef-663526b9ab8090e572f6d684b04e9cba
+FileChecksum: SHA1: 57f64cd39a7d32d6985658c584d5135595409df6
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/norm_impl.h
+SPDXID: SPDXRef-563385ac1f10c9a00db7885b27dd32f4
+FileChecksum: SHA1: 0199f417ca6249f044a5713cb503f449907375d4
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/norm_impl.inl
+SPDXID: SPDXRef-0dfee4de0cfd597038a8117b867d91f7
+FileChecksum: SHA1: e76aabe7a6b916918cdea82fbcde20272e97fc0c
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/reduce_sum_impl.h
+SPDXID: SPDXRef-3e8c1d2be684fec2c3e4b2331b08d301
+FileChecksum: SHA1: f0fcd24ff3be493389025a650a0620f5ae0bf783
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/reduce_sum_impl.inl
+SPDXID: SPDXRef-6f042dfacb5d107a15d430f846f94828
+FileChecksum: SHA1: 8a8fea149cf1636651bcb33c95086ab1bf3907d3
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/shared_memory_proxy.h
+SPDXID: SPDXRef-7dc23ecbd11213d0edfeb51cc06bb56c
+FileChecksum: SHA1: 15d01b19b80afc2c4060e88155ef0714ea20bd90
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/transform_reduce_sum_impl.h
+SPDXID: SPDXRef-fcecfa9bce388a0779c38fde94d2a2d1
+FileChecksum: SHA1: 6b0cb9b18654698fffd2079c2b6da447355506fa
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/transform_reduce_sum_impl.inl
+SPDXID: SPDXRef-722d0285717497cf11801df44afe9860
+FileChecksum: SHA1: 74a122e7b2d91f32d8dfe75ccb350e4436721128
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/transpose_impl.h
+SPDXID: SPDXRef-27fdc060f4146144c3dc5218b7fa0822
+FileChecksum: SHA1: c9fe902aa855334d40dd5e86b5ba46b2bb527b21
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/detail/transpose_impl.inl
+SPDXID: SPDXRef-d32418976fe05e8bd1349bd016896eef
+FileChecksum: SHA1: b024977d0d8999dee20afdf896b661f08db95054
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/device_allocator.h
+SPDXID: SPDXRef-3390fea0dbaabb095a1c5d7a149d85a7
+FileChecksum: SHA1: 010026b57f395a157816991b42bbf1d360758ce5
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/device_helper.h
+SPDXID: SPDXRef-33ffa185c4c1323b935a2dd7b09097f4
+FileChecksum: SHA1: 8fd9f902be66c919482c33a98384acaaf1bf0e2e
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/device_iterator.h
+SPDXID: SPDXRef-7b04d53b5eed90acf96d417e6269e013
+FileChecksum: SHA1: eac6549c28ffa10251406690f15300814db62311
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/device_matrix.h
+SPDXID: SPDXRef-7db2ff44a30fa7b735f96c1f91e855c6
+FileChecksum: SHA1: 65a144a257483e3f600935953989ca6e916e8d95
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/device_matrix.inl
+SPDXID: SPDXRef-bb45f16916f7da6cf0bf93a3fe54ea95
+FileChecksum: SHA1: f79b1a6adfbbd0b146ae1bdf0554902ad816eea1
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/execution_policy.h
+SPDXID: SPDXRef-e26bf2b86ade63df9e27aa0d56561d64
+FileChecksum: SHA1: 40b500af5eaf3bea1fb7ce600dce2b90673aef61
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/fill_const.h
+SPDXID: SPDXRef-04c23494de5b747b2dde43b36f5ce6f1
+FileChecksum: SHA1: e1388a03259e60ad1329d9d0321d759d9066cb31
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/fill_iota.h
+SPDXID: SPDXRef-097e022e11dd9a0b11ba253be8031b71
+FileChecksum: SHA1: 4f11780f1a7cfc8a04e3cdb294989be6891a9d98
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/fill_rand.h
+SPDXID: SPDXRef-79c2661d0a5eaeb769a0df1f23a58d53
+FileChecksum: SHA1: 89f3d233370398058c7565042e84c2fa1c24432b
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/host_allocator.h
+SPDXID: SPDXRef-a04246e2a1a0a8a39e01723405ac3265
+FileChecksum: SHA1: 3d6e1ede8dbb084d20749f12b849f69216f260b7
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/host_iterator.h
+SPDXID: SPDXRef-9daf45f89bd416e751e105dab1438bc4
+FileChecksum: SHA1: a5043d97eb5bc0cef77687213b9caece7c59af50
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/host_matrix.h
+SPDXID: SPDXRef-2c86694126b205e2b3e48ff82adc978d
+FileChecksum: SHA1: 10cbe4a9f7f6965304667a1ae5c2953e69d879bf
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/host_matrix.inl
+SPDXID: SPDXRef-d136eb90844db179d1ba488e6159e8c4
+FileChecksum: SHA1: 6daeef2dcc92fe3336328709660ac9e6c9274cc8
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/implementation_policy.h
+SPDXID: SPDXRef-7b7788d0cbcdcce5ab02aea08b16f88e
+FileChecksum: SHA1: defc3f2eb5dad84612ee8f7bdfcd2cb4dbce532c
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/matmul.h
+SPDXID: SPDXRef-419c5db69f2a44bfc88778ab9f63073f
+FileChecksum: SHA1: c8ee710785a7720dc5fe91b802c2243c0ebe2dca
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/norm.h
+SPDXID: SPDXRef-2e747b572e6093c22b5645836c3fd5fc
+FileChecksum: SHA1: 5e53541948e733ae02c5c4a301cea09aff37beb1
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/pinnedhost_allocator.h
+SPDXID: SPDXRef-4b4569d96e47312d00a6e5bab2f0d6f4
+FileChecksum: SHA1: 7f4917237e7c7ce222e5b554268f49b06453f520
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/reduce_sum.h
+SPDXID: SPDXRef-a2564806e9e150ec6b8034544dffdcea
+FileChecksum: SHA1: cf6cc162308f733b57f36955328e55521ada389c
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/transform_reduce_sum.h
+SPDXID: SPDXRef-b57a45bf128dec53842de586013ac616
+FileChecksum: SHA1: ba213be0c9fa9e1edb71f57862e55a0bbe78fd4e
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./include/mathcca/transpose.h
+SPDXID: SPDXRef-5d6cd0bed36949aeab835c3b0de0c93b
+FileChecksum: SHA1: 663bce5e8ca51507109cc20e8a51bbf397ce2e51
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./intel.sh
+SPDXID: SPDXRef-f75ddc92b909ad845e88a665a935c531
+FileChecksum: SHA1: b27b7f64d139046cce1b4963361afe922c37ecc2
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./main.cpp
+SPDXID: SPDXRef-223b35cd1217fde2e37c261cf9122378
+FileChecksum: SHA1: 61f3de6ec9dd5891cebef5a19f72a7699a0aff39
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./main.cu
+SPDXID: SPDXRef-96719c6e443036cc4099c0c01886ed37
+FileChecksum: SHA1: 6ddd2a98f2f07702b5f599c8fcea2951e5e5834a
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./nvidia.sh
+SPDXID: SPDXRef-9ef7ae5a0069b76177ed0c4754b5fd2a
+FileChecksum: SHA1: c6ac2f9bb4aaccab5932085a0a33dcc93892b719
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./readme.md
+SPDXID: SPDXRef-3bd167e08c2a71be5848476e9a80d49d
+FileChecksum: SHA1: 6ba476cdc36a7451860639c21700b388e21f0578
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./runme.sh
+SPDXID: SPDXRef-c787e3afbe8669562ba8c21f6fa0417b
+FileChecksum: SHA1: 327dd71e43456dad56264111db68e256ebbff9c2
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/CMakeLists.txt
+SPDXID: SPDXRef-b81b2a920c0a1c70ffdd6c50770b3b95
+FileChecksum: SHA1: 9a21f536670f39b694f61081a4a8f55f842252ea
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/CMakeLists.txt
+SPDXID: SPDXRef-ad8aeaab2c598c1a4e4abb15ada7dc10
+FileChecksum: SHA1: c01b96f738d9757f9beaca93d468aa931e77fb0a
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_copy_ctor_dp.cu
+SPDXID: SPDXRef-4e52d53c82c2f2631d2d36cba4174b6e
+FileChecksum: SHA1: 373f4d2d1023295cb83e56bad8386c6dd9f6fb01
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_copy_ctor_sp.cu
+SPDXID: SPDXRef-9bb9fae3a78ea447588c13b0e491c98e
+FileChecksum: SHA1: 3ce88bbcafa0c89311d749ea2631d25700991cd3
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_copy_dp.cu
+SPDXID: SPDXRef-a550326cb17c76ba5b1a11a6cd4a455b
+FileChecksum: SHA1: 191cd45f83753b4c78b10649f321c496e8d2e270
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_copy_sp.cu
+SPDXID: SPDXRef-5f676a53f6404de51be4c7b5f6638475
+FileChecksum: SHA1: 2798d05c868582ea24062be8a9e30d9550ba9ed4
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_fill_dp.cu
+SPDXID: SPDXRef-7f5a16577a0cc6cdc82f0f03fcf8468f
+FileChecksum: SHA1: dcf2246e15407cda8b853224e3aa487a660579fe
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_fill_sp.cu
+SPDXID: SPDXRef-d94d4a3e179fe87ed8f52cce97294538
+FileChecksum: SHA1: d0a870699a5bf830ccea3fdee94b1414982f5d42
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_matarith_dp.cu
+SPDXID: SPDXRef-3bab6c911e859d909da19254d492a4e4
+FileChecksum: SHA1: c05d74adce1d2ca2eaaa8e8890d2bb85b99eed22
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_matarith_sp.cu
+SPDXID: SPDXRef-d06ba7a62220d3ba785ec13a278e522c
+FileChecksum: SHA1: efaedd303c52876e163cea43f5da2bf6f11c3532
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_matmul_dp.cu
+SPDXID: SPDXRef-9c732eb7895ff019737b3cd35d054908
+FileChecksum: SHA1: 5d2089c184a29b60b00fa9da3dcc478c895e65e4
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_matmul_sp.cu
+SPDXID: SPDXRef-c6d258f74b34e138b2bed5090402b299
+FileChecksum: SHA1: 1e0526041a97598514231476cfe8e54fe2857b38
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_move_ctor_dp.cu
+SPDXID: SPDXRef-e8c40ca861cc2167842079e517971aa3
+FileChecksum: SHA1: 4dc6d12576121a018183cf66997264857c056c21
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_move_ctor_sp.cu
+SPDXID: SPDXRef-6a26e8d0a33f126ff7649db16b54a879
+FileChecksum: SHA1: dc5a5cea3058cb2ffaf242d0852976790d0b2503
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_norm_dp.cu
+SPDXID: SPDXRef-a44df7267c2448eea96a0cc9a1ad6859
+FileChecksum: SHA1: 27d673f9f681e121124e9f80798f9c4ec062a27e
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_norm_sp.cu
+SPDXID: SPDXRef-32015ef144c43917eb07f76aeab1cda6
+FileChecksum: SHA1: da9ec0a46142efc280c7d361397bb67a73fc1adc
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_reduce_dp.cu
+SPDXID: SPDXRef-8e66a0f28b95c67b84a869d892c3b20d
+FileChecksum: SHA1: d71e3cb39006d1faf369d72d1271e8252cd12da5
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_reduce_sp.cu
+SPDXID: SPDXRef-c2d14542ed96a0679434b82c7679d2aa
+FileChecksum: SHA1: d971389b825267828c8b12ec1c0c5b8a9ec17be5
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_trans_dp.cu
+SPDXID: SPDXRef-1d7677b61297848996753ad95d2744da
+FileChecksum: SHA1: 9b9ad7b786d37b8d9bde76b2e2a2f3120d54b930
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_trans_reduce_dp.cu
+SPDXID: SPDXRef-f2e842fb83a629a29f3fe9f82d011609
+FileChecksum: SHA1: 93c30e2ee424038ae417bdab85babf2900ad6b34
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_trans_reduce_sp.cu
+SPDXID: SPDXRef-08196b73c3dea0d38c8f6d5469911fb4
+FileChecksum: SHA1: d9402d4f690a9b71b89cf3312315c64f667e6e88
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_dev/dev_trans_sp.cu
+SPDXID: SPDXRef-b5a780a86c5e6cb5c381ff5298eb585d
+FileChecksum: SHA1: 690030535608a2ab2bfb76f8d8e509a5e9b98c0e
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/CMakeLists.txt
+SPDXID: SPDXRef-dd18f6bc4a6ac0671f05457a752324a4
+FileChecksum: SHA1: 7783d1126a06a3661bb8b0725aee8737b8c68a97
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_copy_ctor_dp.cpp
+SPDXID: SPDXRef-0b35a67c489e73a86dfc87e609d1acb8
+FileChecksum: SHA1: fdab772b6bad238e1d482abd1e3b17a14f28b252
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_copy_ctor_sp.cpp
+SPDXID: SPDXRef-f12d94b8b4b948770c0c4e86d7330539
+FileChecksum: SHA1: f548c0e08074399aab0073f675c13eee0cf75215
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_copy_dp.cpp
+SPDXID: SPDXRef-099851dea4109a7555e2f46ee4fcdf95
+FileChecksum: SHA1: 8b9dbf99e02e405db0267f82d8b5a812fa9c6b8c
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_copy_sp.cpp
+SPDXID: SPDXRef-775c18b67ff2c09112b3489782eeaa73
+FileChecksum: SHA1: b2f0ef399801988fe8552b81f6f356706e0ebf71
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_fill_dp.cpp
+SPDXID: SPDXRef-d778c8ea2b788c950fcbbfb3e8c16eda
+FileChecksum: SHA1: b9a97ae186ded086e36324770259113dfc619fd8
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_fill_sp.cpp
+SPDXID: SPDXRef-a72b5f419386707a38ad55f389c5783c
+FileChecksum: SHA1: ad83193f6d7306bf27f4c34dc2b44420478d5888
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_matarith_dp.cpp
+SPDXID: SPDXRef-ef878d06935fa654caed1959141c700f
+FileChecksum: SHA1: e0a311d5a9e8ecdc20c66190e375d5bcc69cc17b
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_matarith_sp.cpp
+SPDXID: SPDXRef-456e63a1f7603090f1df4f62d83ab036
+FileChecksum: SHA1: f045d074a76ab1847509b5d654d5e58d22317a42
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_matmul_dp.cpp
+SPDXID: SPDXRef-36abe81480cfb6d76de7ca33ce0d76ea
+FileChecksum: SHA1: d5a85b854f9fd339dada03f90ddc87f7fb5e9fd5
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_matmul_sp.cpp
+SPDXID: SPDXRef-17359f693e71f39d34a316a30aed8972
+FileChecksum: SHA1: 8b41db7be6da22cd08528cd86fdfc612d1ff1220
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_move_ctor_dp.cpp
+SPDXID: SPDXRef-080f1d95663b637a02affb8485ae95e1
+FileChecksum: SHA1: 53386d779d6b89e7ae58ffbe6ff9168a9c53d3a5
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_move_ctor_sp.cpp
+SPDXID: SPDXRef-5f2a7619fcaee98ee603bbf3b09b1707
+FileChecksum: SHA1: c6cfc4010965ab00b15d3404b6f04f7d82dd9708
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_norm_dp.cpp
+SPDXID: SPDXRef-e2d77193ece682738df1d79916d2486c
+FileChecksum: SHA1: 7fdb4ed2518a296b24d7f0c83ac17b1cfae9732e
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_norm_sp.cpp
+SPDXID: SPDXRef-b1e0e3bb5356c21cf28141474d2af6c2
+FileChecksum: SHA1: 26fe9087dbc4840146a1e7417260dc8a765eb2da
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_reduce_dp.cpp
+SPDXID: SPDXRef-be236bcc2ffdc8aa2336294cfd4e7d07
+FileChecksum: SHA1: cf3cefd4ea68072266e97ac17e5b57ffa144d8cb
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_reduce_sp.cpp
+SPDXID: SPDXRef-1877f5c80c264eb3cf9f425bc94e0619
+FileChecksum: SHA1: 327a77f4ef282730eaa33644b8d1ac42095ad19c
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_trans_dp.cpp
+SPDXID: SPDXRef-9ae6e74166734215b06a2fa1e2dcfaf4
+FileChecksum: SHA1: ec90bee5ba2465525c8063890d194ea4d2efabc2
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_trans_reduce_dp.cpp
+SPDXID: SPDXRef-6c91be54ecafaf22f2190b903c9c167b
+FileChecksum: SHA1: 40b6d4d2db764a9216f298d894a06b46a946f810
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_trans_reduce_sp.cpp
+SPDXID: SPDXRef-088bc5fefdc34b31c553ef150bc4b49d
+FileChecksum: SHA1: c9e1fddad7f3c35eda9afe48a32771dfd31ebf32
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+
+FileName: ./tests/test_host/host_trans_sp.cpp
+SPDXID: SPDXRef-94cf7df9b954c42c16c638a0b8d26a19
+FileChecksum: SHA1: e7aaada4173b2f2222f5d5175343c6ac3282dd66
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: AGPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com></text>
+

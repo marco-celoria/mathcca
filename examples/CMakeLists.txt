@@ -1,4 +1,6 @@
-
+# SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 add_subdirectory(0_host_matmul)
 

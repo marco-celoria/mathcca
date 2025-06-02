@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Marco Celoria <celoria.marco@gmail.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 #ifndef HOST_ITERATOR_H_
 #define HOST_ITERATOR_H_
 #pragma once
