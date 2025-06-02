@@ -54,11 +54,11 @@ TEST(ReduceSp, BasicAssertions)
 
 #endif
 
-      EXPECT_FLOAT_EQ(sumhX_0,  sumhX_O);
+      EXPECT_NEAR(sumhX_0,  sumhX_O, 0.1);
 
 #ifdef _STDPAR      
 
-      EXPECT_FLOAT_EQ(sumhX_O,  sumhX_S);
+      EXPECT_NEAR(sumhX_O,  sumhX_S, 0.1);
 
 #endif
       

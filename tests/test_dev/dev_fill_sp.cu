@@ -82,8 +82,6 @@ TEST(FillSp, BasicAssertions)
 
 #endif
       
-      cudaStreamDestroy(s_A);
-      
       mathcca::fill_rand(dX0.begin(), dX0.end()); 
       mathcca::fill_rand(dX1.begin(), dX1.end());
       mathcca::fill_rand(dX2.begin(), dX2.end());
@@ -149,6 +147,19 @@ TEST(FillSp, BasicAssertions)
 
       EXPECT_TRUE(dX8 != dX9);
       
+      mathcca::copy(dX0.begin(), dX0.end(), hA.begin(), s_A);
+      cudaStreamSynchronize(s_A);
+
+      std::size_t same=0;
+      for (std::size_t i= 0; i < hA.size() - 1; ++i) {
+        if (hA[i] == hA[i+1]) {
+          ++same;
+	}
+      }
+      std::cout << "SAME= " << same << "\n";        
+      EXPECT_TRUE(same < 10);
+
+
       mathcca::detail::fill_rand(mathcca::Cuda(), dX0.begin().get(), dX0.end().get()); 
       mathcca::detail::fill_rand(mathcca::Cuda(), dX1.begin().get(), dX1.end().get());
       mathcca::detail::fill_rand(mathcca::Cuda(), dX2.begin().get(), dX2.end().get());
@@ -214,6 +225,21 @@ TEST(FillSp, BasicAssertions)
 
       EXPECT_TRUE(dX8 != dX9);
 
+      mathcca::copy(dX0.begin(), dX0.end(), hA.begin(), s_A);
+      cudaStreamSynchronize(s_A);
+
+      same=0;
+      for (std::size_t i= 0; i < hA.size() - 1; ++i) {
+        if (hA[i] == hA[i+1]) {
+          ++same;
+        }
+      }
+
+      std::cout << "SAME= " << same << "\n";        
+      EXPECT_TRUE(same < 10);
+
+
+
 #ifdef _THRUST
 
       mathcca::detail::fill_rand(mathcca::Thrust(), dX0.begin().get(), dX0.end().get());
@@ -277,8 +303,21 @@ TEST(FillSp, BasicAssertions)
 
       EXPECT_TRUE(dX8 != dX9);
 
+      mathcca::copy(dX0.begin(), dX0.end(), hA.begin(), s_A);
+      cudaStreamSynchronize(s_A);
+
+      same=0;
+      for (std::size_t i= 0; i < hA.size() - 1; ++i) {
+        if (hA[i] == hA[i+1]) {
+          ++same;
+        } 
+      } 
+      std::cout << "SAME= " << same << "\n";        
+      EXPECT_TRUE(same < 10);
+      
 #endif
 
+      cudaStreamDestroy(s_A);
       std::swap(r,c);
       r*= 5;
       c*= 2;

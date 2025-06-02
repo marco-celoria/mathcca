@@ -1,13 +1,13 @@
 #include <mathcca.hpp>
 #include <gtest/gtest.h>
 
-TEST(FillDp, BasicAssertions)
+TEST(FillSp, BasicAssertions)
 {
     std::size_t r{2};
     std::size_t c{5};
-    for (auto n= 1; n < 9; ++n) {
+    for (auto n= 1; n < 8; ++n) {
 
-      using value_type= double;
+      using value_type= float;
 
       mathcca::host_matrix<value_type> A{r, c};
       mathcca::host_matrix<value_type> X0{r, c};
@@ -131,7 +131,16 @@ TEST(FillDp, BasicAssertions)
       EXPECT_TRUE(X7 != X9);
 
       EXPECT_TRUE(X8 != X9);
-      
+
+      std::size_t same= 0;
+      for (std::size_t i= 0; i < X0.size() - 1; ++i) {
+        if (X0[i] == X0[i+1]) {
+          ++same;
+        }
+      }
+      std::cout << "SAME= " << same << "\n";
+      EXPECT_TRUE(same < 10);
+
       mathcca::detail::fill_rand(mathcca::Omp(), X0.begin().get(), X0.end().get()); 
       mathcca::detail::fill_rand(mathcca::Omp(), X1.begin().get(), X1.end().get());
       mathcca::detail::fill_rand(mathcca::Omp(), X2.begin().get(), X2.end().get());
@@ -196,6 +205,15 @@ TEST(FillDp, BasicAssertions)
       EXPECT_TRUE(X7 != X9);
 
       EXPECT_TRUE(X8 != X9);
+
+      same= 0;
+      for (std::size_t i= 0; i < X0.size() - 1; ++i) {
+        if (X0[i] == X0[i+1]) {
+          ++same;
+        }
+      }
+      std::cout << "SAME= " << same << "\n";
+      EXPECT_TRUE(same < 10);
 
 #ifdef _STDPAR
 
@@ -264,6 +282,14 @@ TEST(FillDp, BasicAssertions)
 
       EXPECT_TRUE(X8 != X9);
 
+      same= 0;
+      for (std::size_t i= 0; i < X0.size() - 1; ++i) {
+        if (X0[i] == X0[i+1]) {
+          ++same;
+        }
+      }
+      std::cout << "SAME= " << same << "\n";
+      EXPECT_TRUE(same < 10);
 
 #endif
 

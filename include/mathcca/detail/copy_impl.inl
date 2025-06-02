@@ -9,6 +9,7 @@
 #ifdef _STDPAR
  #include <execution>
  #include <ranges>
+ #include <algorithm>
 #endif
 
 #ifdef __CUDACC__

@@ -3,6 +3,7 @@
 
 TEST(TransSp, BasicAssertions)
 {
+
     std::size_t r{5};
     std::size_t c{2};
     for (auto i= 1; i < 8; ++i) {

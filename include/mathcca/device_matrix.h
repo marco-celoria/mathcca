@@ -90,15 +90,14 @@ namespace mathcca {
         return *this;
       }
            
-      constexpr iterator begin() noexcept { return iterator{Parent::data()}; }
-      constexpr iterator end()   noexcept { return iterator{Parent::data() + Parent::size()}; }
+      constexpr iterator begin() noexcept { return iterator{this->data()}; }
+      constexpr iterator end()   noexcept { return iterator{this->data() + this->size()}; }
         
-      constexpr const_iterator begin() const  noexcept { return const_iterator{Parent::data()}; }
-      constexpr const_iterator end()   const  noexcept { return const_iterator{Parent::data() + Parent::size()}; }
+      constexpr const_iterator begin() const  noexcept { return const_iterator{const_cast<pointer>(this->data())}; }
+      constexpr const_iterator end()   const  noexcept { return const_iterator{const_cast<pointer>(this->data() + this->size())}; }
       
-      constexpr const_iterator cbegin() const noexcept { return const_iterator{const_cast<pointer>(Parent::data())}; }
-      constexpr const_iterator cend()   const noexcept { return const_iterator{const_cast<pointer>(Parent::data() + Parent::size())}; }
-        
+      constexpr const_iterator cbegin() const noexcept { return const_iterator{const_cast<pointer>(this->data())}; }
+      constexpr const_iterator cend()   const noexcept { return const_iterator{const_cast<pointer>(this->data() + this->size())}; }
       // Standard kernel	
       template<unsigned int THREAD_BLOCK_DIM= 128>
       self& operator+=(const self& rhs) {
@@ -111,7 +110,7 @@ namespace mathcca {
         const auto blocks{static_cast<unsigned int>((size + static_cast<size_type>(threads) - 1)/(static_cast<size_type>(threads)))};
         constexpr dim3 dimBlock(threads, 1, 1);
         dim3 dimGrid(blocks, 1, 1);
-        addTo_kernel<value_type><<<dimGrid, dimBlock>>>(Parent::data(), rhs.data(), size);
+        addTo_kernel<value_type><<<dimGrid, dimBlock>>>(this->data(), rhs.data(), size);
         getLastCudaError("addTo_kernel() execution failed.\n");
         return *this;
       }
@@ -128,7 +127,7 @@ namespace mathcca {
           const auto blocks{static_cast<unsigned int>((size + 2 * static_cast<size_type>(threads) - 1) / (2 * static_cast<size_type>(threads)))};
           constexpr dim3 dimBlock(threads, 1, 1);
           dim3 dimGrid(blocks, 1, 1);
-          subTo_kernel<value_type, threads><<<dimGrid, dimBlock>>>(Parent::data(), rhs.data(), size);
+          subTo_kernel<value_type, threads><<<dimGrid, dimBlock>>>(this->data(), rhs.data(), size);
           getLastCudaError("subTo_kernel() execution failed.\n");
           return *this;
       }
@@ -143,7 +142,7 @@ namespace mathcca {
         const auto blocks{static_cast<unsigned int>((size + 2 * static_cast<size_type>(threads) - 1) / (2 * static_cast<size_type>(threads)))};
         constexpr dim3 dimBlock(threads, 1, 1);
         dim3 dimGrid(blocks, 1, 1);
-        mulScalarTo_kernel<value_type, threads><<<dimGrid, dimBlock>>>(Parent::data(), rhs, size);
+        mulScalarTo_kernel<value_type, threads><<<dimGrid, dimBlock>>>(this->data(), rhs, size);
         getLastCudaError("mulScalarTo_kernel() execution failed.\n");
         return *this;
       }
@@ -173,7 +172,7 @@ namespace mathcca {
         return *this;
       }
 
-      device_allocator<T> get_allocator() const { return Parent::get_allocator();}
+      device_allocator<T> get_allocator() const { return this->get_allocator();}
 
   };
 

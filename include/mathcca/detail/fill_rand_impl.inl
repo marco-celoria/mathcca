@@ -19,9 +19,10 @@
  #endif
 #endif
 
-#ifdef _PARALG
+#ifdef _STDPAR
  #include <execution>
  #include <ranges>
+ #include <algorithm>
 #endif
 
 #ifdef _OPENMP
@@ -46,7 +47,11 @@ namespace mathcca {
     const auto size {static_cast<std::size_t>(last - first)};
       std::cout << "DEBUG FILL_RAND STDPAR\n";
       std::ranges::iota_view r(static_cast<unsigned int>(0),static_cast<unsigned int>(size));
+#ifdef __NVCOMPILER_STDPAR_GPU
+      std::for_each(                          r.begin(), r.end(), [&](auto i) {first[i] = Uniform(static_cast<T>(0), static_cast<T>(1));});
+#else
       std::for_each(std::execution::par_unseq,r.begin(), r.end(), [&](auto i) {first[i] = Uniform(static_cast<T>(0), static_cast<T>(1));});
+#endif
     }
     
 #endif

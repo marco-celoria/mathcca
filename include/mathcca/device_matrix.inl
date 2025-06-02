@@ -95,7 +95,7 @@ namespace mathcca {
     dim3 dimBlock(threads, 1, 1);
     dim3 dimGrid(blocks, 1, 1);
     unsigned int smemSize= (threads <= 32) ? 2 * threads * sizeof(T) : threads * sizeof(T);
-    cg_count_if_diffs_kernel<T><<<dimGrid, dimBlock, smemSize>>>(lhs, rhs, d_odata, size, tol);
+    cg_count_if_diffs_kernel<T><<<dimGrid, dimBlock, smemSize, 0>>>(lhs, rhs, d_odata, size, tol);
     getLastCudaError("cg_count_if_diffs_kernel() execution failed.\n");
     // sum partial block sums on GPU
     unsigned int s{blocks};
@@ -104,12 +104,13 @@ namespace mathcca {
       blocks = (s + (threads * 2 - 1)) / (threads * 2);
       //std::cout << "s = " << s << "; threads = " << threads << "; blocks = " << blocks << "\n";
       checkCudaErrors(cudaMemcpy(d_intermediateSums, d_odata, s * sizeof(T), cudaMemcpyDeviceToDevice));
-      mathcca::detail::cg_reduce_kernel<T><<<blocks, threads, smemSize>>>(d_intermediateSums, d_odata, s);
+      mathcca::detail::cg_reduce_kernel<T><<<blocks, threads, smemSize, 0>>>(d_intermediateSums, d_odata, s);
       getLastCudaError("cg_reduce_kernel() execution failed.\n");
       s= (s + (threads * 2 - 1)) / (threads * 2);
     }
-    checkCudaErrors(cudaMemcpy(&gpu_result, d_odata, sizeof(T), cudaMemcpyDeviceToHost));
-    checkCudaErrors(cudaDeviceSynchronize());
+       //checkCudaErrors(cudaMemcpy(&gpu_result, d_odata, sizeof(T), cudaMemcpyDeviceToHost));
+    checkCudaErrors(cudaMemcpyAsync(&gpu_result, d_odata, sizeof(T), cudaMemcpyDeviceToHost, 0));
+    checkCudaErrors(cudaStreamSynchronize(0));
     checkCudaErrors(cudaFree(d_odata));
     checkCudaErrors(cudaFree(d_intermediateSums));
     return gpu_result;

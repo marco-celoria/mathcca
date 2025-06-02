@@ -70,64 +70,80 @@ namespace mathcca {
         return *this;
       }
          
-      constexpr reference operator[] (size_type i) noexcept {return Parent::data()[i]; }
-      constexpr const_reference operator[] (size_type i) const noexcept {return  Parent::data()[i]; }
+      constexpr reference operator[] (size_type i) noexcept {return this->data()[i]; }
+      constexpr const_reference operator[] (size_type i) const noexcept {return  this->data()[i]; }
         
-      constexpr reference operator() (size_type j, size_type i) noexcept {return  Parent::data()[j *  Parent::num_cols() + i]; }
-      constexpr const_reference operator() (size_type j, size_type i) const noexcept {return  Parent::data()[j *  Parent::num_cols() + i]; }
-         
-      iterator begin() noexcept { return iterator{ Parent::data()}; }
-      iterator end()   noexcept { return iterator{ Parent::data() +  Parent::size()}; }
+      constexpr reference operator() (size_type j, size_type i) noexcept {return  this->data()[j *  this->num_cols() + i]; }
+      constexpr const_reference operator() (size_type j, size_type i) const noexcept {return this->data()[j *  this->num_cols() + i]; }
+
+      iterator begin() noexcept { return iterator{ this->data()}; }
+      iterator end()   noexcept { return iterator{ this->data() +  this->size()}; }
         
-      const_iterator begin()  const noexcept { return const_iterator{ Parent::data()}; }
-      const_iterator end()    const noexcept { return const_iterator{ Parent::data() +  Parent::size()}; }
+      const_iterator begin()  const noexcept { return const_iterator{ const_cast<pointer>(this->data())}; }
+      const_iterator end()    const noexcept { return const_iterator{ const_cast<pointer>(this->data() +  this->size())}; }
         
-      const_iterator cbegin() const noexcept { return const_iterator{ const_cast<pointer>(Parent::data())}; }
-      const_iterator cend()   const noexcept { return const_iterator{ const_cast<pointer>(Parent::data() +  Parent::size()) }; }
+      const_iterator cbegin() const noexcept { return const_iterator{ const_cast<pointer>(this->data())}; }
+      const_iterator cend()   const noexcept { return const_iterator{ const_cast<pointer>(this->data() +  this->size()) }; }
         
       constexpr self& operator+=(const self& rhs) {
         std::cout <<"operator+= lvalue\n";
         if (!check_equal_size((*this), rhs))
           throw std::length_error{"Incompatible sizes for matrix-matrix addition"};
-        const auto size{this->size()}; 
+#ifdef _STDPAR
+	std::transform(std::execution::par_unseq, begin().get(), end().get(), rhs.begin().get(), begin().get(), [=](value_type lhsi, value_type rhsi){ return lhsi + rhsi; });
+#else	
+        const auto size{this->size()};
         #pragma omp parallel for default(shared)
         for (size_type i= 0; i < size; ++i)
           (*this)[i] += rhs[i];
+#endif  
         return *this;
-      }
-        
+      } 
+         
       constexpr self& operator-=(const self& rhs) {
         std::cout <<"operator-= lvalue\n";
         if (!check_equal_size((*this), rhs))
           throw std::length_error{"Incompatible sizes for matrix-matrix subtraction"};
+#ifdef _STDPAR
+	std::transform(std::execution::par_unseq, begin().get(), end().get(), rhs.begin().get(), begin().get(), [=](value_type lhsi, value_type rhsi){ return lhsi - rhsi; });
+#else    
         const auto size{this->size()}; 
         #pragma omp parallel for default(shared)
         for (size_type i= 0; i < size; ++i)
           (*this)[i] -= rhs[i];
+#endif  
         return *this;
-      }
+      } 
         
       constexpr self& operator*=(const value_type rhs) {
         std::cout <<"scalar operator*= lvalue\n";
+#ifdef _STDPAR
+        std::transform(std::execution::par_unseq, begin().get(), end().get(), begin().get(), [=](value_type lhsi){ return lhsi * rhs; });
+#else
         const auto size{this->size()};
         #pragma omp parallel for default(shared)
         for (size_type i= 0; i < size; ++i)
           (*this)[i] *= rhs;
+#endif  
         return *this;
-      }
+      } 
         
       constexpr self& operator*=(const self& rhs) {
         std::cout <<"operator*= lvalue\n";
         if (!check_equal_size((*this), rhs))
           throw std::length_error{"Incompatible sizes for matrix-matrix Hadamard product"};
+#ifdef _STDPAR
+        std::transform(std::execution::par_unseq, begin().get(), end().get(), rhs.begin().get(), begin().get(), [=](value_type lhsi, value_type rhsi){ return lhsi * rhsi; });
+#else   
         const auto size{this->size()};
         #pragma omp parallel for default(shared)
         for (size_type i= 0; i < size; ++i)
           (*this)[i] *= rhs[i];
+#endif   
         return *this;
-      }
+      } 
 
-      Allocator get_allocator() const { return Parent::get_allocator();}
+      Allocator get_allocator() const { return this->get_allocator();}
 
   };  
     

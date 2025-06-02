@@ -6,18 +6,32 @@
 #include <mathcca/fill_const.h>
 #include <mathcca/copy.h>
 
+#ifdef _OPENMP
+ #include <omp.h>
+#endif
+
 int main(int argc, char **argv)  {
 
   constexpr std::size_t l{22501};
   constexpr std::size_t m{23003};
   constexpr std::size_t n{24002};
 #ifdef _USE_DOUBLE_PRECISION
- using value_type= double;
+  std::cout << "USE DOUBLE PRECISION\n";
+  using value_type= double;
 #else
+ std::cout << "USE SINGLE PRECISION\n"; 
  using value_type= float;
 #endif
-  constexpr value_type gops = l * n * (2. * m - 1.) * 1.e-9;
   
+  constexpr value_type gops = l * n * (2. * m - 1.) * 1.e-9;
+ 
+#ifdef _OPENMP
+  int num_threads = 0;
+  #pragma omp parallel reduction(+:num_threads)
+  num_threads += 1;
+  std::cout << "Running with " << num_threads << " OMP threads\n";
+#endif
+
   mathcca::host_matrix<value_type>   hA{l, m};
   mathcca::host_matrix<value_type>   hB{m, n};
   mathcca::device_matrix<value_type> dA{l, m};

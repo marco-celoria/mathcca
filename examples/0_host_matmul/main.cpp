@@ -5,6 +5,10 @@
 #include <mathcca/fill_const.h>
 #include <chrono>
 
+#ifdef _OPENMP
+ #include <omp.h>
+#endif
+
 double wtime() {
 #ifdef _OPENMP
   return omp_get_wtime();
@@ -24,11 +28,20 @@ int main(int argc, char **argv)  {
   constexpr std::size_t n{5002};
 
 #ifdef _USE_DOUBLE_PRECISION
+  std::cout << "USE DOUBLE PRECISION\n";
   using value_type= double;
 #else
+  std::cout << "USE SINGLE PRECISION\n";
   using value_type= float;
 #endif
-  
+ 
+#ifdef _OPENMP
+  int num_threads = 0;
+  #pragma omp parallel reduction(+:num_threads)
+  num_threads += 1;
+  std::cout << "Running with " << num_threads << " OMP threads\n";
+#endif 
+
   constexpr value_type gops = l * n * (2. * m - 1.) * 1.e-9;
   
   mathcca::host_matrix<value_type> A{l, m};

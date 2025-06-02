@@ -18,6 +18,7 @@
 #ifdef _STDPAR
  #include <execution>
  #include <ranges>
+ #include <algorithm>
 #endif
 
 #ifdef _OPENMP

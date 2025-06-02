@@ -12,6 +12,9 @@
 #include <mathcca/host_iterator.h>
 #include <vector>
 
+#ifdef _OPENMP
+ #include <omp.h>
+#endif
 
 template<std::floating_point T>
 __global__ void addTo_kernel_ntimes(T* __restrict accululator, const T* __restrict to_be_op, const std::size_t size, const int ntimes) {
@@ -37,11 +40,20 @@ int main(int argc, char **argv)  {
   constexpr std::size_t iElem{nElem/NSTREAM};
 
 #ifdef _USE_DOUBLE_PRECISION
+  std::cout << "USE DOUBLE PRECISION\n";
   using value_type= double;
 #else
+  std::cout << "USE SINGLE PRECISION\n";
   using value_type= float;
 #endif
-  
+
+#ifdef _OPENMP
+  int num_threads = 0;
+  #pragma omp parallel reduction(+:num_threads)
+  num_threads += 1;
+  std::cout << "Running with " << num_threads << " OMP threads\n";
+#endif
+
   auto avg_speedup= static_cast<value_type>(0);
 
   mathcca::host_matrix<value_type>   hA{l, m};
